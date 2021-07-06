@@ -1,0 +1,74 @@
+{# Template d'affichage de la liste des dataSources #}
+
+{% extends "base.html.twig" %}
+
+{% block body %}
+	{% if is_granted('ROLE_ADMIN') %}
+		<header class="page-header">
+	   		<h1>
+	   			{{ 'menu.datasource'|trans() }}
+
+	   			<div class="pull-right">
+					<a href="{{ path('data_sources_new_key') }}" class="btn btn-primary btn-new" data-toggle="tooltip" data-placement="bottom" title="{{ 'datasources.privateKey.new'|trans() }}">{{ 'datasources.privateKey.button'|trans() }}</a>
+					
+					{% if privateKey %}
+						<a href="{{ path('data_sources_registration') }}" class="btn btn-primary btn-new">{{ 'datasources.new'|trans() }}</a>
+					{% else %}
+						<div data-toggle="tooltip" data-placement="bottom" title="{{ 'datasources.privateKey.add'|trans() }}" style="display:inline-block">
+							<a href="#" class="btn btn-primary btn-new disabled">{{ 'datasources.new'|trans() }}</a>
+						</div>
+					{% endif %}
+				</div>
+	   		</h1>
+		</header>
+
+		<table id="table" class="table table-striped">
+			<thead>
+				<tr>
+					<th>{{ 'datasources.table.titlecolumn.actions'|trans() }}</th>
+					<th>{{ 'datasources.table.titlecolumn.id'|trans() }}</th>
+					<th>{{ 'datasources.table.titlecolumn.nameCon'|trans() }}</th>
+					<th>{{ 'datasources.table.titlecolumn.nameBDD'|trans() }}</th>
+					<th>{{ 'datasources.table.titlecolumn.descriptionBDD'|trans() }}</th>
+					<th>{{ 'datasources.table.titlecolumn.typeBDD'|trans() }}</th>
+					<th>{{ 'datasources.table.titlecolumn.dateBDD'|trans() }}</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				{% for dataSource in list_dataSources %}
+					<tr onClick="document.location.href='{{ path('data_sources_show', {'id': dataSource.id}) }}'" onmouseover="this.className='info';" onmouseout="this.className='';">
+						<td class="tabletdbtn">
+							{% if privateKey %}
+								<a href="{{ path('data_sources_edit', {'id': dataSource.id}) }}" class="tablebtn btn btn-primary" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
+							{% else %}
+								<div data-toggle="tooltip" data-placement="bottom" title="{{ 'datasources.privateKey.edit'|trans() }}" style="display:inline-block; cursor: default;">
+									<a href="#" class="tablebtn btn btn-primary disabled"><span class="glyphicon glyphicon-pencil"></span></a>
+								</div>
+							{% endif %}
+							<a href="{{ path('data_sources_delete', {'id': dataSource.id}) }}" class="tablebtn btn btn-danger" title="Delete" onClick="return confirmeDelete(event, '{{ 'datasources.table.delete.msgconfirm'|trans({'%nameBDD%': dataSource.nameBDD}) }}')"><span class="glyphicon glyphicon-trash"></span></a>
+						</td>
+						<td>{{ dataSource.id }}</td>
+						<td>{{ dataSource.nameCon }}</td>
+						<td>{{ dataSource.nameBDD }}</td>
+						<td>{{ dataSource.descriptionBDD }}</td>
+						<td>{{ dataSource.typeStrBDD }}</td>
+						<td style="min-width: 135px;">{{ dataSource.dateBDD|date('Y/m/d') }}</td>
+						{# changement du format de la date du timestamp en se basant sur le tri des annés et des mois pour une meilleur visualisation lors de la création  d/m/Y H:i:s ===> Y/m/d H:i:s  #}
+						{# TRI SELON L'année , le mois  #}
+			
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
+{% endblock body %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script type="text/javascript">
+		$(document).ready(function(){
+		  $('[data-toggle="tooltip"]').tooltip({html: true});
+		});
+	</script>
+{% endblock %}

@@ -5,10 +5,10 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Response;
-use Mc\DataSourcesBundle\Entity\DataSource;
+use App\Entity\DataSource;
 use Mc\DataSourcesBundle\Form\Type\DataSourceType;
 use Mc\BddBundle\Controller\AvailableType;
-use Mc\EncryptBundle\Controller\EncryptController;
+use App\Controller\EncryptController;
 
 class DataSourcesController extends AbstractController
 {
@@ -17,7 +17,7 @@ class DataSourcesController extends AbstractController
      */
     public function index()
     {
-        $repository = $this->getDoctrine()->getRepository('McDataSourcesBundle:DataSource');
+        $repository = $this->getDoctrine()->getRepository(DataSource::class);
         $list_dataSources = $repository->findAll();
 
         // On vérifie si la clé de chiffrement existe
@@ -26,7 +26,7 @@ class DataSourcesController extends AbstractController
             $keyExists = true;
         }
 
-        return $this->render('McDataSourcesBundle:DataSources:index.html.twig', array(
+        return $this->render('data_sources/index.html.twig', array(
             'list_dataSources' => $list_dataSources,
             'privateKey' => $keyExists
         ));
