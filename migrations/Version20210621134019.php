@@ -27,16 +27,18 @@ final class Version20210621134019 extends AbstractMigration
 
         $accounts = $this->connection->fetchAll('SELECT * FROM account ORDER BY id ASC');
         foreach ($accounts as $account) {
+          $id = $account["id"];
           $username = $account["username_canonical"];
           $email = $account["email_canonical"];
           $password = $account["password"];
           $roles = json_encode(unserialize($account["roles"]));
           $this->addSql(<<<SQL
             INSERT INTO users (id, username, email, password, roles)
-            VALUES (nextval('users_id_seq'), '$username', '$email', '$password', '$roles')
+            VALUES ('$id', '$username', '$email', '$password', '$roles')
 SQL
           );
         }
+        $this->addSql("SELECT setval('users_id_seq', (SELECT MAX(id) FROM users))");
     }
 
     public function down(Schema $schema): void
