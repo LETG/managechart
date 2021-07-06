@@ -137,3 +137,48 @@ chart_duplicate:
   controller: App\Controller\ChartController::duplicate
   requirements:
     id: \d+
+
+#----------------
+#  DATA SOURCES
+#----------------
+
+data_sources_list:
+  path:  /list
+  controller: App\Controller\DataSourcesController:index
+
+data_sources_delete:
+  path: /delete/{id}
+  controller: App\Controller\DataSourcesController:delete
+  requirements:
+    id: \d+
+
+data_sources_edit:
+  path: /edit/{id}
+  controller: App\Controller\DataSourcesController:edit
+  requirements:
+    id: \d+
+
+data_sources_registration:
+  path: /registration
+  controller: App\Controller\DataSourcesController:new
+
+data_sources_registration_confirmed:
+  path: /registration-confirmed/{id}
+  controller: App\Controller\DataSourcesController:confirmed
+  requirements:
+    id: \d+
+
+data_sources_connect:
+  path: /connect
+  controller: App\Controller\DataSourcesController:connect
+
+data_sources_show:
+  path: /show/{id}
+  controller: App\Controller\DataSourcesController:show
+  requirements:
+    id: \d+
+
+data_sources_new_key:
+  path: /new-key
+  controller: App\Controller\EncryptController:rechiffrerBDD
+  requirements:
