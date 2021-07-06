@@ -229,3 +229,33 @@ data_list_duplicate:
     controller: App\Controller\DataListController::duplicate
     requirements:
         id: \d+
+
+#--------
+# USERS
+#--------
+
+user_show:
+  path:  /show/{id}
+  controller: App\Controller\UserListController:show
+  requirements:
+    id: \d+
+
+#----------------
+# USERS (ADMIN)
+#----------------
+
+user_list:
+  path:     /list
+  controller: App\Controller\UserListController:index
+
+user_edit:
+  path:     /edit/{id}
+  controller: App\Controller\UserListController:edit
+  requirements:
+    id: \d+
+
+user_delete:
+  path:     /delete/{id}
+  controller: App\Controller\UserListController:delete
+  requirements:
+    id: \d+

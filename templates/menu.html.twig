@@ -35,9 +35,12 @@
 						<li><a href="{{ path('user_show', {'id': app.user.id}) }}" title="{{ 'user.isconnect'|trans({'%name%': app.user.username}) }}">{{ 'user.isconnect'|trans({'%name%': app.user.username}) }}</a></li>
 						<li><a data-toggle="dropdown" href="#"><b class="caret"></b></a>
             				<ul class="dropdown-menu">
+                              {#
+                              TODO : re-implement this from FOSUserBundle
             					<li><a href="{{ path('fos_user_profile_edit') }}" title="{{ 'user.edit'|trans }}">{{ 'user.edit'|trans }}</a></li>
             					<li><a href="{{ path('fos_user_change_password') }}" title="{{ 'user.changePassword'|trans }}">{{ 'user.changePassword'|trans }}</a></li>
-    							<li><a href="{{ path('fos_user_security_logout') }}" title="{{ 'user.disconnect'|trans() }}"><span class="glyphicon glyphicon-off"></span>
+                                #}
+    							<li><a href="{{ path('app_logout') }}" title="{{ 'user.disconnect'|trans() }}"><span class="glyphicon glyphicon-off"></span>
     								{{ 'user.disconnect'|trans() }}
     							</a></li>
     						</ul>
