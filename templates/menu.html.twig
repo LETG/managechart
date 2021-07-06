@@ -1,0 +1,52 @@
+{# app/Resources/views/Blog/menu.html.twig #}
+
+<nav class="navbar navbar-default navbar-fixed-top">
+  	<div class="container">
+		<div class="navbar-header">
+      		<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#manageChartNavbar" aria-expanded="false">
+        		<span class="sr-only">Toggle navigation</span>
+        		<span class="icon-bar"></span>
+        		<span class="icon-bar"></span>
+        		<span class="icon-bar"></span>
+      		</button>
+      		<img src="{{ asset('favicon.ico') }}" height="50px" style="float: left; padding: 5px 0px; margin-right: 20px;">
+      		<a class="navbar-brand" href="{{ path('index') }}" >ManageChart</a>
+    	</div>
+
+    	<div class="collapse navbar-collapse" id="manageChartNavbar">
+    		<ul class="nav navbar-nav">
+    			{% if is_granted('ROLE_ADMIN') %}
+                    <li><a href="{{ path('data_sources_list') }}" title="{{ 'menu.datasource'|trans() }}">{{ 'menu.datasource'|trans() }}</a></li>
+                    <li><a href="{{ path('data_list_list') }}" title="{{ 'menu.datalist'|trans() }}">{{ 'menu.datalist'|trans() }}</a></li>
+                    <li><a href="{{ path('index2', {'_locale' : app.request.locale}) }}" title="{{ 'menu.chart'|trans() }}">{{ 'menu.chart'|trans() }}</a></li>
+                    <li><a href="{{ path('user_list') }}" title="{{ 'menu.user'|trans() }}">{{ 'menu.user'|trans() }}</a></li>
+                {% elseif is_granted('ROLE_SCIENTIFIC_PLUS') %}
+                    <li><a href="{{ path('data_list_list') }}" title="{{ 'menu.datalist'|trans() }}">{{ 'menu.datalist'|trans() }}</a></li>
+                    <li><a href="{{ path('index2', {'_locale' : app.request.locale}) }}" title="{{ 'menu.chart'|trans() }}">{{ 'menu.chart'|trans() }}</a></li>
+                {% endif %}
+    		</ul>
+
+    		<ul class="nav navbar-nav navbar-right">
+    			{# si l'utilisateur n'est pas connecte on affiche le menu de connexion #}
+				{% if is_granted("IS_AUTHENTICATED_REMEMBERED") == false %}
+					<li><a href="{{ path('app_login') }}" title="{{ 'user.connect'|trans() }}">{{ 'user.connect'|trans() }}</a></li>
+				{% else %}
+					<li class="dropdown">
+						<li><a href="{{ path('user_show', {'id': app.user.id}) }}" title="{{ 'user.isconnect'|trans({'%name%': app.user.username}) }}">{{ 'user.isconnect'|trans({'%name%': app.user.username}) }}</a></li>
+						<li><a data-toggle="dropdown" href="#"><b class="caret"></b></a>
+            				<ul class="dropdown-menu">
+            					<li><a href="{{ path('fos_user_profile_edit') }}" title="{{ 'user.edit'|trans }}">{{ 'user.edit'|trans }}</a></li>
+            					<li><a href="{{ path('fos_user_change_password') }}" title="{{ 'user.changePassword'|trans }}">{{ 'user.changePassword'|trans }}</a></li>
+    							<li><a href="{{ path('fos_user_security_logout') }}" title="{{ 'user.disconnect'|trans() }}"><span class="glyphicon glyphicon-off"></span>
+    								{{ 'user.disconnect'|trans() }}
+    							</a></li>
+    						</ul>
+    					</li>
+					</li>
+				{% endif %}
+    		</ul>
+    	</div>
+  	</div>
+
+    <button class="btn changeNavColor"></button>
+</nav>

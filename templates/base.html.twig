@@ -1,19 +1,109 @@
+{# Copyleft 2014 Collin Maxime / 2015 Kakoa Robel / 2016 Dumont Maxime #}
+
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {# Run `composer require symfony/webpack-encore-bundle`
-           and uncomment the following Encore helpers to start using Symfony UX #}
-        {% block stylesheets %}
-            {#{{ encore_entry_link_tags('app') }}#}
-        {% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ManageChart{% endblock %}</title>
 
-        {% block javascripts %}
-            {#{{ encore_entry_script_tags('app') }}#}
-        {% endblock %}
-    </head>
-    <body>
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+    {% endblock %}
+
+    <script type="text/javascript">
+        /* Stop l'evenement onClick sur le tableau index chart pour afficher le chart ou sellectionner l'url au clique dans l'input de l'url*/
+        function selectInput(e, id) {
+            e.stopPropagation && e.stopPropagation() || (e.cancelBubble = true);
+            $('#url' + id).select();
+            
+            return true;
+        }
+        
+        /* Suppression d'elements dans les tableaux index */
+        /* format des tableaux :
+         * <tr onClick="document.location.href="showItem";>
+         *      <td>Item</td>
+         *      <td onClick="return confirmeDelete(event, 'msg')">ButtonDelete</td>
+         * </tr> 
+         */
+        function confirmeDelete(e, msg) {
+            e.stopPropagation && e.stopPropagation() || (e.cancelBubble = true);
+
+            return confirm(msg);
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        {% include 'menu.html.twig' %}
+
         {% block body %}{% endblock %}
-    </body>
+
+        <footer>
+            <p>ManageChart 🄯 2014-2021 LETG-Brest Géomer</p>
+        </footer>
+    </div>
+
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+    {% endblock %}
+
+    {# Bloc appelant les scripts js inclus dans les vues #}
+    <script type="text/javascript">
+        if (Cookies.get('Nav')) {
+            $('button.changeNavColor').addClass('navChangeColorButton');
+            $('nav').addClass('navbar-inverse');
+        }
+
+        toastr.options.progressBar = true;
+        toastr.options.newestOnTop = true;
+            
+        $(document).ready(function() {
+            {% block document_ready %}{% endblock %}
+
+            {% if is_granted('ROLE_SCIENTIFIC') %}
+                $("#table").DataTable({
+                    "columnDefs": [
+                        { "orderable": false, "targets": 0 }
+                    ],
+                    "order": [[ 1, "desc" ]],
+                    "pagingType": "full_numbers",
+                    language: {
+                        paginate: {
+                            first:    '«',
+                            previous: '‹',
+                            next:     '›',
+                            last:     '»'
+                        },
+                        "info": "{{ 'paginate.info'|trans() }}",
+                        "lengthMenu": "{{ 'paginate.lengthMenu'|trans() }}",
+                        "search": "",
+                        "searchPlaceholder": "{{ 'paginate.searchPlaceholder'|trans() }}"
+                    }
+                });
+            {% else %}
+                $("#table").DataTable({
+                    "columnDefs": [
+                        { "orderable": false, "targets": 0 }
+                    ],
+                    "order": [[ 0, "desc" ]],
+                    "pagingType": "full_numbers",
+                    language: {
+                        paginate: {
+                            first:    '«',
+                            previous: '‹',
+                            next:     '›',
+                            last:     '»'
+                        },
+                        "info": "{{ 'paginate.info'|trans() }}",
+                        "lengthMenu": "{{ 'paginate.lengthMenu'|trans() }}",
+                        "search": "",
+                        "searchPlaceholder": "{{ 'paginate.searchPlaceholder'|trans() }}"
+                    }
+                });
+            {% endif %}
+        });
+    </script>
+</body>
 </html>

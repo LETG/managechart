@@ -1,0 +1,185 @@
+# app/Ressources/translations/messages.en.yml
+
+menu:
+  datasource: Data Sources
+  datalist: Data Lists
+  chart: Charts
+  user: Users
+
+form:
+  roles: Roles
+
+button:
+  submit: Save
+  new: New
+  edit: Edit
+
+paginate:
+  info: Page \_PAGE\_ of \_PAGES\_
+  lengthMenu: Number of entries _MENU_
+  searchPlaceholder: Research
+
+#-----------
+#  CHARTS
+#-----------
+
+chart:
+  table:
+    titlecolumn:
+      actions: Actions
+      id: id
+      name: Name
+      type: Type
+      url: URL
+    label:
+      simplechart: Classic
+      timechart: Time
+      multiaxistimechart: Multi-Axis Time
+      dynamicchart: Dynamic chart
+      timedynamicchart: Time dynamique
+      polarchart: Polar
+      piechart: Pie
+      heatmapchart: Heatmap
+    delete:
+      msgconfirm: Do you really want to delete {nameChart} ?
+    duplicate:
+      msgconfirm: Do you want to duplicate {nameChart} ?
+  newHighchart: New chart
+  registration:
+    confirmed: "{nameChart} has been registered"
+  editHighchart: Edit
+  newHighstock: New time chart
+  copy: Copied
+
+modal:
+  title: Select a chart type
+  close: Close
+  create: Create
+  chart: Simple chart
+  timechart: Time chart
+  multiaxistimechart: Multi-axis time chart
+  dynamicchart: Dynamic chart
+  timedynamicchart: Time dynamic chart
+  polarchart: Polar chart
+  piechart: Pie/ring chart
+  heatmapchart: Heatmap chart
+  error:
+    type:
+      name: Error
+      description: No type selected
+
+formChart:
+  hide: Hide
+  show: Display
+  fix: Freeze
+  unfix: Unfreeze
+  name: Name
+  credits: Credits
+  title: Title
+  urlcredits: Credits Url
+  subtitle: Subtitle
+  legend: Legend
+  tooltip: Tooltip
+  xAxisTitle: X-axis title
+  exportPrint: Print export
+  xAxisUnit: X-axis unit
+  exportCSV: CSV export
+  xAxisType: X-axis Type
+  inverted: Reverse axes
+  addYAxis: Add Y-axis
+  addFlag: Add flag
+  submit: Save
+  typestacked: Stacking
+  normal : Normal 
+  percent: Percent
+  scriptError:
+    name: Loading error
+    description: Unable to load charts.
+  gapSize: GapSize
+
+listTypeAxis:
+  linear: Linear
+  datetime: Temporal
+  logarithmic: Logarithmic
+  category: Category
+
+formYAxis:
+  label: Y-axis n°
+  title: Title
+  delete: Delete axis
+  type: Type
+  panel:
+    addAll:
+      title: Add all series
+      button: Add series
+    addAllFlag:
+      title: Add all flags    
+    addOne:
+      title: Add a serie
+      titleFlag: Add a flag
+  logarithmicError:
+    name: Logarithmic error
+    description: Presence of negative or null values.
+
+formFlag:
+  title: Title
+  dataListChoice: Select query
+  parameter: Parameter
+  label: Flag (Serie) n°
+  onseries: Onseries
+  shape: Shape
+  style: Font style
+  color: Color
+  width: Line width
+  dataList: Request 
+  delete: Delete
+
+listShapeFlag:
+  flag: Flag
+  circlepin: Circle
+  squarepin: Square
+  
+listStyleFlag:
+  normal: Normal
+  bold: Bold
+
+formSerie:
+  dataListChoice: Select query
+  label: Serie n°
+  title: Title
+  unit: Unit
+  dataList: Request
+  parameterDataList: Parameter
+  type: Type
+  color: Color
+  marker: Marker
+  dashstyle: Dash style
+  delete: Delete
+  colsize : Column size
+  stringError:
+    name: Incompatible series
+    description: The series contains string values.
+
+listTypeSerie:
+  line: Line
+  spline: Spline
+  scatter: Scatter
+  area: Area
+  areaspline: Area spline
+  column: Column
+  bar: Bar
+  pie: Pie
+  heatmap: Heatmap
+
+listDashStyleSerie:
+  solid: Solid
+  shortdash: Short Dash
+  shortdot: Short Dot
+  shortdashdot: Short Dash Dot
+  shortdashdotdot: Short Dash Dot Dot
+  dot: Dot
+  dash: Dash
+  longdash: Long Dash
+  dashdot: Dash Dot
+  longdashdot: Long Dash Dot
+  longdashdotdot: Long Dash Dot Dot

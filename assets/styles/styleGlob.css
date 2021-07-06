@@ -1,0 +1,180 @@
+@font-face {
+    font-family: SourceSansPro-Light;
+    src: url(../fonts/SourceSansPro-Light.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: SourceSansPro-LightItalic;
+    src: url(../fonts/SourceSansPro-LightItalic.ttf) format('truetype');
+}
+
+@font-face {
+	font-family: SIXTY;
+    src: url(../fonts/SIXTY.ttf) format('truetype');
+}
+
+body {
+	padding-top: 30px;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0)
+  and (min-resolution:.001dpcm) {
+    input[type='checkbox'] {
+    	height: 17px;
+    	width: 17px;
+    }
+}
+
+.copy-left { 
+	display: inline-block; 
+	text-align: right; 
+	margin: 0px; 
+	-moz-transform: scaleX(-1); 
+	-o-transform: scaleX(-1); 
+	-webkit-transform: scaleX(-1); 
+	transform: scaleX(-1); 
+	filter: FlipH; 
+	-ms-filter: “FlipH”; 
+}
+
+button.changeNavColor {
+	background-color: #222222;
+	border-radius: unset;
+	height: 51px;
+	position: fixed;
+	top: 0;
+}
+
+.navChangeColorButton {
+	background-color: #F8F8F8 !important;
+}
+
+h1 {
+	min-width: 583px;
+}
+
+table tbody tr td {
+	vertical-align: middle !important;
+}
+
+.tabletdbtn {
+	min-width: 140px;
+}
+
+.tablebtn {
+	width: 60px;
+} 
+
+#loader {
+	position: fixed;
+	top: 50%;
+	z-index: 1;
+}
+
+.dataTables_filter input {
+	width: 250px !important;
+}
+
+input[type="checkbox"] {
+	margin: 0 auto !important;
+}
+
+button.center-block {
+	width: 100%;
+}
+
+/*button.center-block[id^=addOneSerie_] {
+	margin-top: 10%;
+}*/
+
+input[type='number'] {
+    -moz-appearance:textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+/* FOSUserBundle */
+input#remember_me {
+	position: relative;
+}
+
+/* Chart */
+table#table tbody tr {
+	cursor: pointer;
+}
+
+table#table tbody tr td input {
+	width: 100%;
+	min-width: 200px;
+}
+
+div.modalBodyText {
+	text-align: center;
+}
+
+div.modalBodyText a {
+	margin-bottom: 5px;
+}
+
+div.div_chart {
+	position: fixed;
+	top: 55px;
+	right: 42px;
+	z-index: 255;
+}
+
+div.container_chart {
+	position: fixed;
+	top: 93px;
+	right: 28px;
+	z-index: 0;
+	border: 1px solid;
+}
+
+div.panel {
+	padding: 0 !important;
+}
+
+/*#addAllSeries_body select[id^="mc_chartbundle_chart_list_yAxis_"][id$="_dataList"] {
+	margin-bottom: 15px;
+}*/
+
+img#drag {
+	cursor: move;
+	left: 3px;
+	position: absolute;
+	top: 3px;
+	width: 20px;
+}
+ 
+/* DataSource */
+textarea#mc_datasourcesbundle_datasource_descriptionBDD {
+	resize: vertical;
+}
+
+input#mc_datasourcesbundle_datasource_portBDD {
+	-moz-appearance: textfield;
+}
+
+input#mc_datasourcesbundle_datasource_portBDD::-webkit-outer-spin-button,
+input#mc_datasourcesbundle_datasource_portBDD::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+/* DataList */
+form#mc_datalistbundle_datalist {
+	min-width: 598px;
+}
+
+textarea#mc_datalistbundle_datalist_requestData {
+	resize: none;
+	height: 330px;
+}
+
+.required::after {
+    content: "*";
+    color: red;
+}

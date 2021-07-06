@@ -1,0 +1,577 @@
+<?php
+
+namespace App\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use App\Entity\Chart;
+use App\Entity\YAxis;
+use Mc\ChartBundle\Form\Type\ChartType;
+use Mc\DataListBundle\Entity\DataList;
+use Symfony\Component\HttpFoundation\Response;
+use Mc\ChartBundle\AvailableChoice\AvailableColorSerie;
+use Mc\ChartBundle\AvailableChoice\AvailableTypeSerie;
+use Mc\ChartBundle\AvailableChoice\AvailableTypeAxis;
+use Mc\ChartBundle\AvailableChoice\AvailableDashStyleSerie;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+
+class ChartController extends AbstractController
+{
+    private static $varTwig;
+
+    protected function initializeVarTwig($manager)
+    {
+        $translator = $this->get('translator');
+
+        $jsTranslate = array(
+            'formYAxis_logarithmicError_name' => $translator->trans('formYAxis.logarithmicError.name'),
+            'formYAxis_logarithmicError_description' => $translator->trans('formYAxis.logarithmicError.description')
+        );
+
+        self::$varTwig = array(
+            'list_yAxis'         => null,
+            'form'               => null,
+            'listDataList'       => self::getListDataList($manager),
+            'listTypeAxis'       => AvailableTypeAxis::$typesAxis,
+            'listTypeSerie'      => AvailableTypeSerie::$typesSerie,
+            'listColorSerie'     => AvailableColorSerie::$colorSerie,
+            'listDashStyleSerie' => AvailableDashStyleSerie::$dashStyleSerie,
+            'firstTypeAxis'      => key(AvailableTypeAxis::$typesAxis),
+            'firstTypeSerie'     => key(AvailableTypeSerie::$typesSerie),
+            'firstColorSerie'    => key(AvailableColorSerie::$colorSerie),
+            'jsTranslate'        => $jsTranslate
+        );
+        return self::$varTwig;
+    }
+
+
+    /**
+     * Retourne la liste des dataList en BDD
+     */
+    protected static function getListDataList($manager)
+    {
+        $repository = $manager->getRepository('McDataListBundle:DataList');
+        return $repository->findAll();
+    }
+
+    /**
+     * @Route("/")
+     */
+    public function index()
+    {
+        $repository = $this->getDoctrine()->getRepository(Chart::class);
+        $list_chart = $repository->findAll();
+
+        return $this->render('chart/index.html.twig', array('list_chart' => $list_chart));
+    }
+
+    /**
+     * Prépare le formulaire de création d'un graphique
+     * @isGranted("ROLE_SCIENTIFIC")
+     */
+    public function create($typeChart)
+    {
+        $chart = new Chart();
+        $chart->setTypeChart($typeChart);
+
+        /* Si graphique temporel */
+        if ($typeChart == 'timechart' || $typeChart == 'multiaxistimechart' || $typeChart == 'timedynamicchart') {
+            $chart->setXAxisType('datetime');
+        }
+
+        $form = $this->createForm(new ChartType(), $chart);
+        $request = $this->get('request');
+
+        if ($request->getMethod() == 'POST') {
+            $form->bind($request);
+            if ($form->isValid()) {
+            $this->register($chart, false);
+            return $chart;
+            }
+        }
+
+        /* Initialisation des varibles twig */
+        $em = $this->getDoctrine()->getManager();
+        $varTwig = self::initializeVarTwig($em);
+        $varTwig['form'] = $form->createView();
+
+        return $varTwig;
+    }
+
+    /**
+     * Prépare le formulaire d'édition d'un graphique
+     * @isGranted("ROLE_SCIENTIFIC")
+     */
+    protected function edit($chart)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $listYAxis = $chart->getListYAxis()->toArray();
+
+            // On supprime les axes Y et leurs séries/flags
+        foreach ($chart->getListYAxis() as $yAxis) {
+            foreach ($yAxis->getSeries() as $series) {
+            $em->remove($series);
+            }
+            foreach ($yAxis->getFlag() as $flag) {
+            $em->remove($flag);
+            }
+            $em->remove($yAxis);
+        }
+
+        $chart->getListYAxis()->clear();
+
+        // On pré-remplie le formulaire avec les données du graphique + ses axes + ses séries/flags
+        $form = $this->createForm(new ChartType(), $chart);
+        $request = $this->get('request');
+
+        if ($request->getMethod() == 'POST') {
+            $form->bind($request);
+            if ($form->isValid()) {
+            $this->register($chart, true);
+            return $chart;
+            }
+        }
+
+            /* Initialisation des varibles twig */
+        $varTwig = self::initializeVarTwig($em);
+        $varTwig['list_yAxis'] = $listYAxis;
+        $varTwig['form'] = $form->createView();
+
+        return $varTwig;
+    }
+
+    /**
+     * Enregistrement du chart en BDD
+     */
+    protected function register($chart, $edit)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+            // On enregistre le graphique
+            if (!$edit) {
+            $em->persist($chart);
+        }
+
+        // On enregistre chaque axe Y avec ses séries et/ou flags
+        foreach ($chart->getListYAxis() as $yAxis) {
+            $yAxis->setChart($chart);
+            $em->persist($yAxis);
+
+            foreach ($yAxis->getSeries() as $serie) {
+                $serie->setYAxis($yAxis);
+                $em->persist($serie);
+            }
+
+            foreach ($yAxis->getFlag() as $flag) {
+                $flag->setYAxis($yAxis);
+                $em->persist($flag);
+            }
+        }
+
+        $em->flush();
+    }
+
+    /**
+     * Retourne la dataList au format JSON
+     */
+    public function getDataParameterDataList(DataList $dataList, $attributsSpatiaux, $editCreate)
+    {
+        if (!$attributsSpatiaux) {
+            $dataList->executeQuery("default", false, false);
+        } else {
+            $dataList->executeQuery($attributsSpatiaux, false, false);
+        }
+        $listData = $dataList->getListDataByParameter();
+
+        $dataJSON = "{";
+        $regex = "#[^0-9.-]#";
+
+        /** Les valeurs de x et y peuvent être des chaines de caractères ou numérique, il y a 4 différents cas :
+         *  x et y => string, x et y => numeric, x => string et y => numeric, x => numeric et y => string
+         */
+        foreach ($listData as $key => $value) {
+            if (!empty($value)) {
+            $dataJSON .= "" . json_encode($key) . " : [";
+
+            /* x => string */
+            if (preg_match($regex, $value[0][0])) {
+                /* y => string */
+                if (preg_match($regex, $value[0][1])) {
+                foreach ($value as $item) {
+                    $dataJSON .= (isset($item[1]))  ? '[' . json_encode($item[0]) . ',' . json_encode($item[1]) . '],'
+                                : '[' . json_encode($item[0]) . ',null],';
+                }
+                }
+                /* y => numeric */
+                else {
+                foreach ($value as $item) {
+                    $dataJSON .= (isset($item[1]))  ? '[' . json_encode($item[0]) . ',' . $item[1] . '],'
+                                : '[' . json_encode($item[0]) . ',null],';
+                }
+                }
+            }
+            /* x => numeric */
+            else {
+                /* y => string */
+                if (preg_match($regex, $value[0][1])) {
+                foreach ($value as $item) {
+                    $dataJSON .= (isset($item[1]))  ? '[' . $item[0] . ',' . json_encode($item[1]) . '],'
+                                : '[' . $item[0] . ',null],';
+                }
+                }
+                /* y => numeric */
+                else {
+                foreach ($value as $item) {
+                    $dataJSON .= (isset($item[1]))  ? '[' . $item[0] . ',' . $item[1] . '],'
+                                : '[' . $item[0] . ',null],';
+                }
+                }
+            }
+            }
+            /* Suppression de la dernière virgule */
+            $dataJSON = substr($dataJSON, 0, strlen($dataJSON) -1);
+            $dataJSON .= "],";
+        }
+        $dataJSON = substr($dataJSON, 0, strlen($dataJSON) -1);
+        $dataJSON .= "}";
+
+        $response = new Response();
+        $response->setContent($dataJSON);
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
+    }
+
+    /**
+     * @isGranted("ROLE_SCIENTIFIC")
+     */
+    public function confirmed(Chart $chart)
+    {
+        return $this->render('McChartBundle:Chart:confirmed.html.twig', array('chart' => $chart));
+    }
+
+    /**
+     * @isGranted("ROLE_SCIENTIFIC")
+     */
+    public function duplicate(Chart $chart)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        // Duplication du graphique
+        $duplicatedChart = clone $chart;
+        $duplicatedChart->setNameChart('Copie de ' . $chart->getNameChart());
+        $em->persist($duplicatedChart);
+
+        // Duplication de chaque axe Y avec ses séries et/ou flags
+        foreach ($chart->getListYAxis() as $yAxis) {
+
+            $duplicatedYAxis = clone $yAxis;
+            $duplicatedYAxis->setChart($duplicatedChart);
+            $em->persist($duplicatedYAxis);
+
+            foreach ($yAxis->getSeries() as $serie) {
+                $duplicatedSerie = clone $serie;
+                $duplicatedSerie->setYAxis($duplicatedYAxis);
+                $em->persist($duplicatedSerie);
+            }
+
+            foreach ($yAxis->getFlag() as $flag) {
+                $duplicatedFlag = clone $flag;
+                $duplicatedFlag->setYAxis($duplicatedYAxis);
+                $em->persist($duplicatedFlag);
+            }
+        }
+
+        $em->flush();
+
+        return $this->redirectToRoute('index');
+    }
+
+    public function show(Chart $chart)
+    {
+        return $this->render('McChartBundle:Chart:show.html.twig', array('chart' => $chart));
+    }
+
+    public function showIframe(Chart $chart, $width, $height, $attributsSpatiaux, $test)
+    {
+        return $this->render('McChartBundle:Chart:showIframe.html.twig', array(
+            'chart' => $chart,
+            'listColorSerie' => AvailableColorSerie::$colorSerie,
+            'width' => $width === "auto" ? "null" : $width,
+            'height' => $height === "auto" ? "null" : $height,
+            'attributsSpatiaux' => $attributsSpatiaux,
+            'test' => $test, // Le paramètre test sert à définir si on utilise les attributs spatiaux présents dans l'URL ou ceux présent en BDD (true : BDD / false : URL)
+            'background' => $this->getRequest()->get('background')
+        ));
+    }
+
+    /**
+     * @isGranted("ROLE_SCIENTIFIC_PLUS")
+     */
+    public function delete(Chart $chart)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $em->remove($chart);
+        $em->flush();
+
+        return $this->redirect($this->generateUrl('index2', array('_locale' =>$this->getRequest()->getLocale())));
+    }
+
+    /* * * * * * * GRAPHIQUE SIMPLE * * * * * * */
+
+    /**
+     * Création d'un graphique simple
+     * @isGranted("ROLE_SCIENTIFIC")
+     */
+    public function newSimplechart()
+    {
+        $returnCreate = $this->create('simplechart');
+
+        if ($returnCreate instanceof Chart) {
+            return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnCreate->getId())));
+        } else {
+            return $this->render('McChartBundle:Chart:Simplechart/new.html.twig', $returnCreate);
+        }
+    }
+
+    /**
+     * Modification d'un graphique simple
+     * @isGranted("ROLE_SCIENTIFIC")
+     */
+    public function editSimplechart(Chart $chart)
+    {
+        $returnEdit = $this->edit($chart);
+
+        if ($returnEdit instanceof Chart) {
+            return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnEdit->getId())));
+        } else {
+            return $this->render('McChartBundle:Chart:Simplechart/edit.html.twig', $returnEdit);
+        }
+    }
+
+    /* * * * * * * GRAPHIQUE TEMPOREL * * * * * * */
+
+    /**
+     * Création d'un graphique temporel
+     * @isGranted("ROLE_SCIENTIFIC")
+     */
+    public function newTimechart()
+    {
+        $returnCreate = $this->create('timechart');
+
+        if ($returnCreate instanceof Chart) {
+            return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnCreate->getId())));
+        } else {
+            return $this->render('McChartBundle:Chart:Timechart/new.html.twig', $returnCreate);
+        }
+    }
+
+    /**
+     * Modification d'un graphique temporel
+     * @isGranted("ROLE_SCIENTIFIC")
+     */
+    public function editTimechart(Chart $chart)
+    {
+        $returnEdit = $this->edit($chart);
+
+        if ($returnEdit instanceof Chart) {
+            return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnEdit->getId())));
+        } else {
+            return $this->render('McChartBundle:Chart:Timechart/edit.html.twig', $returnEdit);
+        }
+    }
+
+    /* * * * * * * GRAPHIQUE TEMPOREL MULTI-AXES * * * * * * */
+
+    /**
+     * Création d'un graphique temporel multi-axes
+     * @isGranted("ROLE_SCIENTIFIC")
+     */
+    public function newMultiaxistimechart()
+    {
+        $returnCreate = $this->create('multiaxistimechart');
+
+        if ($returnCreate instanceof Chart) {
+            return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnCreate->getId())));
+        } else {
+            return $this->render('McChartBundle:Chart:Multiaxistimechart/new.html.twig', $returnCreate);
+        }
+    }
+
+    /**
+     * Modification d'un graphique temporel multi-axes
+     * @isGranted("ROLE_SCIENTIFIC")
+     */
+    public function editMultiaxistimechart(Chart $chart)
+    {
+        $returnEdit = $this->edit($chart);
+
+        if ($returnEdit instanceof Chart) {
+            return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnEdit->getId())));
+        } else {
+            return $this->render('McChartBundle:Chart:Multiaxistimechart/edit.html.twig', $returnEdit);
+        }
+    }
+
+    /* * * * * * * GRAPHIQUE CIRCULAIRE * * * * * * */
+
+    /**
+     * Création d'un graphique circulaire
+     * @isGranted("ROLE_SCIENTIFIC")
+     */
+    public function newPiechart()
+    {
+        $returnCreate = $this->create('piechart');
+
+        if ($returnCreate instanceof Chart) {
+            return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnCreate->getId())));
+        } else {
+            return $this->render('McChartBundle:Chart:Piechart/new.html.twig', $returnCreate);
+        }
+    }
+
+    /**
+     * Modification d'un graphique circulaire
+     * @isGranted("ROLE_SCIENTIFIC")
+     */
+    public function editPiechart(Chart $chart)
+    {
+        $returnEdit = $this->edit($chart);
+
+        if ($returnEdit instanceof Chart) {
+            return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnEdit->getId())));
+        } else {
+            return $this->render('McChartBundle:Chart:Piechart/edit.html.twig', $returnEdit);
+        }
+    }
+
+    /* * * * * * * GRAPHIQUE DYNAMIQUE * * * * * * */
+
+    /**
+     * Création d'un graphique dynamique
+     * @isGranted("ROLE_SCIENTIFIC")
+     */
+    public function newDynamicchart()
+    {
+        $returnCreate = $this->create('dynamicchart');
+
+        if ($returnCreate instanceof Chart) {
+            return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnCreate->getId())));
+        } else {
+            return $this->render('McChartBundle:Chart:Dynamicchart/new.html.twig', $returnCreate);
+        }
+    }
+
+    /**
+     * Modification d'un graphique dynamique
+     * @isGranted("ROLE_SCIENTIFIC")
+     */
+    public function editDynamicchart(Chart $chart)
+    {
+        $returnEdit = $this->edit($chart);
+
+        if ($returnEdit instanceof Chart) {
+            return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnEdit->getId())));
+        } else {
+            return $this->render('McChartBundle:Chart:Dynamicchart/edit.html.twig', $returnEdit);
+        }
+    }
+
+    /* * * * * * * GRAPHIQUE POLAIRE * * * * * * */
+
+    /**
+     * Création d'un graphique polar et spiderweb
+     * @isGranted("ROLE_SCIENTIFIC")
+     */
+    public function newPolarchart()
+    {
+        $returnCreate = $this->create('polarchart');
+
+        if ($returnCreate instanceof Chart) {
+            return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnCreate->getId())));
+        } else {
+            return $this->render('McChartBundle:Chart:Polarchart/new.html.twig', $returnCreate);
+        }
+    }
+
+    /**
+     * Modification d'un graphique polar et spiderweb
+     * @isGranted("ROLE_SCIENTIFIC")
+     */
+    public function editPolarchart(Chart $chart)
+    {
+        $returnEdit = $this->edit($chart);
+
+        if ($returnEdit instanceof Chart) {
+            return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnEdit->getId())));
+        } else {
+            return $this->render('McChartBundle:Chart:Polarchart/edit.html.twig', $returnEdit);
+        }
+    }
+
+    /* * * * * * * GRAPHIQUE HEATMAP * * * * * * */
+
+    /**
+     * Création d'un graphique heatmap
+     * @isGranted("ROLE_SCIENTIFIC")
+     */
+    public function newHeatmapchart()
+    {
+        $returnCreate = $this->create('heatmapchart');
+
+        if ($returnCreate instanceof Chart) {
+            return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnCreate->getId())));
+        } else {
+            return $this->render('McChartBundle:Chart:Heatmapchart/new.html.twig', $returnCreate);
+        }
+    }
+
+    /**
+     * Modification d'un graphique heatmap
+     * @isGranted("ROLE_SCIENTIFIC")
+     */
+    public function editHeatmapchart(Chart $chart)
+    {
+        $returnEdit = $this->edit($chart);
+
+        if ($returnEdit instanceof Chart) {
+            return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnEdit->getId())));
+        } else {
+            return $this->render('McChartBundle:Chart:Heatmapchart/edit.html.twig', $returnEdit);
+        }
+    }
+
+    /* * * * * * * GRAPHIQUE DYNAMIQUE TEMPOREL * * * * * * */
+
+    /**
+     * Création d'un graphique dynamique temporel
+     * @isGranted("ROLE_SCIENTIFIC")
+     */
+    public function newTimedynamicchart()
+    {
+        $returnCreate = $this->create('timedynamicchart');
+
+        if ($returnCreate instanceof Chart) {
+            return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnCreate->getId())));
+        } else {
+            return $this->render('McChartBundle:Chart:Timedynamicchart/new.html.twig', $returnCreate);
+        }
+    }
+
+    /**
+     * Modification d'un graphique dynamique temporel
+     * @isGranted("ROLE_SCIENTIFIC")
+     */
+    public function editTimedynamicchart(Chart $chart)
+    {
+        $returnEdit = $this->edit($chart);
+
+        if ($returnEdit instanceof Chart) {
+            return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnEdit->getId())));
+        } else {
+            return $this->render('McChartBundle:Chart:Timedynamicchart/edit.html.twig', $returnEdit);
+        }
+    }
+}

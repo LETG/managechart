@@ -1,0 +1,206 @@
+menu:
+  datasource: Bases de données
+  datalist: Requêtes SQL
+  chart: Graphiques
+  user: Utilisateurs
+
+form:
+  roles: Rôles
+
+button:
+  submit: Enregistrer
+  new: Nouveau
+  edit: Édition
+
+paginate:
+  info: Page \_PAGE\_ sur \_PAGES\_
+  lengthMenu: Nb d'entrée _MENU_
+  searchPlaceholder: Recherche
+
+#-----------
+#  CHARTS
+#-----------
+
+chart:
+  table:
+    titlecolumn:
+      actions: Actions
+      id: id
+      name: Nom
+      type: Type
+      url: URL
+    label:
+      simplechart: Classique
+      timechart: Temporel
+      multiaxistimechart: Temporel multi-axes
+      dynamicchart: Dynamique
+      timedynamicchart: Dynamique temporel
+      polarchart: Polaire
+      piechart: Circulaire
+      heatmapchart: Heatmap
+    delete:
+      msgconfirm: Voulez-vous vraiment supprimer {nameChart} ?
+    duplicate:
+      msgconfirm: Voulez-vous dupliquer {nameChart} ?
+  newHighchart: Nouveau graphique
+  registration:
+    confirmed: "{nameChart} a bien été enregistrée"
+  editHighchart: Edition
+  newHighstock: Nouveau graphique temporel
+  copy: Copié
+
+modal:
+  title: Sélectionner un type de graphique
+  close: Fermer
+  create: Créer
+  chart: Graphique simple
+  timechart: Graphique temporel
+  multiaxistimechart: Graphique temporel multi-axes
+  dynamicchart: Graphique dynamique
+  timedynamicchart: Graphique dynamique temporel
+  polarchart: Graphique polaire
+  piechart: Graphique circulaire/en anneau
+  heatmapchart: Graphique "Heatmap"
+  error:
+    type:
+      name: Erreur
+      description: Aucun type sélectionné
+
+formChart:
+  hide: Masquer
+  show: Afficher
+  fix: Figer
+  unfix: Défiger
+  name: Nom
+  credits: Crédits
+  title: Titre
+  urlcredits: Url crédits
+  subtitle: Sous-titre
+  legend: Légende
+  tooltip: Infobulle
+  xAxisTitle: Titre axe-X
+  exportPrint: Export impression
+  xAxisUnit: Unité axe-X
+  exportCSV: Export CSV
+  xAxisType: Type axe-X
+  inverted: Inverser les axes
+  polarType: Type polaire
+  pieType: Type Circulaire  
+  heatmapType : Type Granulo
+  addYAxis: Ajouter un axe-Y
+  addFlag: Ajouter un flag
+  submit: Enregistrer
+  typestacked: Empilage
+  normal : Normal 
+  percent: Pourcentage
+  scriptError:
+    name: Erreur de chargement
+    description: Chargement du graphique impossible.
+  gapSize: GapSize
+ 
+
+listTypeAxis:
+  linear: Linéaire
+  datetime: Temporel
+  logarithmic: Logarithmique
+  category: Catégorie
+
+formYAxis:
+  label: Axe-Y n°
+  title: Titre
+  delete: Supprimer l'axe
+  type: Type
+  panel:
+    addAll:
+      title: Ajouter toutes les séries
+      button: Ajouter les séries
+    addAllFlag:
+      button: Ajouter les flags
+    addOne:
+      title: Ajouter une série
+      titleFlag: Ajouter un flag
+      titleerror: Ajouter une série d'erreur 
+  logarithmicError:
+    name: Erreur type logarithmique
+    description: Présence de valeurs négative ou null.
+  top: Top
+  height: Taille
+  opposite: Position opposée
+  width: Largeur 
+
+formFlag:
+  title: Titre
+  dataListChoice: Sélectionner une requête
+  parameter: Paramètre
+  label: Flag (Série) n°
+  onseries: Onseries
+  shape: Forme
+  style: Style de police
+  color: Couleur
+  width: Largeur de ligne
+  dataList: Requête 
+  delete: Supprimer
+
+listShapeFlag:
+  flag: Drapeau
+  circlepin: Cercle
+  squarepin: Carré
+
+listStyleFlag:
+  normal: Normal
+  bold: Gras
+
+formSerie:
+  dataListChoice: Sélectionner une requête
+  label: Série n°
+  title: Titre
+  unit: Unité
+  dataList: Requête
+  parameterDataList: Paramètre
+  type: Type
+  color: Couleur
+  marker: Marqueur
+  dashstyle: Style de ligne
+  delete: Supprimer
+  size : Taille
+  innersize : Taille intérieure
+  colsize : Taille colonne
+  stringError:
+    name: Série Incompatible
+    description: La série contient des valeurs de chaînes de caratères.
+  scatterError:
+    name: Erreur type scatter
+    description: Erreur stacking pour type scatter. 
+  pieError:
+    name: Erreur type pie
+    description: Erreur stacking pour type Pie.  
+
+
+listTypeSerie:
+  line: Ligne
+  spline: Courbe
+  scatter: Nuage de point
+  area: Aire
+  areaspline: Aire en courbe
+  column: Colonne verticale
+  bar: Colonne horizontale
+  pie: Circulaire
+  errorbar : Erreur-bar
+  heatmap: Heatmap
+
+listDashStyleSerie: 
+  solid: Ligne
+  shortdash: Tiret court
+  shortdot: Petit point
+  shortdashdot: Tiret court point
+  shortdashdotdot: Tiret court point point
+  dot: Point
+  dash: Tiret
+  longdash: Tiret long
+  dashdot: Tiret point
+  longdashdot: Tiret long point
+  longdashdotdot: Tiret long point point
+
+listPolarType:
+  polar: Polaire
+  spiderweb: Toile d'araignée
