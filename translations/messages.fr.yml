@@ -204,3 +204,52 @@ listDashStyleSerie:
 listPolarType:
   polar: Polaire
   spiderweb: Toile d'araignée
+
+#---------------
+# DATA SOURCES
+#---------------
+
+datasources:
+  table:
+    titlecolumn:
+      id: id
+      nameCon: Nom de connexion
+      nameBDD: Nom Bdd
+      descriptionBDD: Description
+      typeBDD: Type
+      dateBDD: Date
+      actions: Actions
+    delete:
+      msgconfirm: Voulez-vous supprimer {nameBDD} ?
+    label:
+      host: Hôte
+      port: Port
+  new: Nouvelle connexion
+  edit: Édition
+  privateKey:
+    button: Nouvelle clé et chiffrement
+    new: Génère une nouvelle clé privée et rechiffre les identifiants et mots de passe des bases de données.
+    add: Il faut générer une clé privée avant d'ajouter une connexion.
+    edit: Il faut générer une clé privée avant de modifier une connexion.
+
+formDataSource:
+  nameCon: Nom de connexion
+  name: Nom de Bdd
+  description: Description
+  host: Hôte
+  port: Port
+  login: Identifiant
+  password: Mot de passe
+  type: Type
+  testCon: Test de connexion
+  submit: Enregistrer
+
+test:
+  success:
+    name: Connexion Réussie
+    description: Bien joué!
+  error:
+    name: Connexion impossible
+    description: Merci de vérifier vos données et de réessayer.
+  empty:
+    description: Merci de compléter les champs.

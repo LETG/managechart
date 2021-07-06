@@ -183,3 +183,52 @@ listDashStyleSerie:
   dashdot: Dash Dot
   longdashdot: Long Dash Dot
   longdashdotdot: Long Dash Dot Dot
+
+#---------------
+# DATA SOURCES
+#---------------
+
+datasources:
+  table:
+    titlecolumn:
+      id: id
+      nameCon: Connection name
+      nameBDD: DataBase name
+      descriptionBDD: Description
+      typeBDD: Type
+      dateBDD: Date
+      actions: Actions
+    delete:
+      msgconfirm: Do you want to delete {nameBDD} ?
+    label:
+      host: Host
+      port: Port
+  new: New connection
+  edit: Edit
+  privateKey:
+    button: New key and encryption
+    new: Generates a new private key and re-encrypts databases logins and passwords.
+    add: A private key must be generated before adding a connection.
+    edit: A private key must be generated before changing a connection.
+    
+formDataSource:
+  nameCon: Connection name
+  name: Database name
+  description: Description
+  host: Host
+  port: Port
+  login: Login
+  password: Password
+  type: Type
+  testCon: Connection test
+  submit: Save
+
+test:
+  success:
+    name: Connection succeeded
+    description: Well done!
+  error:
+    name: Connection failed
+    description: Check your data and try again.
+  empty:
+    description: Please fill out fields

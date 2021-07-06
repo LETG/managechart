@@ -46,7 +46,7 @@
 									<a href="#" class="tablebtn btn btn-primary disabled"><span class="glyphicon glyphicon-pencil"></span></a>
 								</div>
 							{% endif %}
-							<a href="{{ path('data_sources_delete', {'id': dataSource.id}) }}" class="tablebtn btn btn-danger" title="Delete" onClick="return confirmeDelete(event, '{{ 'datasources.table.delete.msgconfirm'|trans({'%nameBDD%': dataSource.nameBDD}) }}')"><span class="glyphicon glyphicon-trash"></span></a>
+							<a href="{{ path('data_sources_delete', {'id': dataSource.id}) }}" class="tablebtn btn btn-danger" title="Delete" onClick="return confirmeDelete(event, '{{ 'datasources.table.delete.msgconfirm'|trans({'nameBDD': dataSource.nameBDD}) }}')"><span class="glyphicon glyphicon-trash"></span></a>
 						</td>
 						<td>{{ dataSource.id }}</td>
 						<td>{{ dataSource.nameCon }}</td>
