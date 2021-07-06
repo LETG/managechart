@@ -17,7 +17,7 @@ class DataSourcesController extends AbstractController
      */
     public function index()
     {
-        $repository = $this->getDoctrine()->getRepository(DataSource::class);
+        $repository = $this->getDoctrine()->getRepository('McDataSourcesBundle:DataSource');
         $list_dataSources = $repository->findAll();
 
         // On vérifie si la clé de chiffrement existe
