@@ -253,3 +253,68 @@ test:
     description: Merci de vérifier vos données et de réessayer.
   empty:
     description: Merci de compléter les champs.
+  qb:
+    select:
+      name: Erreur requête
+      warning: Attention
+      description: La requête doit commencer par un SELECT.
+      nbParam: Nombre de champs saisie insuffisant pour la génération de graphiques.
+
+#------------
+# DATA LIST
+#------------
+
+datalist:
+  table:
+    titlecolumn:
+      id: id
+      nameData: Nom
+      nameBDD: Base de données
+      dateData: Date
+      actions: Actions
+    delete:
+      msgconfirm: Voulez-vous supprimer {nameData} ?
+    duplicate:
+      msgconfirm: Voulez-vous dupliquer {nameData} ?
+    label:
+      requestData: Requête
+      attributSpatial:
+        num: Attribut spatial n° 
+        name: Nom
+        value: Valeur
+        keyword: Mot clé
+  new: Nouvelle requête
+  registration:
+    confirmed: "{nameData} a bien été enregistrée"
+  edit: Édition requête
+
+formDataList:
+  name: Nom
+  dataSource: BDD
+  request: Requête
+  attributes: Attributs Spatiaux
+  apercu: Aperçu
+  submit: Enregistrer
+  help:
+    format: 'Veiller à respecter le format suivant :'
+    field1: '1er champ : x'
+    field2: '2nd champ : y'
+    field3: '3eme champ : nom du parametre y'
+    field4: '4eme champ : unite du parametre en y (optionnel)'
+    type: Toutes les valeurs d'un même champ d'une série données doivent être de même type (numérique ou chaîne de caractère).
+    unix_timestamp: La valeur de date doit être un
+    js_unix_timestamp: Attention ! Les graphiques attendent des millisecondes. Il est nécessaire d'ajouter un facteur 1000.
+
+formAttributes:
+  label: Attribut spatial n°
+  add: Ajouter un attribut spatial
+  name: Nom
+  value: Valeur de test
+  type: Type
+  typeNumeric: Numérique
+  typeString: Chaîne de caractères
+  keyword: Mot clé
+  delete: Annuler
+
+request:
+  button: Export CSV

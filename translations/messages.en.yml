@@ -210,7 +210,7 @@ datasources:
     new: Generates a new private key and re-encrypts databases logins and passwords.
     add: A private key must be generated before adding a connection.
     edit: A private key must be generated before changing a connection.
-    
+
 formDataSource:
   nameCon: Connection name
   name: Database name
@@ -232,3 +232,68 @@ test:
     description: Check your data and try again.
   empty:
     description: Please fill out fields
+  qb:
+    select:
+      name: Request error
+      warning: Warning
+      description: The query must start with a SELECT
+      nbParam: Insufficient input fields for creating charts.
+
+#------------
+# DATA LIST
+#------------
+
+datalist:
+  table:
+    titlecolumn:
+      id: id
+      nameData: Name
+      nameBDD: Database
+      dateData: Date
+      actions: Actions
+    delete:
+      msgconfirm: Do you want to delete {nameData} ?
+    duplicate:
+      msgconfirm: Do you want to duplicate {nameData} ?
+    label:
+      requestData: Request
+      attributSpatial:
+        num: Spatial attribute n° 
+        name: Name 
+        value: Value
+        keyword: Keyword
+  new: New request
+  registration:
+    confirmed: "{nameData} has been registered"
+  edit: Edit request
+
+formDataList:
+  name: Name
+  dataSource: Database
+  request: Request
+  attributes: Spatial attributes
+  apercu: Preview
+  submit: Save
+  help:
+    format: 'Be sure to observe the following format :'
+    field1: '1st field : x'
+    field2: '2nd field : y'
+    field3: '3rd field : y parameter name'
+    field4: '4th field : y parameter unit (optional)'
+    type: All values for the same field of a serie must be of the same type (numeric or string).
+    unix_timestamp: The date value must be a
+    js_unix_timestamp: Warning ! The charts are waiting milliseconds. It is necessary to add a factor of 1000.
+
+formAttributes:
+  label: Spatial attribut n°
+  add: Add spatial attribute
+  name: Name
+  value: Value of test
+  type: Type
+  typeNumeric: Numeric
+  typeString: String
+  keyword: Keyword
+  delete: Cancel
+
+request:
+  button: CSV export
