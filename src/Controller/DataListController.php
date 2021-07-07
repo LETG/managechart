@@ -5,10 +5,10 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Response;
-use Mc\DataListBundle\Entity\DataList;
+use App\Entity\DataList;
 use Mc\DataListBundle\Form\Type\DataListType;
 use Mc\BddBundle\Controller\Bdd;
-use Mc\DataSourcesBundle\Entity\DataSource;
+use App\Entity\DataSource;
 
 class DataListController extends AbstractController
 {
@@ -16,10 +16,10 @@ class DataListController extends AbstractController
      * @isGranted("ROLE_SCIENTIFIC_PLUS")
      */
     public function index() {
-        $repository = $this->getDoctrine()->getRepository('McDataListBundle:DataList');
+        $repository = $this->getDoctrine()->getRepository(DataList::class);
         $list_dataList = $repository->findAll();
 
-        return $this->render('McDataListBundle:DataList:index.html.twig', array('list_dataList' =>$list_dataList));
+        return $this->render('data_list/index.html.twig', array('list_dataList' =>$list_dataList));
     }
 
     /**

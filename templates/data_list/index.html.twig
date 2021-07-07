@@ -1,0 +1,53 @@
+{# template d'affichage des dataList #}
+
+{% extends "layout.html.twig" %}
+
+{% block body %}
+	{% if is_granted('ROLE_SCIENTIFIC_PLUS') %}
+		<header class="page-header">
+	   		<h1>
+	   			{{ 'menu.datalist'|trans() }}
+	   			<div class="pull-right">
+					<a href="{{ path('data_list_registration') }}" class="btn btn-primary btn-new">{{ 'datalist.new'|trans() }}</a>
+				</div>
+	   		</h1>
+		</header>
+
+		<table id="table" class="table table-striped">
+			<thead>
+				<tr>
+					<th>{{ 'datalist.table.titlecolumn.actions'|trans() }}</th>
+					<th>{{ 'datalist.table.titlecolumn.id'|trans() }}</th>
+					<th>{{ 'datalist.table.titlecolumn.nameData'|trans() }}</th>
+					<th>{{ 'datalist.table.titlecolumn.nameBDD'|trans() }}</th>
+					<th>{{ 'datalist.table.titlecolumn.dateData'|trans() }}</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				{% for dataList in list_dataList %}
+					<tr onClick="document.location.href='{{ path('data_list_show', {'id': dataList.id}) }}'" onmouseover="this.className='info';" onmouseout="this.className='';">
+						<td class="tabletdbtn">
+							{# Lien d'edition #}
+							<a class="tablebtn btn btn-primary btn-sm" href="{{ path('data_list_edit', {'id': dataList.id}) }}" title="Edit">
+								<span class="glyphicon glyphicon-pencil"></span>
+							</a>
+							{# Lien de duplication #}
+							<a class="tablebtn btn btn-primary btn-sm" href="{{ path('data_list_duplicate', {'id': dataList.id}) }}" title="Duplicate" onClick="return confirmeDelete(event, '{{ 'datalist.table.duplicate.msgconfirm'|trans({'%nameData%': dataList.nameData}) }}')">
+								<span class="glyphicon glyphicon-duplicate"></span>
+							</a>
+							{# Lien de suppression avec confirmation #}
+							<a class="tablebtn btn btn-danger btn-sm" href="{{ path('data_list_delete', {'id': dataList.id}) }}" title="Delete" onClick="return confirmeDelete(event, '{{ 'datalist.table.delete.msgconfirm'|trans({'%nameData%': dataList.nameData}) }}')">
+								<span class="glyphicon glyphicon-trash"></span>
+							</a>
+						</td>
+						<td>{{ dataList.id }}</td>
+						<td>{{ dataList.nameData }}</td>
+						<td>{{ dataList.dataSource.getUniqueName }}</td>
+						<td style="min-width: 135px;">{{ dataList.dateData|date('Y/m/d') }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
+{% endblock body %}

@@ -11,7 +11,7 @@ use app\ChromePhp;
  * DataList
  *
  * @ORM\Table(name="data_list")
- * @ORM\Entity(repositoryClass="Mc\DataListBundle\Repository\DataListRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\DataListRepository")
  */
 
 class DataList
@@ -50,24 +50,24 @@ class DataList
     private $requestData;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Mc\DataSourcesBundle\Entity\DataSource")
+     * @ORM\ManyToOne(targetEntity="App\Entity\DataSource")
      * @ORM\JoinColumn(nullable=false)
      * @Assert\NotBlank()
      */
     private $dataSource;
 
     /**
-     * @ORM\OneToMany(targetEntity="Mc\ChartBundle\Entity\Series", mappedBy="dataList", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="App\Entity\Series", mappedBy="dataList", cascade={"persist", "remove"})
      */
     private $series;
 
     /**
-     * @ORM\OneToMany(targetEntity="Mc\ChartBundle\Entity\Flag", mappedBy="dataList", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="App\Entity\Flag", mappedBy="dataList", cascade={"persist", "remove"})
      */
     private $flag;
 
     /**
-     * @ORM\OneToMany(targetEntity="Mc\DataListBundle\Entity\AttributSpatial", mappedBy="dataList", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="App\Entity\AttributSpatial", mappedBy="dataList", cascade={"persist", "remove"})
      */
     private $attributsSpatiaux;
 
@@ -350,10 +350,10 @@ class DataList
     /**
      * Set dataSource
      *
-     * @param \Mc\DataSourcesBundle\Entity\DataSource $dataSource
+     * @param \App\Entity\DataSource $dataSource
      * @return DataList
      */
-    public function setDataSource(\Mc\DataSourcesBundle\Entity\DataSource $dataSource) {
+    public function setDataSource(\App\Entity\DataSource $dataSource) {
         $this->dataSource = $dataSource;
         return $this;
     }
@@ -362,7 +362,7 @@ class DataList
     /**
      * Get dataSource
      *
-     * @return \Mc\DataSourcesBundle\Entity\DataSource 
+     * @return \App\Entity\DataSource 
      */
     public function getDataSource() {
         return $this->dataSource;
@@ -372,10 +372,10 @@ class DataList
     /**
      * Add series
      *
-     * @param \Mc\ChartBundle\Entity\Series $series
+     * @param \App\Entity\Series $series
      * @return DataList
      */
-    public function addSeries(\Mc\ChartBundle\Entity\Series $series) {
+    public function addSeries(\App\Entity\Series $series) {
         $this->series[] = $series;
         return $this;
     }
@@ -384,9 +384,9 @@ class DataList
     /**
      * Remove series
      *
-     * @param \Mc\ChartBundle\Entity\Series $series
+     * @param \App\Entity\Series $series
      */
-    public function removeSeries(\Mc\ChartBundle\Entity\Series $series) {
+    public function removeSeries(\App\Entity\Series $series) {
         $this->series->removeElement($series);
     }
 
@@ -405,10 +405,10 @@ class DataList
     /**
      * Add flag
      *
-     * @param \Mc\ChartBundle\Entity\Flag $flag
+     * @param \App\Entity\Flag $flag
      * @return DataList
      */
-    public function addFlag(\Mc\ChartBundle\Entity\Flag $flag) {
+    public function addFlag(\App\Entity\Flag $flag) {
         $this->flag[] = $flag;
         return $this;
     }
@@ -417,9 +417,9 @@ class DataList
     /**
      * Remove flag
      *
-     * @param \Mc\ChartBundle\Entity\Flag $flag
+     * @param \App\Entity\Flag $flag
      */
-    public function removeFlag(\Mc\ChartBundle\Entity\Flag $flag) {
+    public function removeFlag(\App\Entity\Flag $flag) {
         $this->flag->removeElement($flag);
     }
 
@@ -427,7 +427,7 @@ class DataList
     /**
      * Get flag
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getFlag() {
         return $this->flag;
@@ -438,10 +438,10 @@ class DataList
     /**
      * Add attributsSpatiaux
      *
-     * @param \Mc\DataListBundle\Entity\AttributSpatial $attributsSpatiaux
+     * @param \App\Entity\AttributSpatial $attributsSpatiaux
      * @return DataList
      */
-    public function addAttributsSpatiaux(\Mc\DataListBundle\Entity\AttributSpatial $attributsSpatiaux) {
+    public function addAttributsSpatiaux(\App\Entity\AttributSpatial $attributsSpatiaux) {
         $this->attributsSpatiaux[] = $attributsSpatiaux;
         return $this;
     }
@@ -450,9 +450,9 @@ class DataList
     /**
      * Remove attributsSpatiaux
      *
-     * @param \Mc\DataListBundle\Entity\AttributSpatial $attributsSpatiaux
+     * @param \App\Entity\AttributSpatial $attributsSpatiaux
      */
-    public function removeAttributsSpatiaux(\Mc\DataListBundle\Entity\AttributSpatial $attributsSpatiaux) {
+    public function removeAttributsSpatiaux(\App\Entity\AttributSpatial $attributsSpatiaux) {
         $this->attributsSpatiaux->removeElement($attributsSpatiaux);
     }
 
@@ -460,7 +460,7 @@ class DataList
     /**
      * Get attributsSpatiaux
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getAttributsSpatiaux() {
         return $this->attributsSpatiaux;
