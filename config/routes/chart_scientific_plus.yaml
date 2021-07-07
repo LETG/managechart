@@ -1,0 +1,5 @@
+chart_delete:
+  path: /delete/{id}
+  defaults: { _controller: McChartBundle:Chart:delete }
+  requirements:
+    id: \d+

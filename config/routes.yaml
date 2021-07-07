@@ -8,227 +8,39 @@ index2:
     requirements:
         _locale: en|fr
 
-#------------
-#  CHARTS
-#------------
-
-chart_show:
-  path: /show/{id}
-  controller: App\Controller\ChartController::show
-  requirements:
-    id: \d+
-
-chart_show_iframe:
-  path: /show/{id}/{width}/{height}/{attributsSpatiaux}
-  controller: App\Controller\ChartController::showIframe
-  defaults: { attributsSpatiaux: 0, test: 'false' }
-  requirements:
-    id: \d+
-    width: \d+|auto
-    height: \d+|auto
-
-get_data_parameterdatalist:
-  path: /get-data-parameterdatalist/{dataList}/{attributsSpatiaux}/{editCreate}
-  controller: App\Controller\ChartController::getDataParameterDataList
-  defaults: { attributsSpatiaux: 0, editCreate: false }
-  requirements:
-    dataList: \d+
-
-#----------------------
-#  CHARTS SCIENTIFIC
-#----------------------
-
-# ROUTES DE MODIFICATION DES GRAPHIQUES #
-
-chart_edit_simplechart:
-  path: /edit-simplechart/{id}
-  controller: App\Controller\ChartController::editSimplechart
-  requirements:
-    id: \d+
-
-chart_edit_timechart:
-  path: /edit-timechart/{id}
-  controller: App\Controller\ChartController::editTimechart
-  requirements:
-    id: \d+
-
-chart_edit_multiaxistimechart:
-  path: /edit-multiaxistimechart/{id}
-  controller: App\Controller\ChartController::editMultiaxistimechart
-  requirements:
-    id: \d+
-
-chart_edit_dynamicchart:
-  path: /edit-dynamicchart/{id}
-  controller: App\Controller\ChartController::editDynamicchart
-  requirements:
-    id: \d+
-
-chart_edit_timedynamicchart:
-  path: /edit-timedynamicchart/{id}
-  controller: App\Controller\ChartController::editTimedynamicchart
-  requirements:
-    id: \d+
-
-chart_edit_polarchart:
-  path: /edit-polarchart/{id}
-  controller: App\Controller\ChartController::editPolarchart
-  requirements:
-    id: \d+
-
-chart_edit_heatmapchart:
-  path: /edit-heatmapchart/{id}
-  controller: App\Controller\ChartController::editHeatmapchart
-  requirements:
-    id: \d+
-
-chart_edit_piechart:
-  path: /edit-piechart/{id}
-  controller: App\Controller\ChartController::editPiechart
-  requirements:
-    id: \d+
-
-
-# ROUTES DE CREATION DES GRAPHIQUES #
-
-chart_registration_simplechart:
-  path: /registration-simplechart
-  controller: App\Controller\ChartController::newSimplechart
-
-chart_registration_timechart:
-  path: /registration-timechart
-  controller: App\Controller\ChartController::newTimechart
-
-chart_registration_multiaxistimechart:
-  path: /registration-multiaxistimechart
-  controller: App\Controller\ChartController::newMultiaxistimechart
-
-chart_registration_dynamicchart:
-  path: /registration-dynamicchart
-  controller: App\Controller\ChartController::newDynamicchart
-
-chart_registration_timedynamicchart:
-  path: /registration-timedynamicchart
-  controller: App\Controller\ChartController::newTimedynamicchart
-
-chart_registration_polarchart:
-  path: /registration-polarchart
-  controller: App\Controller\ChartController::newPolarchart
-
-chart_registration_piechart:
-  path: /registration-piechart
-  controller: App\Controller\ChartController::newPiechart
-
-chart_registration_heatmapchart:
-  path: /registration-heatmapchart
-  controller: App\Controller\ChartController::newHeatmapchart
-
-chart_registration_confirmed:
-  path: /registration-confirmed/{chart}
-  controller: App\Controller\ChartController::confirmed
-  requirements:
-    chart: \d+
-
-
-# ROUTE DE DUPLICATION DES GRAPHIQUES #
-
-chart_duplicate:
-  path: /duplicate/{id}
-  controller: App\Controller\ChartController::duplicate
-  requirements:
-    id: \d+
-
-#----------------
-#  DATA SOURCES
-#----------------
-
-data_sources_list:
-  path:  /list
-  controller: App\Controller\DataSourcesController:index
-
-data_sources_delete:
-  path: /delete/{id}
-  controller: App\Controller\DataSourcesController:delete
-  requirements:
-    id: \d+
-
-data_sources_edit:
-  path: /edit/{id}
-  controller: App\Controller\DataSourcesController:edit
-  requirements:
-    id: \d+
-
-data_sources_registration:
-  path: /registration
-  controller: App\Controller\DataSourcesController:new
-
-data_sources_registration_confirmed:
-  path: /registration-confirmed/{id}
-  controller: App\Controller\DataSourcesController:confirmed
-  requirements:
-    id: \d+
-
-data_sources_connect:
-  path: /connect
-  controller: App\Controller\DataSourcesController:connect
-
-data_sources_show:
-  path: /show/{id}
-  controller: App\Controller\DataSourcesController:show
-  requirements:
-    id: \d+
-
-data_sources_new_key:
-  path: /new-key
-  controller: App\Controller\EncryptController:rechiffrerBDD
-  requirements:
-
-#--------------
-#  DATA LISTS
-#--------------
-
-# renvoi les donnees brut que le serveur recoit
-data_list_query_brut:
-    path: /test-query-brut/
-    controller: App\Controller\DataListController::queryBrut
-
-data_list_list:
-    path:  /list
-    controller: App\Controller\DataListController::index
-
-data_list_delete:
-    path: /delete/{id}
-    controller: App\Controller\DataListController::delete
+chart:
+    resource: './routes/chart.yaml'
+    prefix: /{_locale}/chart
     requirements:
-        id: \d+
+        _locale: en|fr
 
-data_list_edit:
-    path: /edit/{id}
-    controller: App\Controller\DataListController::edit
+# URLs protegees par /scientific
+chart_scientific:
+    resource: './routes/chart_scientific.yaml'
+    prefix: /{_locale}/scientific/chart
     requirements:
-        id: \d+
+        _locale: en|fr
 
-data_list_registration:
-    path: /registration
-    controller: App\Controller\DataListController::new
-
-data_list_registration_confirmed:
-    path: /registration-confirmed/{id}
-    controller: App\Controller\DataListController::confirmed
+# URLs protegees par /admin
+chart_scientific_plus:
+    resource: './routes/chart_scientific_plus.yaml'
+    prefix: /{_locale}/scientific+/chart
     requirements:
-        id: \d+
+        _locale: en|fr
 
-data_list_show:
-    path: /show/{id}
-    controller: App\Controller\DataListController::show
+# URLs protegees par /admin
+data_sources:
+    resource: './routes/data_sources.yaml'
+    prefix: /{_locale}/admin/data-sources
     requirements:
-        id: \d+
+        _locale: en|fr
 
-data_list_duplicate:
-    path: /duplicate/{id}
-    controller: App\Controller\DataListController::duplicate
+# URLs protegees par /scientifique+
+mc_data_list:
+    resource: './routes/data_list.yaml'
+    prefix: /{_locale}/scientifique+/data-list
     requirements:
-        id: \d+
+        _locale: en|fr
 
 #--------
 # USERS

@@ -1,0 +1,21 @@
+chart_show:
+  path: /show/{id}
+  controller: App\Controller\ChartController::show
+  requirements:
+    id: \d+
+
+chart_show_iframe:
+  path: /show/{id}/{width}/{height}/{attributsSpatiaux}
+  controller: App\Controller\ChartController::showIframe
+  defaults: { attributsSpatiaux: 0, test: 'false' }
+  requirements:
+    id: \d+
+    width: \d+|auto
+    height: \d+|auto
+
+get_data_parameterdatalist:
+  path: /get-data-parameterdatalist/{dataList}/{attributsSpatiaux}/{editCreate}
+  controller: App\Controller\ChartController::getDataParameterDataList
+  defaults: { attributsSpatiaux: 0, editCreate: false }
+  requirements:
+    dataList: \d+

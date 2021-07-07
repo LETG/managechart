@@ -1,0 +1,99 @@
+# ROUTES DE MODIFICATION DES GRAPHIQUES #
+
+chart_edit_simplechart:
+  path: /edit-simplechart/{id}
+  controller: App\Controller\ChartController::editSimplechart
+  requirements:
+    id: \d+
+
+chart_edit_timechart:
+  path: /edit-timechart/{id}
+  controller: App\Controller\ChartController::editTimechart
+  requirements:
+    id: \d+
+
+chart_edit_multiaxistimechart:
+  path: /edit-multiaxistimechart/{id}
+  controller: App\Controller\ChartController::editMultiaxistimechart
+  requirements:
+    id: \d+
+
+chart_edit_dynamicchart:
+  path: /edit-dynamicchart/{id}
+  controller: App\Controller\ChartController::editDynamicchart
+  requirements:
+    id: \d+
+
+chart_edit_timedynamicchart:
+  path: /edit-timedynamicchart/{id}
+  controller: App\Controller\ChartController::editTimedynamicchart
+  requirements:
+    id: \d+
+
+chart_edit_polarchart:
+  path: /edit-polarchart/{id}
+  controller: App\Controller\ChartController::editPolarchart
+  requirements:
+    id: \d+
+
+chart_edit_heatmapchart:
+  path: /edit-heatmapchart/{id}
+  controller: App\Controller\ChartController::editHeatmapchart
+  requirements:
+    id: \d+
+
+chart_edit_piechart:
+  path: /edit-piechart/{id}
+  controller: App\Controller\ChartController::editPiechart
+  requirements:
+    id: \d+
+
+
+# ROUTES DE CREATION DES GRAPHIQUES #
+
+chart_registration_simplechart:
+  path: /registration-simplechart
+  controller: App\Controller\ChartController::newSimplechart
+
+chart_registration_timechart:
+  path: /registration-timechart
+  controller: App\Controller\ChartController::newTimechart
+
+chart_registration_multiaxistimechart:
+  path: /registration-multiaxistimechart
+  controller: App\Controller\ChartController::newMultiaxistimechart
+
+chart_registration_dynamicchart:
+  path: /registration-dynamicchart
+  controller: App\Controller\ChartController::newDynamicchart
+
+chart_registration_timedynamicchart:
+  path: /registration-timedynamicchart
+  controller: App\Controller\ChartController::newTimedynamicchart
+
+chart_registration_polarchart:
+  path: /registration-polarchart
+  controller: App\Controller\ChartController::newPolarchart
+
+chart_registration_piechart:
+  path: /registration-piechart
+  controller: App\Controller\ChartController::newPiechart
+
+chart_registration_heatmapchart:
+  path: /registration-heatmapchart
+  controller: App\Controller\ChartController::newHeatmapchart
+
+chart_registration_confirmed:
+  path: /registration-confirmed/{chart}
+  controller: App\Controller\ChartController::confirmed
+  requirements:
+    chart: \d+
+
+
+# ROUTE DE DUPLICATION DES GRAPHIQUES #
+
+chart_duplicate:
+  path: /duplicate/{id}
+  controller: App\Controller\ChartController::duplicate
+  requirements:
+    id: \d+

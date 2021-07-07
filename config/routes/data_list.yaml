@@ -1,0 +1,42 @@
+# renvoi les donnees brut que le serveur recoit
+data_list_query_brut:
+    path: /test-query-brut/
+    controller: App\Controller\DataListController::queryBrut
+
+data_list_list:
+    path:  /list
+    controller: App\Controller\DataListController::index
+
+data_list_delete:
+    path: /delete/{id}
+    controller: App\Controller\DataListController::delete
+    requirements:
+        id: \d+
+
+data_list_edit:
+    path: /edit/{id}
+    controller: App\Controller\DataListController::edit
+    requirements:
+        id: \d+
+
+data_list_registration:
+    path: /registration
+    controller: App\Controller\DataListController::new
+
+data_list_registration_confirmed:
+    path: /registration-confirmed/{id}
+    controller: App\Controller\DataListController::confirmed
+    requirements:
+        id: \d+
+
+data_list_show:
+    path: /show/{id}
+    controller: App\Controller\DataListController::show
+    requirements:
+        id: \d+
+
+data_list_duplicate:
+    path: /duplicate/{id}
+    controller: App\Controller\DataListController::duplicate
+    requirements:
+        id: \d+
