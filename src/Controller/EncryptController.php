@@ -9,8 +9,8 @@ use App\Entity\DataSource;
 
 class EncryptController extends AbstractController
 {
-    public static $keyFile = __DIR__ . '/../Resources/privateKey/key.txt';
-    public static $ivFile = __DIR__ . '/../Resources/privateKey/iv.txt';
+    public static $keyFile = __DIR__ . '/../../Resources/privateKey/key.txt';
+    public static $ivFile = __DIR__ . '/../../Resources/privateKey/iv.txt';
 
 
     /**
@@ -60,7 +60,7 @@ class EncryptController extends AbstractController
      * Rechiffre tous les identifiants et mots de passe en base de données
      * @isGranted("ROLE_ADMIN")
      */
-    public function rechiffrerBDDAction()
+    public function rechiffrerBDD()
     {
         // Si il existe déjà une clé privée, on en crée une nouvelle puis on rechiffre la base de données
         if (file_exists(self::$keyFile) && file_exists(self::$ivFile))
@@ -72,7 +72,7 @@ class EncryptController extends AbstractController
             file_put_contents(self::$ivFile, base64_encode(openssl_random_pseudo_bytes(16)));
 
             $em = $this->getDoctrine()->getManager();
-            $repository = $this->getDoctrine()->getRepository('McDataSourcesBundle:DataSource');
+            $repository = $this->getDoctrine()->getRepository(DataSource::class);
             $listDataSources = $repository->findAll();
 
             foreach ($listDataSources as $dataSource)
