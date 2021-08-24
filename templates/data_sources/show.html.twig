@@ -1,0 +1,68 @@
+{# Template d'affichage d'un dataSource #}
+
+{% extends "base.html.twig" %}
+
+{% block body %}
+	{% if is_granted('ROLE_ADMIN') %}
+		<header class="page-header">
+	   		<h1>
+	   			{{ dataSource.nameBDD }}
+	   			<div class="pull-right">
+					{% if privateKey %}
+						<a class="btn btn-primary" href="{{ path('data_sources_edit', {'id': dataSource.id}) }}" title="DataSource">{{ 'datasources.edit'|trans }}</a>
+					{% else %}
+						<div data-toggle="tooltip" data-placement="bottom" title="{{ 'datasources.privateKey.edit'|trans() }}">
+							<a class="btn btn-primary disabled" href="#">{{ 'datasources.edit'|trans }}</a>
+						</div>
+					{% endif %}
+	   			</div>
+	   		</h1>
+		</header>
+
+		<table class="table table-striped">
+			<tbody>
+				<tr>
+					<td>{{ 'datasources.table.titlecolumn.id'|trans() }}</td>
+					<td>{{ dataSource.id }}</td>
+				</tr>
+				<tr>
+					<td>{{ 'datasources.table.titlecolumn.nameBDD'|trans() }}</td>
+					<td>{{ dataSource.nameBDD }}</td>										
+				</tr>			
+				<tr>
+					<td>{{ 'datasources.table.titlecolumn.nameCon'|trans() }}</td>
+					<td>{{ dataSource.nameCon }}</td>
+				</tr>	
+				<tr>
+					<td>{{ 'datasources.table.titlecolumn.descriptionBDD'|trans() }}</td>
+					<td>{{ dataSource.descriptionBDD }}</td>
+				</tr>
+				<tr>
+					<td>{{ 'datasources.table.titlecolumn.typeBDD'|trans() }}</td>
+					<td>{{ dataSource.typeStrBDD }}</td>
+				</tr>
+				<tr>
+					<td>{{ 'datasources.table.label.host'|trans }}</td>
+					<td>{{ dataSource.hostBDD }}</td>
+				</tr>
+				<tr>
+					<td>{{ 'datasources.table.label.port'|trans }}</td>
+					<td>{{ dataSource.portBDD }}</td>
+				</tr>			
+				<tr>
+					<td>{{ 'datasources.table.titlecolumn.dateBDD'|trans() }}</td>
+					<td>{{ dataSource.dateBDD|date('Y/m/d') }}</td>
+				</tr>
+			</tbody>
+		</table>
+	{% endif %}
+{% endblock body %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script type="text/javascript">
+		$(document).ready(function(){
+		  $('[data-toggle="tooltip"]').tooltip({html: true});
+		});
+	</script>
+{% endblock %}

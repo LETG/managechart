@@ -173,7 +173,7 @@ class DataSourcesController extends AbstractController
             $keyExists = true;
         }
 
-        return $this->render('McDataSourcesBundle:DataSources:show.html.twig', array(
+        return $this->render('data_sources/show.html.twig', array(
             'dataSource' => $dataSource,
             'privateKey' => $keyExists
             ));
