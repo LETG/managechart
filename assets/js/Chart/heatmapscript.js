@@ -60,3 +60,5 @@ function getLimitValues(data){
 
     return limitValues;
 }
+
+export { colorJet, getLimitValues }
