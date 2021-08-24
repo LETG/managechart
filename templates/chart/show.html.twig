@@ -1,0 +1,25 @@
+{# template d'affichage d'un chart #}
+
+{% extends "layout.html.twig" %}
+
+{% block body %}
+	<header class="page-header">
+   		<h1>
+   			{{ chart.nameChart }}
+
+   			{% if is_granted('ROLE_SCIENTIFIC') %}
+   				<div class="pull-right">
+   					<a class="btn btn-primary" href="{{ path('chart_edit_' ~ chart.typeChart, {'id': chart.id}) }}" title="Chart">{{ 'button.edit'|trans }}</a>
+				</div>
+			{% endif %}
+   		</h1>
+	</header>
+
+	<div class="col-md-12">
+		<div class="col-md-10 col-md-offset-1">
+			<iframe name="chartFrame" src="{{ path('chart_show_iframe', {'id' : chart.id, 'width' : 800, 'height' : 600, 'test' : 'true'}) }}"
+					frameborder="0" scrolling="no" width="800" height="800" marginwidth="0" marginheight="0" >
+			</iframe>
+		</div>
+	</div>
+{% endblock body %}

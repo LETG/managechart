@@ -88,7 +88,7 @@ class DataSource
      * @var \DateTime
      *
      * @ORM\Column(name="dateBDD", type="datetime")
-     * @Assert\DateTime()
+     * @Assert\Type("\DateTimeInterface")
      */
     private $dateBDD;
 

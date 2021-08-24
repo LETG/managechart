@@ -4,10 +4,12 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use App\Entity\DataSource;
-use Mc\DataSourcesBundle\Form\Type\DataSourceType;
-use Mc\BddBundle\Controller\AvailableType;
+use App\Form\DataSourceType;
+use App\Bdd\Controller\AvailableType;
 use App\Controller\EncryptController;
 
 class DataSourcesController extends AbstractController
@@ -35,10 +37,10 @@ class DataSourcesController extends AbstractController
     /**
      * @isGranted("ROLE_ADMIN")
      */
-    public function new()
+    public function new(Request $request, TranslatorInterface $translator)
     {
         $dataSource = new DataSource;
-        $form = $this->createForm(new DataSourceType, $dataSource);
+        $form = $this->createForm(DataSourceType::class, $dataSource);
 
         // On vérifie si la clé de chiffrement existe
         $keyExists = false;
@@ -46,11 +48,10 @@ class DataSourcesController extends AbstractController
             $keyExists = true;
         }
 
-        $request = $this->get('request');
         if ($request->getMethod() == 'POST') {
-            $form->bind($request);
+            $form->handleRequest($request);
 
-            if ($form->isValid()) {
+            if ($form->isSubmitted() && $form->isValid()) {
                 /* Ajout typeStrBDD et chifrement des identifiants */
                 $dataSource->setTypeStrBDD(AvailableType::$types[$dataSource->getTypeBDD()]);
                 $dataSource->setLoginBDD(EncryptController::chiffrer($dataSource->getLoginBDD()));
@@ -64,9 +65,9 @@ class DataSourcesController extends AbstractController
             }
         }
 
-        $translator = $this->get('translator');
 
-        return $this->render('McDataSourcesBundle:DataSources:form.html.twig', array(
+        dump($form);
+        return $this->render('data_sources/form.html.twig', array(
             'form' => $form->createView(),
             'title' => $translator->trans('datasources.new'),
             'privateKey' => $keyExists
@@ -108,17 +109,16 @@ class DataSourcesController extends AbstractController
      */
     public function confirmed(DataSource $dataSource)
     {
-        return $this->render('McDataSourcesBundle:DataSources:confirmed.html.twig', array('dataSource' => $dataSource));
+        return $this->render('data_sources/confirmed.html.twig', array('dataSource' => $dataSource));
     }
 
     /**
      * @isGranted("ROLE_ADMIN")
      */
-    public function edit(DataSource $dataSource)
+    public function edit(Request $request, TranslatorInterface $translator, DataSource $dataSource)
     {
         $dataSource->setLoginBDD(EncryptController::dechiffrer($dataSource->getLoginBDD()));
-        $form = $this->createForm(new DataSourceType, $dataSource);
-        $request = $this->get('request');
+        $form = $this->createForm(DataSourceType::class, $dataSource);
 
         // On vérifie si la clé de chiffrement existe
         $keyExists = false;
@@ -127,9 +127,9 @@ class DataSourcesController extends AbstractController
         }
 
         if ($request->getMethod() == 'POST') {
-            $form->bind($request);
+            $form->handleRequest($request);
 
-            if ($form->isValid()) {
+            if ($form->isSubmitted() && $form->isValid()) {
                 $dataSource->setTypeStrBDD(AvailableType::$types[$dataSource->getTypeBDD()]);
                 $dataSource->setLoginBDD(EncryptController::chiffrer($dataSource->getLoginBDD()));
                 $dataSource->setPasswordBDD(EncryptController::chiffrer($dataSource->getPasswordBDD()));
@@ -141,9 +141,7 @@ class DataSourcesController extends AbstractController
             }
         }
 
-        $translator = $this->get('translator');
-
-        return $this->render('McDataSourcesBundle:DataSources:form.html.twig', array(
+        return $this->render('data_sources/form.html.twig', array(
             'form' => $form->createView(),
             'title' => $translator->trans('datasources.edit'),
             'privateKey' => $keyExists

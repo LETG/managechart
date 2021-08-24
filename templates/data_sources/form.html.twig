@@ -1,0 +1,166 @@
+{# Template de creation/edition d'une connexion a une base de donnees #}
+
+{% extends "layout.html.twig" %}
+
+{% block body %}
+	{% if is_granted('ROLE_ADMIN') %}
+		<header class="page-header">
+	   		<h1>{{ title }}</h1>
+		</header>
+
+		{{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+
+		{{ form_errors(form) }}
+
+		<div class="form-group">
+			{{ form_label(form.nameCon, 'formDataSource.nameCon'|trans(), {'label_attr': {'class': 'col-md-3 control-label'}}) }}
+			{{ form_errors(form.nameCon) }}
+			<div class="col-md-5">
+	        	{# Génération de l'input. #}
+	        	{{ form_widget(form.nameCon, {'attr': {'class': 'form-control'}}) }}
+      		</div>
+    	</div>
+
+
+    	<div class="form-group">
+			{{ form_label(form.nameBDD, 'formDataSource.name'|trans(), {'label_attr': {'class': 'col-md-3 control-label'}}) }}
+			{{ form_errors(form.nameBDD) }}
+			<div class="col-md-5">
+	        	{# Génération de l'input. #}
+	        	{{ form_widget(form.nameBDD, {'attr': {'class': 'form-control'}}) }}
+      		</div>
+    	</div>
+
+    	<div class="form-group">
+			{{ form_label(form.typeBDD, 'formDataSource.type'|trans(), {'label_attr': {'class': 'col-md-3 control-label'}}) }}
+			{{ form_errors(form.typeBDD) }}
+			<div class="col-md-5">
+	        	{# Génération de l'input. #}
+	        	{{ form_widget(form.typeBDD, {'attr': {'class': 'form-control'}}) }}
+      		</div>
+    	</div>
+
+    	<div class="form-group">
+			{{ form_label(form.descriptionBDD, 'formDataSource.description'|trans(), {'label_attr': {'class': 'col-md-3 control-label'}}) }}
+			{{ form_errors(form.descriptionBDD) }}
+			<div class="col-md-5">
+	        	{# Génération de l'input. #}
+	        	{{ form_widget(form.descriptionBDD, {'attr': {'class': 'form-control'}}) }}
+      		</div>
+    	</div>
+
+    	<div class="form-group">
+			{{ form_label(form.hostBDD, 'formDataSource.host'|trans(), {'label_attr': {'class': 'col-md-3 control-label'}}) }}
+			{{ form_errors(form.hostBDD) }}
+			<div class="col-md-5">
+	        	{# Génération de l'input. #}
+	        	{{ form_widget(form.hostBDD, {'attr': {'class': 'form-control'}}) }}
+      		</div>
+    	</div>
+
+    	<div class="form-group">
+			{{ form_label(form.portBDD, 'formDataSource.port'|trans(), {'label_attr': {'class': 'col-md-3 control-label'}}) }}
+			{{ form_errors(form.portBDD) }}
+			<div class="col-md-5">
+	        	{# Génération de l'input. #}
+	        	{{ form_widget(form.portBDD, {'attr': {'class': 'form-control'}}) }}
+      		</div>
+    	</div>
+
+    	<div class="form-group">
+			{{ form_label(form.loginBDD, 'formDataSource.login'|trans(), {'label_attr': {'class': 'col-md-3 control-label'}}) }}
+			{{ form_errors(form.loginBDD) }}
+			<div class="col-md-5">
+	        	{# Génération de l'input. #}
+	        	{{ form_widget(form.loginBDD, {'attr': {'class': 'form-control'}}) }}
+      		</div>
+    	</div>
+
+    	<div class="form-group">
+			{{ form_label(form.passwordBDD, 'formDataSource.password'|trans(), {'label_attr': {'class': 'col-md-3 control-label'}}) }}
+			{{ form_errors(form.passwordBDD) }}
+			<div class="col-md-5">
+	        	{# Génération de l'input. #}
+	        	{{ form_widget(form.passwordBDD, {'attr': {'class': 'form-control'}}) }}
+      		</div>
+    	</div>
+
+    	<div class="form-group">
+    		<div class="col-sm-offset-3 col-sm-5">
+				{% if privateKey %}
+					<button onClick="connect()" class="btn btn-primary" type="button" id="testbtn">{{ 'formDataSource.testCon'|trans() }}</button>
+					<input class="btn btn-primary pull-right" type="submit" id="submitbtn" value="{{ 'formDataSource.submit'|trans }}" />
+				{% else %}
+					<button class="btn btn-primary" disabled="disabled" type="button" id="testbtn">{{ 'formDataSource.testCon'|trans() }}</button>
+					<input class="btn btn-primary pull-right" disabled="disabled" type="submit" value="{{ 'formDataSource.submit'|trans }}" />
+				{% endif %}
+    		</div>
+    	</div>
+
+    	{{ form_end(form) }}
+	{% endif %}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+	<script type="text/javascript">
+		{% block document_ready %}
+			$(document).ready(function(){
+			  $('[data-toggle="tooltip"]').tooltip({html: true});
+			});
+			
+			$('#testbtn').click(function (e) {
+			    if (e.target) {
+			        $("form").submit(function (ev) {
+						ev.preventDefault();
+					});
+			    }
+			});
+
+			$('#submitbtn').click(function (e) {
+			    if (e.target) {
+			        $("form")[0].submit();
+			    }
+			});
+
+			function connect() {
+				/* Recuperation des valeurs */
+				console.log("Demande de test de connexion");
+
+				var nameBDD = $('#mc_datasourcesbundle_datasource_nameBDD').val();
+				var nameCon = $('#mc_datasourcesbundle_datasource_nameCon').val();
+				var descriptionBDD = $('#mc_datasourcesbundle_datasource_descriptionBDD').val();
+		   		var host = $('#mc_datasourcesbundle_datasource_hostBDD').val();
+		   		var port = $('#mc_datasourcesbundle_datasource_portBDD').val();
+		   		var login = $('#mc_datasourcesbundle_datasource_loginBDD').val();
+		   		var password = $('#mc_datasourcesbundle_datasource_passwordBDD').val();
+		   		var type = $('#mc_datasourcesbundle_datasource_typeBDD').val();
+
+		   		if (nameBDD && nameCon && descriptionBDD && host && port && login && password && type) {
+		   			$.ajax({
+		   				type: 'POST',
+		   				url: '{{ path('data_sources_connect') }}',
+		   				data: 'nameBDD=' + nameBDD + '&host=' + host + '&port=' + port + '&login=' + login + '&password=' + password + '&type=' + type,
+		   				success: function(msg) {
+		   					if (msg != 'Connexion Reussi') {
+		   						console.log("Echec du test de la connexion");
+		   						toastr.error('{{ 'test.error.description'|trans() }}', '{{ 'test.error.name'|trans() }}');
+		   					} else {
+		   						console.log("Test de la connexion reussi");
+		   						toastr.success('{{ 'test.success.description'|trans() }}', '{{ 'test.success.name'|trans() }}');
+		   					}
+		   				},
+		   				error: function() {
+		   					console.log("Echec du test de la connexion");
+		   					toastr.error('{{ 'test.error.description'|trans() }}', '{{ 'test.error.name'|trans() }}');
+		   				}
+		   			});
+		   		} else {
+		   			console.log("Présence de champs vide");
+		   			toastr.error('{{ 'test.empty.description'|trans() }}', '{{ 'test.error.name'|trans() }}');
+		   		}
+			}
+		{% endblock %}
+	</script>
+{% endblock %}

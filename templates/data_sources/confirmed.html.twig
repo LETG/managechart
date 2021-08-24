@@ -1,0 +1,17 @@
+{# template  "data source bien enregistre" #}
+
+{% extends "layout.html.twig" %}
+
+{% block body %}
+	{% if is_granted('ROLE_ADMIN') %}
+	    <p>{{ 'datasources.registration.confirmed'|trans({'%nameBDD%': dataSource.nameBDD}, 'messages') }}</p>
+	{% endif %}    
+{% endblock body %}
+
+{% block javascripts %}
+	{{ parent() }}
+	
+	<script type="text/javascript">
+		window.setTimeout("window.location.assign('{{ path('data_sources_list') }}')");
+	</script>
+{% endblock %}

@@ -291,7 +291,7 @@ class ChartController extends AbstractController
 
     public function show(Chart $chart)
     {
-        return $this->render('McChartBundle:Chart:show.html.twig', array('chart' => $chart));
+        return $this->render('chart/show.html.twig', array('chart' => $chart));
     }
 
     public function showIframe(Request $request, Chart $chart, $width, $height, $attributsSpatiaux, $test)
