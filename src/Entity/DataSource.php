@@ -4,8 +4,8 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Mc\BddBundle\Controller\Bdd;
-use Mc\EncryptBundle\Controller\EncryptController;
+use App\Bdd\Controller\Bdd;
+use App\Controller\EncryptController;
 
 /**
  * DataSource
