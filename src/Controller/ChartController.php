@@ -9,10 +9,11 @@ use App\Entity\YAxis;
 use Mc\ChartBundle\Form\Type\ChartType;
 use Mc\DataListBundle\Entity\DataList;
 use Symfony\Component\HttpFoundation\Response;
-use Mc\ChartBundle\AvailableChoice\AvailableColorSerie;
-use Mc\ChartBundle\AvailableChoice\AvailableTypeSerie;
-use Mc\ChartBundle\AvailableChoice\AvailableTypeAxis;
-use Mc\ChartBundle\AvailableChoice\AvailableDashStyleSerie;
+use Symfony\Component\HttpFoundation\Request;
+use App\Chart\AvailableChoice\AvailableColorSerie;
+use App\Chart\AvailableChoice\AvailableTypeSerie;
+use App\Chart\AvailableChoice\AvailableTypeAxis;
+use App\Chart\AvailableChoice\AvailableDashStyleSerie;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 class ChartController extends AbstractController
@@ -293,16 +294,16 @@ class ChartController extends AbstractController
         return $this->render('McChartBundle:Chart:show.html.twig', array('chart' => $chart));
     }
 
-    public function showIframe(Chart $chart, $width, $height, $attributsSpatiaux, $test)
+    public function showIframe(Request $request, Chart $chart, $width, $height, $attributsSpatiaux, $test)
     {
-        return $this->render('McChartBundle:Chart:showIframe.html.twig', array(
+        return $this->render('chart/showIframe.html.twig', array(
             'chart' => $chart,
             'listColorSerie' => AvailableColorSerie::$colorSerie,
             'width' => $width === "auto" ? "null" : $width,
             'height' => $height === "auto" ? "null" : $height,
             'attributsSpatiaux' => $attributsSpatiaux,
             'test' => $test, // Le paramètre test sert à définir si on utilise les attributs spatiaux présents dans l'URL ou ceux présent en BDD (true : BDD / false : URL)
-            'background' => $this->getRequest()->get('background')
+            'background' =>$request->get('background')
         ));
     }
 

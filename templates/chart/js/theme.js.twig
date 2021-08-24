@@ -1,0 +1,61 @@
+var listColors = [
+	{% for key,color in listColorSerie|shuffle %} 
+		'{{ color|e('js') }}',
+	{% endfor %}
+];
+
+{% if app.request.locale == 'fr' %}
+	Highcharts.setOptions({
+		lang: {
+			decimalPoint: ',',
+			downloadJPEG: 'Télécharger image JPEG',
+			downloadPDF: 'Télécharger document PDF',
+			downloadPNG: 'Télécharger image PNG',
+			downloadSVG: 'Télécharger image vecteur SVG',
+			months: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+			printChart: 'Imprimer',
+			rangeSelectorFrom: 'Du',
+			rangeSelectorTo: 'au',
+			weekdays: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+			thousandsSep: ' ',
+			downloadCSV: 'Télécharger CSV',
+            downloadXLS: 'Télécharger XLS',
+            viewData: 'Visualisation'
+		}
+	});
+{% endif %}
+
+Highcharts.theme = {
+	chart: {
+		style: {
+			fontFamily: 'SourceSansPro-Light'
+		},
+		height: 320,
+		width: 540
+	},
+	colors: listColors,
+    title: {
+		style: {
+			fontSize: '28px'
+		},
+    },
+	subtitle: {
+		style: {
+			fontSize: '18px'
+		},
+	},
+	legend: {
+		itemStyle: {
+			fontFamily: 'SourceSansPro-LightItalic',
+			fontSize: '14px'
+		}
+	},
+	plotOptions: {
+		pie: {
+			 allowPointSelect: true
+		}
+	},
+};
+
+{# Application du theme #}
+Highcharts.setOptions(Highcharts.theme);

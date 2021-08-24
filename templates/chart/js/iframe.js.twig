@@ -1,0 +1,329 @@
+{# src/Mc/ChartBundle/Resources/views/Js/iframe.js.twig #}
+
+{# template regroupant les scripts js des vues new, edit et showIframe #}
+
+<script type="text/javascript">
+
+/* Concatenation du titre et de l'unité */
+function produceTitleWithUnit(title, unit)
+{
+	if (unit) {
+		title += ' (' + unit + ')';
+	}
+	return title;
+}
+
+/* Titre et unité à partir du parametre */
+function produceTitleAndUnitWithParameter(parameter)
+{
+	var arrayParam = parameter.split('@');
+	var title = arrayParam[0];
+	var unit = '';
+
+	if (arrayParam.length > 1) {
+		unit = arrayParam[1].slice(0, arrayParam[1].length);
+	}
+	var name = produceTitleWithUnit(title,unit);
+	
+	return name;
+}
+
+
+/* Execute une requete Ajax et la dataList à dataGlob */
+function getData(idDataList, attributsSpatiaux, test, functionCallBack)
+{
+	dataGlob[idDataList] = {};
+
+	var urlGetParam = "{{ path('get_data_parameterdatalist', {'dataList': 0}) }}";
+	urlGetParam = urlGetParam.substring(0, urlGetParam.length -1);
+	urlGetParam += idDataList + "/";
+
+	if (attributsSpatiaux != null && test == false) {
+		urlGetParam += attributsSpatiaux + "/false";
+	} else {
+		urlGetParam += "0" + "/true";
+	}
+
+	$('form').animate({'opacity': '0.5'});
+	$('div.cssload-loader').show();
+
+	$.getJSON(urlGetParam, function(dataJSON)
+	{
+		dataGlob[idDataList] = dataJSON;
+		if (typeof functionCallBack !== 'undefined') {
+			functionCallBack();
+		}
+
+		$('form').animate({'opacity': '1'});
+		$('div.cssload-loader').hide();
+	});
+ }
+
+
+/* Initialise un paramètre pour la requête (i.e. dataList) venant d'être selectionnée pour une série (ou un flag) */
+function displayParameters(idSerie, dataList, parameterDataList, idYAxis, flag)
+{
+	var msg = '';
+	var index = 0;
+	
+	for (parameter in dataGlob[$(dataList).val()]) {
+		msg += '<option value="' + index + '">' + parameter + '</option>';
+		index++;
+	}
+	
+	if (msg != '')
+	{
+		$(parameterDataList).html(msg);
+		
+		/* On regarde si on peut initialiser le paramètre de la requête en fonction du numéro de la série (ou flag) associée à la requête */
+		var valParameter = 0;
+		if ($('select#mc_chartbundle_chart_list_yAxis_' + idYAxis + '_series_' + idSerie + '_parameterDataList option[value="' + (idSerie-1) +  '"]').length) {
+			valParameter = idSerie-1;
+		}
+		$('select#mc_chartbundle_chart_list_yAxis_' + idYAxis + '_series_' + idSerie + '_parameterDataList').val(valParameter);
+		
+		if (flag) {
+			updateTitleWithParameter(parameterDataList);
+		} else {
+			updateTitleAndUnitWithParameter(parameterDataList);
+		}
+
+		if (!load) {
+			setSerie(idSerie, $(dataList).val(), $(parameterDataList).val(), idYAxis, flag);
+		}
+	}
+	else
+	{
+		$(parameterDataList).html('<em>No item</em>');
+	}
+}
+
+
+/* Listener onChange sur le champ "dataList" du formulaire d'une série (ou d'un flag) */
+function addAjaxQueryOnDataList(dataList, idSerie, idYAxis, flag)
+{
+	if (typeof flag === 'undefined') { flag = false; }
+
+	parameterDataList = $(dataList).parent('div').next('label').next('div').children('select');
+	/*if (flag == true){ // le chart ne se réinitialise pas tout le temps donc je vide le graph à chaque changement de requete
+	chart.yAxis[idYAxis-1].series[(idSerie-1)].setData();
+	}*/
+
+	if ($(dataList).val() != '')
+	{
+		if (typeof dataGlob[$(dataList).val()] === 'undefined')
+		{
+			var functionCallBack = function() {
+				displayParameters(idSerie, dataList, parameterDataList, idYAxis, flag);
+			}
+			getData($(dataList).val(), null, true, functionCallBack);
+		} 
+		else
+		{
+			displayParameters(idSerie, dataList, parameterDataList, idYAxis, flag);
+		}
+	} 
+	else
+	{
+		$(parameterDataList).html('');
+		setSerie(idSerie, $(dataList).val(), $(parameterDataList).val(), idYAxis, flag);
+	}
+}
+
+/* Vérification d'absence de chaine de caractères dans les séries */
+function noStringValueInSerie(data)
+{
+	if (typeof data[0][0] === 'string' || typeof data[0][1] === 'string') { return false }
+	
+	return true;
+}
+
+
+function setData(idSerieChart, idDataList, valParameter, editCreate, idYChart, flag)
+{
+	var chart = $('#container').highcharts();
+	
+    if (flag == false)
+    {
+		if (idDataList != '')
+		{
+			var listAttr = Object.keys(dataGlob[idDataList]);
+
+			/* Création d'un tableau contenant les données de la série */
+			if(valParameter != null) {
+				var data = dataGlob[idDataList][listAttr[valParameter]].slice(0);
+				var ParameterName=[listAttr[valParameter]];
+			} else { // ASFLAG : Pour éviter un crash du code lors de l'ajout d'une nouvelle série qui n'a pas plus d'un paramètre. A vérifier si il est cohérent, quelque soit le type de données utilisé
+				var data = dataGlob[idDataList][listAttr[0]].slice(0);
+				var ParameterName=[listAttr[0]];
+			}
+
+			// ASFLAG : Récupération du typeSerie pour le format des données
+			var typeSerie = undefined;
+			try {
+				typeSerie = chart.yAxis[(idYChart -1)].series[(idSerieChart-1)].type;
+			} catch(exception) {}
+			
+			/* Contruction du JSON */
+			var data_update='[';
+
+			data.forEach( function(element, index)
+			{
+				var elem=element[0];
+
+				if (typeof element[1] === 'string')
+				{
+					var y = element[1].split(",");
+					y = y[0].replace("{","");
+					var value = element[1].split(",");
+					value = value[1].replace("}","");
+
+					if (element[1]=='' ) {element[1]='0'};
+
+					// ASFLAG : Format des données selon son typeSerie
+					if (typeSerie == 'heatmap') {
+						if (index == data.length-1) {
+							data_update += "{"+'"x":'+element[0]+','+'"y":'+y+','+'"value":'+value+'}';
+						} else {
+							data_update += "{"+'"x":'+element[0]+','+'"y":'+y+','+'"value":'+value+'},';
+						}
+					} else if (typeSerie == 'errorbar') {
+						if (index == data.length-1) {
+							data_update += "{"+'"x":'+element[0]+','+'"low":'+y+','+'"high":'+value+'}';
+						} else {
+							data_update += "{"+'"x":'+element[0]+','+'"low":'+y+','+'"high":'+value+'},';
+						}
+					}
+				}
+			});
+			data_update+=']'; 
+
+			/* JSON en object */
+			var obj2 = JSON.parse(data_update);
+
+			/* Vérification de valeur non négative pour type d'axe logarithmique, sinon définission du type d'axes linéaire */
+			if(data_update != '[]') {
+				var dataUsed = obj2;
+			} else {
+				var dataUsed = data;
+			}
+
+			/* Les graphiques circulaires n'ont pas d'axe Y à proprement parler */
+			if ('{{ typeChart }}' === 'piechart') {
+				chart.series[idSerieChart-1].setData(dataUsed);
+			} else {
+				chart.yAxis[(idYChart-1)].series[(idSerieChart-1)].setData(dataUsed);
+			}
+			
+			console.log("SetData : axe Y n°" + idYChart + ' / série n°' + idSerieChart);
+		}
+		else
+		{
+			if ('{{ typeChart }}' === 'piechart') {
+				chart.series[idSerieChart-1].setData(null);
+			} else {
+				chart.yAxis[(idYChart-1)].series[(idSerieChart-1)].setData(null);
+			}
+			
+			console.log("SetData null : axe Y n°" + idYChart + ' / série n°' + idSerieChart);
+		}
+    }
+    else
+    {
+		if (idDataList != '')
+		{
+			var listAttr = Object.keys(dataGlob[idDataList]);
+
+			/* Création d'un tableau contenant les données du flag */
+			var data = dataGlob[idDataList][listAttr[valParameter]].slice(0);
+			var ParameterName=[listAttr[valParameter]];
+
+			/* Contruction du JSON */
+			var data_update='[';  
+			data.forEach( function(element, index)
+			{
+				var elem=element[1];
+
+				if (element[1]=='') {element[1]='0'};
+				
+				if (index == data.length-1) {
+					data_update += "{"+'"x":'+ element[0]+','+'"title":"'+ elem +'",'+'"text":"'+ ParameterName +'"'+'}';
+				} else {
+					data_update += "{"+'"x":'+ element[0]+','+'"title":"'+ elem +'",'+'"text":"'+ ParameterName +'"'+'},';
+				}
+			});
+			data_update+=']';  
+
+			/* JSON en object */
+			var obj = JSON.parse(data_update);
+			
+			chart.yAxis[(idYChart-1)].series[(idSerieChart-1)].setData(obj);
+			
+			console.log("SetData : axe Y n°" + idYChart + ' / flag n°' + idSerieChart);
+		}
+		else
+		{
+			chart.yAxis[(idYChart-1)].series[(idSerieChart-1)].setData(null);
+			
+			console.log("SetData null : axe Y n°" + idYChart + ' / flag n°' + idSerieChart);
+		}
+    }
+}
+
+function addslashes(ch)
+{
+	if (typeof ch !== 'number') { // si le flag est un integer on 'echappe pas'
+		ch = ch.replace(/\"/g,"\\\"");
+	}
+	return ch
+}
+
+function setSerie(idSerieChart, idDataList, valParameter, idYChart, flag, csvExport, attributsSpatiaux, test, editCreate)
+{
+	console.log("----- SetSerie : " + idYChart + '_' + idSerieChart);
+	
+	if (typeof csvExport === 'undefined') { csvExport = false; }
+	if (typeof attributsSpatiaux === 'undefined') { attributsSpatiaux = null; }
+	if (typeof test === 'undefined') { test = false; }
+	if (typeof editCreate === 'undefined') { editCreate = true; }
+	if (typeof flag === 'undefined') { flag = false; }
+	
+	if (idDataList != '') {
+		/* Ajout des entrée dans la file d'attente des séries */
+		if (!editCreate) {
+			if (typeof fileAttente[idDataList] === 'undefined') {
+			  fileAttente[idDataList] = new Array();
+			}
+			fileAttente[idDataList].push(new Array(idSerieChart, idDataList, valParameter, editCreate, idYChart, flag));
+		}
+
+		var functionCallBack = function() {
+			/* Si editCreate, graphe les séries en cours */
+			if (editCreate) {
+				setData(idSerieChart, idDataList, valParameter, editCreate, idYChart, flag);
+			} else {
+				while (fileAttente[idDataList].length > 0) {
+				  for (var i = 0; i < fileAttente[idDataList].length; i++) {
+					var newSerie = fileAttente[idDataList].pop();
+					setData(newSerie[0], newSerie[1], newSerie[2], newSerie[3], newSerie[4], newSerie[5]);
+				  }
+				}
+			}
+		}
+
+		/* Si la dataList n'a pas encore été récupérer */
+		if (typeof dataGlob[idDataList] === 'undefined') {
+			getData(idDataList, attributsSpatiaux, test, functionCallBack);
+		} else {
+			if (editCreate) {
+				setData(idSerieChart, idDataList, valParameter, editCreate, idYChart, flag);
+			}
+		}
+	} else {
+		if (editCreate) {
+			setData(idSerieChart, idDataList, valParameter, editCreate, idYChart, flag);
+		}
+	}
+}
+
+</script>

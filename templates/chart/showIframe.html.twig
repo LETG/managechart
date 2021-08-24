@@ -1,0 +1,469 @@
+{# template d'affichage d'un chart dans une iframe #}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('chart') }}
+        {% endblock %}
+        {% if background is not null %}
+            {# override bootstrap default white background #}
+            <style>
+                body {
+                    background: {{ background }};
+                }
+            </style>
+        {% endif %}
+        {% if height == "null" %}
+            <style>
+                html,
+                body,
+                #container {
+                    height: 100%;
+                }
+            </style>
+        {% endif %}
+    </head>
+
+    <body style="padding-top: 0;">
+        <div class="cssload-loader" id="loader">
+            <div class="cssload-inner cssload-one"></div>
+            <div class="cssload-inner cssload-two"></div>
+            <div class="cssload-inner cssload-three"></div>
+        </div>
+
+        <div id="container"></div>
+
+        {% include 'chart/js/iframe.js.twig' with {'typeChart': chart.typeChart} %}
+
+        {% block javascripts %}
+            {{ encore_entry_script_tags('chart') }}
+        {% endblock %}
+
+        {% if chart.exportPrintChart == true %}<script src="{{ asset('js/Chart/exporting.js') }}"></script>{% endif %}
+        {% if chart.exportCSVChart == true %}<script src="{{ asset('js/Chart/export-csv.js') }}"></script>{% endif %}
+
+        <script type="text/javascript">
+            $(document).ready(function() {
+                
+                /*
+                 * La création du graphique se fait en 3 étapes :
+                 * 1. On initialise le graphique, l'axe X, les axes Y, les séries et les flags dans la variable "options"
+                 * 2. On crée le graphique avec tous ses éléments qui sont stockés dans la variable "options"
+                 * 3. On ajoute les données sur l'ensemble des séries/flags du graphique
+                */
+                
+                {% include 'chart/js/theme.js.twig' %}
+                
+                
+                        /* * * * *   INITIALISATION GRAPHIQUE   * * * * */
+                
+                var chart = null;
+                var options = {
+                    chart: {
+                        {% if chart.typeChart == 'piechart' %} pie: true, {% endif %}
+                        {% if chart.typeChart == 'polarchart' %} polar: true, {% endif %}
+                        {% if chart.typeChart == 'heatmapchart' %} type: 'heatmap', {% endif %}
+                        renderTo: 'container',
+                        width: {{ width }},
+                        height: {{ height }},
+                        zoomType: 'x',
+                        {% if background is not null %}
+                            backgroundColor: '{{ background | e('js') }}',
+                        {% endif %}
+                        events: {
+                            load: function() {
+                                this.credits.element.onclick = function() {
+                                    var urlcreditChart='{{ chart.urlcreditsChart|e('js') }}';
+                                    if (urlcreditChart != '') {
+                                        if(urlcreditChart.indexOf("http://") != 0 ) { 
+                                            urlcreditChart = "http://" + urlcreditChart;
+                                        }
+                                        window.open(urlcreditChart, '_blank');
+                                    }
+                                }
+                            }
+                        },
+                        inverted: {% if chart.invertedChart == true %} true {% else %} false {% endif %},
+                    },
+                    title: {
+                        text: '{{ chart.titleChart|e('js') }}',
+                        style: { 
+                            fontSize: '28px',
+                        }
+                    },
+                    subtitle: {
+                        text: '{{ chart.subtitleChart|e('js') }}',
+                    },
+                    legend: {
+                        enabled: {% if chart.legendChart == true %} true {% else %} false {% endif %},
+                    },
+                    exporting:{
+                        filename: '{{ chart.titleChart|e('js') }}',
+                        chartOptions: {
+                            legend: {
+                                itemWidth: 250,
+                                itemStyle: { 
+                                    fontSize:'10px',
+                                }
+                            }
+                        },
+                        url: '/wapps/highcharts-export-web/',
+                    },
+                    navigator: {
+                        series: { 
+                            includeInCSVExport: false,
+                        }
+                    },
+                    credits: {
+                        enableb: true,                                      
+                        text: '{{ chart.creditsChart|e('js') }}',
+                        href: '{{ chart.urlcreditsChart|e('js') }}',            
+                    },
+                    plotOptions: {
+                        series: {
+                            {% if (chart.typeChart == 'simplechart') %} stacking: '{{chart.typestacked|e('js')}}', {% endif %}
+                            turboThreshold: 0,
+                            {% if (chart.typeChart == 'heatmapchart') %} boostThreshold: 0 {% else %} boostThreshold: 100 {% endif %},
+                            gapSize: {{ chart.gapSizeChart }},
+                            dataGrouping:{
+                                dateTimeLabelFormats: {
+                                    {% if app.request.locale == 'fr' %}
+                                        millisecond: ['%d/%m/%Y %H:%M:%S'],
+                                        second: ['%d/%m/%Y %H:%M:%S'],
+                                        minute: ['%d/%m/%Y %H:%M:%S'],
+                                        hour: ['%d/%m/%Y %H:%M:%S'],
+                                        day: ['%d/%m/%Y %H:%M:%S'],
+                                        week: ['%d/%m/%Y %H:%M:%S'],
+                                        month: ['%d/%m/%Y %H:%M:%S'],
+                                        year: ['%d/%m/%Y %H:%M:%S'],
+                                    {% else %}
+                                        millisecond: ['%Y/%m/%d %H:%M:%S'],
+                                        second: ['%Y/%m/%d %H:%M:%S'],
+                                        minute: ['%Y/%m/%d %H:%M:%S'],
+                                        hour: ['%Y/%m/%d %H:%M:%S'],
+                                        day: ['%Y/%m/%d %H:%M:%S'],
+                                        week: ['%Y/%m/%d %H:%M:%S'],
+                                        month: ['%Y/%m/%d %H:%M:%S'],
+                                        year: ['%Y/%m/%d %H:%M:%S'],
+                                    {% endif %}
+                                }
+                            }
+                        }
+                    },
+                    {% if (chart.typeChart == 'timechart' or chart.typeChart == 'multiaxistimechart' or chart.typechart == 'timedynamicchart') %}
+                        rangeSelector: {
+                            inputEnabled: $('#container').width() > 480,
+                        },
+                    {% endif %}
+                    tooltip: {
+                        style: {
+                            color: '#303030',
+                            fontSize: '12px',
+                            fontWeight: 'normal',
+                            fontFamily: 'Serif',
+                            fontSizeAdjust: '0.70',
+                            padding: '8px',
+                        },
+                        valueDecimals: 2,
+                        xDateFormat: {% if app.request.locale == 'fr' %} '%d/%m/%Y' {% else %} '%Y/%m/%d' {% endif %} + ' %H:%M:%S',
+                        crosshairs: [true],
+                        enabled: {% if chart.tooltipChart == true %} true {% else %} false {% endif %},
+                        {% if(chart.typeChart == 'heatmapchart') %}
+                            pointFormatter: function() {
+                                return 'X : ' + Math.exp(this.x) + '<br>' + 'Y : ' + this.y + '<br>' + 'Value : ' + this.value;
+                            }
+                        {% endif %}
+                    },
+                    {% if (chart.typeChart == 'heatmapchart') %}
+                        colorAxis:{
+                            stops: colorJet,
+                            labels: {
+                                format: '{value}%',
+                            }
+                        },
+                    {% endif %}
+                    
+                    
+                        /* * * * *   INITIALISATION AXE X   * * * * */
+                    
+                    xAxis: {
+                        title: {
+                            text : produceTitleWithUnit('{{ chart.xAxisTitle|e('js') }}', '{{ chart.xAxisUnit|e('js') }}'),
+                        },
+                        ordinal: false,
+                        {% if(chart.typeChart == 'heatmapchart') %}
+                            labels: {
+                                formatter: function(){
+                                    return '' + Math.exp(this.value).toFixed(2);
+                                }
+                            },
+                        {% endif %}
+                        type: {% if (chart.typeChart == 'simplechart' or chart.typeChart == 'dynamicchart' or chart.typeChart == 'polarchart' or chart.typeChart== 'heatmapchart') %}
+                                  '{{ chart.xAxisType|e('js') }}'
+                              {% else %}
+                                  null
+                              {% endif %}
+                    },
+                    
+                    
+                        /* * * * *   INITIALISATION AXES Y   * * * * */
+
+                    yAxis: [
+                        {% set maxYAxisOrder = '' %}
+                        {% for yAxis in chart.listYAxis %} 
+                            {% set maxYAxisOrder =  max(maxYAxisOrder, yAxis.orderY) %}
+                        {% endfor %}
+                        
+                        {% for indexY in 1..maxYAxisOrder %}
+                            {% for yAxis in chart.listYAxis %}
+                                {% if indexY == yAxis.orderY %}
+                                    {
+                                        id: 'yAxis' + {{ yAxis.id|e('js') }},
+                                        title: { text: '{{ yAxis.titleYAxis|e('js') }}' },
+                                        type: '{{ yAxis.typeYAxis|e('js') }}',
+                                        {% if yAxis.opposite %}
+                                            opposite: true,
+                                            labels: { align: 'left' }, // Ajout de cette propriété pour aligner correctement les labels de l'axe Y
+                                        {% else %}
+                                            opposite: false,
+                                        {% endif %}
+                                        {% if chart.typeChart == 'multiaxistimechart' %}
+                                            top: (0 + (100 / {{ loop.length }}) * ({{ indexY }}-1)) + '%',
+                                            height: (100 / {{ loop.length }}) + '%',
+                                            offset: 0,
+                                            lineWidth: 2,
+                                        {% else %}
+                                            {% if chart.typeChart == 'heatmapchart' %} reversed: true, {% endif %}
+                                            {% if chart.invertedChart == false %}
+                                                top: '{{ yAxis.top|e('js') }}',
+                                                height: '{{ yAxis.height|e('js') }}',
+                                            {% else %}
+                                                left: '{{ yAxis.top|e('js') }}',
+                                                width: '{{ yAxis.height|e('js') }}',
+                                            {% endif %}
+                                        {% endif %}
+                                    },
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    ],
+                    
+                    
+                        /* * * * *   INITIALISATION SERIES / FLAGS   * * * * */
+                        
+                    series: [
+                        {% if chart.typeChart != 'dynamicchart' and chart.typeChart != 'timedynamicchart' %}
+                        
+                            {% set maxYAxisOrder = '' %}
+                            {% for yAxis in chart.listYAxis %} 
+                                {% set maxYAxisOrder =  max(maxYAxisOrder, yAxis.orderY) %}
+                            {% endfor %}
+                        
+                            {% for indexY in 1..maxYAxisOrder %}
+                                {% for yAxis in chart.listYAxis %}
+                                    {% if indexY == yAxis.orderY %}
+                        
+                                        // Calcul du max YaxisOrder entre serie et flag
+                                        {% set maxSerieOrder = '' %}
+                                        {% for serie in yAxis.series %} 
+                                            {% set maxSerieOrder =  max(maxSerieOrder, serie.yaxisOrder) %} 
+                                        {% endfor %}
+                                        {% for flag in yAxis.flag %}    
+                                            {% set maxSerieOrder =  max(maxSerieOrder, flag.yaxisOrder) %}    
+                                        {% endfor %}
+
+                                        // Boucle suivant l'ordre des series/flags 
+                                        {% for indexSerie in 1..maxSerieOrder %}
+                                            {% for serie in yAxis.series %} 
+                                                {% if indexSerie == serie.yaxisOrder %}
+                                                    {
+                                                        id: {{ serie.yAxis.id|e('js') }} + '_' + {{ serie.yaxisOrder }},
+                                                        yAxis: 'yAxis' + {{ serie.yAxis.id|e('js') }},
+                                                        color: '{{ serie.colorSerie|e('js') }}',
+                                                        // ASFLAG : Ajout du champs colors pour le Piechart (color.js)
+                                                        {% if chart.typeChart == 'piechart' %}
+                                                            colors: getColorsMixed('{{ serie.colorSerie|e('js') }}'),
+                                                        {% endif %}
+                                                        type: '{{ serie.typeSerie|e('js') }}',
+                                                        name: produceTitleWithUnit('{{ serie.titleSerie|e('js') }}', '{{ serie.unitSerie|e('js') }}'),
+                                                        marker: {
+                                                            enabled: {% if serie.markerSerie == true %} true {% else %} false {% endif %}
+                                                        },
+                                                        {% if serie.dashStyleSerie|e('js') != 'Solid' %}
+                                                            dashStyle: '{{ serie.dashStyleSerie|e('js') }}',
+                                                        {% endif %}
+                                                        data: [],
+                                                        size: '{{ serie.size|e('js') }}', // rajouter condition if pie chart
+                                                        innerSize: '{{ serie.innersize|e('js') }}'          
+                                                    },
+                                                {% endif %} 
+                                            {% endfor %}
+
+                                            {% for flag in yAxis.flag %} 
+                                                {% if indexSerie == flag.yaxisOrder %}
+                                                    {
+                                                        id: {{ flag.yAxis.id|e('js') }} + '_' + {{ flag.yaxisOrder }},
+                                                        yAxis: 'yAxis' + {{ flag.yAxis.id|e('js') }},
+                                                        color: '{{ flag.colorFlag|e('js') }}',
+                                                        fillColor: '{{ flag.colorFlag|e('js') }}',
+                                                        type: 'flags',                                                  
+                                                        name: '{{ flag.titleFlag|e('js') }}',
+                                                        shape: '{{ flag.shapeFlag|e('js') }}',
+                                                        style: {
+                                                            fontSize: '12px',
+                                                            fontWeight: '{{ flag.styleFlag|e('js') }}'
+                                                        },
+                                                        lineWidth: '{{ flag.widthFlag|e('js') }}',
+                                                        data: [],
+                                                        onSeries: {{ flag.yAxis.id|e('js') }} + '_' + {{ flag.onseries|e('js') }}
+                                                    },
+                                                {% endif %}                                             
+                                            {% endfor %}
+                                        {% endfor %}
+                                        
+                                    {% endif %} 
+                                {% endfor %}
+                            {% endfor %}
+                            
+                        {% endif %}
+                    ]
+                };
+        
+                        
+                        /* * * * *   CREATION DU GRAPHIQUE   * * * * */
+
+            {% if (chart.typeChart == 'simplechart' or chart.typeChart == 'dynamicchart' or chart.typeChart == 'piechart') or chart.typeChart == 'heatmapchart' %}
+                chart = new Highcharts.Chart(options);
+            {% elseif chart.typeChart == 'polarchart' %}
+                {% if '{{ chart.polarType }}' == 'polar' %}
+                    options.xAxis.lineWidth = 0;
+                    polar: true;    
+                    options.yAxis[0].gridLineInterpolation = 'circle';
+                {% else %}
+                    options.xAxis.lineWidth = 0;
+                    polar: true;    
+                    options.yAxis[0].gridLineInterpolation = 'polygon';
+                {% endif %} 
+                chart = new Highcharts.Chart(options);
+            {% else %}
+                chart = new Highcharts.StockChart(options);
+            {% endif %}
+
+            dataGlob = new Array();
+            fileAttente = new Array();
+
+
+                        /* * * * *   AJOUT DES DONNEES AUX SERIES/FLAGS DU GRAPHIQUE   * * * * */
+                    
+            /*
+             * Si le graphique est dynamique, les séries ne sont pas définies. On récupère tous les paramètres en fonction de la requête enregistré en base
+             * puis pour chaque paramètre on ajoute la série au graphique. Sinon, les séries sont déjà définit et on appel la fonction setSerie.
+            */
+            {% if chart.typeChart == 'dynamicchart' or chart.typeChart == 'timedynamicchart' %}
+            
+                {% set indexSerie = 1 %} 
+                {% for yAxis in chart.listYAxis %}
+                    {% for serie in yAxis.series %}
+                        var functionCallBack = function() {
+                            for (var parameter in dataGlob[{{ serie.dataList.id }}])
+                            {
+                                var i = Object.keys(dataGlob[{{ serie.dataList.id }}]).indexOf(parameter);
+                                
+                                chart.addSeries({
+                                    yAxis: 'yAxis' + {{ serie.yAxis.id|e('js') }},
+                                    type: '{{ serie.typeSerie|e('js') }}',
+                                    name: produceTitleAndUnitWithParameter(parameter),
+                                    marker: {
+                                        enabled: {% if serie.markerSerie == true %} true {% else %} false {% endif %}
+                                    },
+                                    {% if serie.dashStyleSerie|e('js') != 'Solid' %}
+                                        dashStyle: '{{ serie.dashStyleSerie|e('js') }}',
+                                    {% endif %}
+                                    data: dataGlob[{{ serie.dataList.id }}][parameter]
+                                });
+                            }
+                        }
+
+                        getData({{ serie.dataList.id }}, {{ attributsSpatiaux }}, {{ test }}, functionCallBack);
+                        {% set indexSerie = indexSerie + 1 %}
+                    {% endfor %}
+                {% endfor %}
+                
+            {% else %}
+                
+                {% set maxYAxisOrder = '' %}
+                {% for yAxis in chart.listYAxis %} 
+                    {% set maxYAxisOrder =  max(maxYAxisOrder, yAxis.orderY) %}
+                {% endfor %}
+            
+                {% for indexY in 1..maxYAxisOrder %}
+                    {% for yAxis in chart.listYAxis %}
+                        {% if indexY == yAxis.orderY %}
+                        
+                            {% for serie in yAxis.series %} 
+                                {% set indexSerie = serie.yaxisOrder %}
+                                // ASFLAG : A l'état actuel, le ParamaterDataList nécessite d'être mis à zéro puisque le Heatmap ne contient pas à proprement dit de différent Paramètre sur lequel il peut être sélectionné
+                                {% if chart.typeChart == 'heatmapchart' %}
+                                    {% if chart.exportCSVChart == true %}
+                                        setSerie({{ indexSerie }}, {{ serie.dataList.id }}, 0, {{ indexY }}, false, true, '{{ attributsSpatiaux|e('js') }}', {{ test }}, false);
+                                    {% else %}
+                                        setSerie({{ indexSerie }}, {{ serie.dataList.id }}, 0, {{ indexY }}, false, false, '{{ attributsSpatiaux|e('js') }}', {{ test }}, false);
+                                    {% endif %}
+                                    // ASFLAG : A fixer pour l'affichage du IFRAME, du colsize & du minmax (heatmapscript). Le problème vient du champ data qui renvoit une valeur nulle
+                                    {% if (serie.colsize != "") %}
+                                        var colsizevalue = {{ serie.colsize }};
+                                        chart.update({
+                                            series:{
+                                                colsize: colsizevalue
+                                            }
+                                        });
+                                    {% else %}
+                                        var limitValues = getLimitValues(chart.yAxis[0].series[0].data);
+                                        var colsizevalue = (limitValues['maxXAxis'] - limitValues['minXAxis'])/limitValues['uniqueXAxis'];
+                                        chart.update({
+                                            colorAxis: {
+                                                min: limitValues['minValue'],
+                                                max: limitValues['maxValue']
+                                            },
+                                            series:{
+                                                colsize: colsizevalue
+                                            }
+                                        });
+                                    {% endif %}
+
+                                    chart.update({
+                                        series:{
+                                            rowsize: 1.2
+                                        }
+                                    });
+                                    // END ASFLAG
+                                // END ASFLAG
+                                {% else %}
+                                    {% if chart.exportCSVChart == true %}
+                                        setSerie({{ indexSerie }}, {{ serie.dataList.id }}, {{ serie.parameterDataList }}, {{ indexY }}, false, true, '{{ attributsSpatiaux|e('js') }}', {{ test }}, false);
+                                    {% else %}
+                                    setSerie({{ indexSerie }}, {{ serie.dataList.id }}, {{ serie.parameterDataList }}, {{ indexY }}, false, false, '{{ attributsSpatiaux|e('js') }}', {{ test }}, false);
+                                    {% endif %} 
+                                {% endif %} 
+                            {% endfor %}
+
+                            {% for flag in yAxis.flag %} 
+                                {% set indexFlag = flag.yaxisOrder %}
+                                {% if chart.exportCSVChart == true %}
+                                    setSerie({{ indexFlag }}, {{ flag.dataList.id }}, {{ flag.parameterDataList }}, {{ indexY }}, true, true, '{{ attributsSpatiaux|e('js') }}', {{ test }}, false);
+                                {% else %}
+                                    setSerie({{ indexFlag }}, {{ flag.dataList.id }}, {{ flag.parameterDataList }}, {{ indexY }}, true, false, '{{ attributsSpatiaux|e('js') }}', {{ test }}, false);
+                                {% endif %} 
+                            {% endfor %}
+
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+                
+            {% endif %}
+            });
+        </script>
+    </body>
+</html>
