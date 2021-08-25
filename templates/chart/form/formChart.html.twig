@@ -1,0 +1,196 @@
+{# Copyleft 2014 Maxime Collin #}
+
+{# template d'affichage du formulaire de creation/edition de graphique #}
+
+<header class="page-header">
+	<h1>{{ title }}</h1>
+</header>
+
+<div class="cssload-loader" id="loader" style="display: none">
+	<div class="cssload-inner cssload-one"></div>
+	<div class="cssload-inner cssload-two"></div>
+	<div class="cssload-inner cssload-three"></div>
+</div>
+
+<div id="chart" class="div_chart">
+	<div class="row">
+		<button class="btn btn-default" id="hide_chart">{{ 'formChart.hide'|trans }}</button>
+		<button class="btn btn-default" id="fix_chart">{{ 'formChart.fix'|trans }}</button>
+	</div>
+	<div class="row">
+		<div id="container" class="container_chart"></div>
+	</div>
+</div>
+
+{{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+
+{{ form_errors(form) }}
+
+<div class="form-group">
+	{{ form_label(form.nameChart, 'formChart.name'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+	{{ form_errors(form.nameChart) }}
+	<div class="col-md-2">
+    	{{ form_widget(form.nameChart, {'attr': {'class': 'form-control'}}) }}
+	</div>
+
+	{{ form_label(form.creditsChart, 'formChart.credits'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+	{{ form_errors(form.creditsChart) }}
+	<div class="col-md-2">
+    	{{ form_widget(form.creditsChart, {'attr': {'class': 'form-control'}}) }}
+	</div>
+</div>
+
+<div class="form-group">
+	{{ form_label(form.titleChart, 'formChart.title'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+	{{ form_errors(form.titleChart) }}
+	<div class="col-md-2">
+    	{{ form_widget(form.titleChart, {'attr': {'class': 'form-control'}}) }}
+	</div>
+
+	{{ form_label(form.urlcreditsChart, 'formChart.urlcredits'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+	{{ form_errors(form.urlcreditsChart) }}
+	<div class="col-md-2">
+    	{{ form_widget(form.urlcreditsChart, {'attr': {'class': 'form-control'}}) }}
+	</div>
+</div>
+
+<div class="form-group">
+	{{ form_label(form.subtitleChart, 'formChart.subtitle'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+	{{ form_errors(form.subtitleChart) }}
+	<div class="col-md-2">
+    	{{ form_widget(form.subtitleChart, {'attr': {'class': 'form-control'}}) }}
+	</div>
+
+	{{ form_label(form.legendChart, 'formChart.legend'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+	{{ form_errors(form.legendChart) }}
+	<div class="col-md-2">
+    	{{ form_widget(form.legendChart, {'attr': {'class': 'form-control'}}) }}
+	</div>
+</div>
+
+<div class="form-group">
+	{{ form_label(form.xAxisTitle, 'formChart.xAxisTitle'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+	{{ form_errors(form.xAxisTitle) }}
+	<div class="col-md-2">
+    	{{ form_widget(form.xAxisTitle, {'attr': {'class': 'form-control'}}) }}
+	</div>
+
+	{{ form_label(form.tooltipChart, 'formChart.tooltip'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+	{{ form_errors(form.tooltipChart) }}
+	<div class="col-md-2">
+    	{{ form_widget(form.tooltipChart, {'attr': {'class': 'form-control'}}) }}
+	</div>
+</div>
+
+<div class="form-group">
+	{{ form_label(form.xAxisUnit, 'formChart.xAxisUnit'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+	{{ form_errors(form.xAxisUnit) }}
+	<div class="col-md-2">
+    	{{ form_widget(form.xAxisUnit, {'attr': {'class': 'form-control'}}) }}
+	</div>
+	
+	{{ form_label(form.exportPrintChart, 'formChart.exportPrint'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+	{{ form_errors(form.exportPrintChart) }}
+	<div class="col-md-2">
+		{{ form_widget(form.exportPrintChart, {'attr': {'class': 'form-control'}}) }}
+	</div>	
+</div>
+{% if (typeChart == 'simplechart') %}
+	<div class="form-group">
+		{{ form_label(form.typestacked, 'formChart.typestacked'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+		{{ form_errors(form.typestacked) }}
+		<div class="col-md-2">
+	    	{{ form_widget(form.typestacked, {'attr': {'class': 'form-control'}}) }}
+		</div>
+		
+		{{ form_label(form.exportCSVChart, 'formChart.exportCSV'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+		{{ form_errors(form.exportCSVChart) }}
+		<div class="col-md-2">
+			{{ form_widget(form.exportCSVChart, {'attr': {'class': 'form-control'}}) }}
+		</div>
+	</div>
+
+	<div class="form-group">
+		{{ form_label(form.xAxisType, 'formChart.xAxisType'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+		{{ form_errors(form.xAxisType) }}
+		<div class="col-md-2">
+	    	{{ form_widget(form.xAxisType, {'attr': {'class': 'form-control'}}) }}
+		</div>
+
+		{{ form_label(form.invertedChart, 'formChart.inverted'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+		{{ form_errors(form.invertedChart) }}
+		<div class="col-md-2">
+	    	{{ form_widget(form.invertedChart, {'attr': {'class': 'form-control'}}) }}
+		</div>
+	</div>
+{% elseif (typeChart == 'dynamicchart' or typeChart == 'piechart' or typeChart == 'heatmapchart' or typeChart == 'polarchart') %}
+	<div class="form-group">
+		{{ form_label(form.xAxisType, 'formChart.xAxisType'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+		{{ form_errors(form.xAxisType) }}
+		<div class="col-md-2">
+	    	{{ form_widget(form.xAxisType, {'attr': {'class': 'form-control'}}) }}
+		</div>
+
+		{{ form_label(form.exportCSVChart, 'formChart.exportCSV'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+		{{ form_errors(form.exportCSVChart) }}
+		<div class="col-md-2">
+			{{ form_widget(form.exportCSVChart, {'attr': {'class': 'form-control'}}) }}
+		</div>
+	</div>
+	
+	<div class="form-group">
+		{% if typeChart == 'polarchart' %}
+			{{ form_label(form.polarType, 'formChart.polarType'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+			{{ form_errors(form.polarType) }}
+			<div class="col-md-2">
+				{{ form_widget(form.polarType, {'attr': {'class': 'form-control'}}) }}
+			</div>
+		{% else %}
+			<div class="col-md-4"></div>
+		{% endif %}
+
+		{{ form_label(form.invertedChart, 'formChart.inverted'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+		{{ form_errors(form.invertedChart) }}
+		<div class="col-md-2">
+	    	{{ form_widget(form.invertedChart, {'attr': {'class': 'form-control'}}) }}
+		</div>
+	</div>
+{% else %}
+	<div class="form-group">
+		<div class="col-md-4"></div>
+
+		{{ form_label(form.exportCSVChart, 'formChart.exportCSV'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+		{{ form_errors(form.exportCSVChart) }}
+		<div class="col-md-2">
+			{{ form_widget(form.exportCSVChart, {'attr': {'class': 'form-control'}}) }}
+		</div>
+	</div>
+{% endif %}
+
+<div id="prototype_yAxis" data-prototype='{% include "chart/form/formImbriqueYAxis.html.twig" %}'></div>
+<div id="prototype_flag" data-prototype='{% include "chart/form/formImbriqueFlag.html.twig" %}'></div>
+<div id="prototype_series" data-prototype='{% include "chart/form/formImbriqueSeries.html.twig" %}'></div>
+
+<div class="form-group">
+	<div class="col-sm-offset-2 col-sm-6">
+		<input class="btn btn-primary pull-right" type="submit" id="submitbtn" value="{{ 'formChart.submit'|trans }}" />
+	</div>
+</div>
+
+{# On ajoute le tab-panel seulement pour les types de graphiques qui peuvent avoir plusieurs axes Y #}
+{% if (typeChart == 'simplechart' or typeChart == 'timechart' or typeChart == 'multiaxistimechart') %}
+	<div class="form-group">
+		<div class="col-sm-8">
+			<ul id="tabs_yAxis" class="nav nav-tabs">
+				<li id="ajout_yAxis_btn" onClick="addyAxis()"><a href="#" class="add-y-axis"><span class="glyphicon glyphicon-plus"></span> {{ 'formChart.addYAxis'|trans }}</a></li>
+			</ul>
+		</div>
+	</div>
+{% endif %}
+
+<div id="container_yAxis" class="tab-content"></div>
+
+<div class="form-group">
+	{{ form_widget(form.list_yAxis) }}
+</div>
+{{ form_end(form) }}

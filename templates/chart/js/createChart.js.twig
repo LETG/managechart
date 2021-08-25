@@ -1,0 +1,143 @@
+{# Template regroupant le Js de création d'un graphique sans axe Y et sans séries #}
+
+
+dataGlob = new Array();
+
+var firstTypeAxis = $('select#mc_chartbundle_chart_xAxisType option:eq(0)').val();
+var firstTypeSerie = $('select#mc_chartbundle_chart_list_yAxis_1_series_1_typeSerie option:eq(0)').val();
+var firstColorSerie = $('select#mc_chartbundle_chart_list_yAxis_1_series_1_colorSerie option:eq(0)').val();
+
+shareVars_listDataList = {
+	{% for dataList in listDataList %}
+		'{{ dataList.id }}' : "{{ dataList.nameData|e('js') }}",
+	{% endfor %}
+};
+
+jsTranslate = {
+	{% for key,value in jsTranslate %}
+		'{{ key }}' : "{{ value|e('js') }}",
+	{% endfor %}
+};
+
+{# tableau de correspondance entre les axes Y du formulaire et ceux du graphique #}
+var arrayCorresIndexYAxisChart = new Array();
+var indexYAxisChart = 0;
+
+{# tableau de correspondance entre les series du formulaire et celles du graphique #}
+var arrayCorresIndexSerieChart = new Array();
+var indexSerieChart = 0;
+
+{# coefficient multiplicateur de l'index de l'axe Y du formulaire #}
+var nbSerieParAxe = 100;
+
+{# Definition des variables #}
+var creditsDisplay = $('#container').children('div').children('svg').children('text:last');
+var creditsChart = $('input#mc_chartbundle_chart_creditsChart');
+var titleChart = $('input#mc_chartbundle_chart_titleChart');
+var urlcreditsChart = $('input#mc_chartbundle_chart_urlcreditsChart');
+var subtitleChart = $('input#mc_chartbundle_chart_subtitleChart');
+var legendChart = $('input#mc_chartbundle_chart_legendChart');
+var tooltipChart = $('input#mc_chartbundle_chart_tooltipChart');
+var titleXAxis = $('input#mc_chartbundle_chart_xAxisTitle');
+var exportPrintChart = $('input#mc_chartbundle_chart_exportPrintChart');
+var unitXAxis = $('input#mc_chartbundle_chart_xAxisUnit');
+var exportCSVChart = $('input#mc_chartbundle_chart_exportCSVChart');
+var typeXAxis = $('select#mc_chartbundle_chart_xAxisType');
+var invertedChart = $('input#mc_chartbundle_chart_invertedChart');
+var gapSize = $('#mc_chartbundle_chart_gapSizeChart');
+var gapSizeValue = $('#mc_chartbundle_chart_gapSizeChart').val();
+	gapSizeValue = (gapSizeValue > 0) ? gapSizeValue : null;
+var polarType = $('#mc_chartbundle_chart_polarType');
+var pieType = $('#mc_chartbundle_chart_polarType');
+var typestacked = $('#mc_chartbundle_chart_typestacked');
+
+{% include 'chart/js/theme.js.twig' %}
+
+{# Definition des options du chart #}
+var options = {
+	chart: {
+		renderTo: 'container',
+		zoomType: 'x',
+		animation: false,
+		events: {
+            load: function() {
+	            this.credits.element.onclick = function() {
+                	if ($(urlcreditsChart).val() != '') {
+	                    window.open(
+	                        $(urlcreditsChart).val(),
+	                        '_blank');
+	                }
+	            }
+            }
+        },
+		inverted: $(invertedChart).is(':checked')
+	},    
+	title: {
+		text: $(titleChart).val()
+	},
+	exporting:{
+		filename: $(titleChart).val(),
+		chartOptions: {
+			legend: {
+                itemWidth: 250,
+                itemStyle: {
+ 					fontSize:'10px'
+ 				}
+            }
+		},
+		{# necessite l'ajout de l'adresse du serveur distant iuem #}
+	    url:'/wapps/highcharts-export-web/'
+	},
+	navigator: {
+        series: {
+            includeInCSVExport: false
+        },
+    },
+	subtitle: {
+		text: $(subtitleChart).val()
+	},
+	legend: {
+		enabled: $(legendChart).is(':checked')
+	},
+	credits: {
+		text: $(creditsChart).val()
+	},
+	plotOptions: {
+		series: {
+			turboThreshold: 1000,
+			gapSize: gapSizeValue
+		}
+	},
+	tooltip: {
+		valueDecimals: 2,
+		enabled: $(tooltipChart).is(':checked'),
+    	xDateFormat: {% if app.request.locale == 'fr' %}'%d %m %Y',{% else %}'%Y %m %d',{% endif %}
+    },
+	xAxis: {
+		title: {
+			text : produceTitleWithUnit($(titleXAxis).val(), $(unitXAxis).val())
+		},
+		type: null,
+		ordinal: false
+	},
+	yAxis: {
+		opposite: false,
+	},
+	series: [{
+		stacking: $(typestacked).val(),
+		data: [],
+	}]
+};
+
+/* 
+ * Changer cette valeur pour afficher ou non les messages de débogage dans la console pour les fichiers suivants :
+ * - yaxis.js
+ * - multiyaxis.js
+ * - serie.js
+ * - seriepie.js
+ * - timechartserie.js
+ * - flag.js
+ * - timechartflag.js
+ * - dynamicchart.js
+*/
+var debug = false;

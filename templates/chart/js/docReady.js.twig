@@ -1,0 +1,184 @@
+{# src/Mc/ChartBundle/Resources/views/Js/docReady.js.twig #}
+
+{# Template Js pour la fonction document_ready() des vues new et edit #}
+
+$('button#fix_chart').on('click', function() {
+	{# Suppression de la position left généré par le drag n drop #} // suppression de la guillement de drag'n drop
+	$('#container').css('left', '');
+	
+	if ($('button#fix_chart').text() == '{{ 'formChart.fix'|trans }}') {
+		$('#container').css({
+			'position': 'absolute',
+			'top': '38px',
+			'right': '-14px'
+		});
+		$('#chart').css('position', 'absolute');
+		$('button#fix_chart').text('{{ 'formChart.unfix'|trans }}');
+	} else {
+		$('#container').css({
+			'position': 'fixed',
+			'top': '93px',
+			'right': '28px'
+		});
+		$('#chart').css('position', 'fixed');
+		$('button#fix_chart').text('{{ 'formChart.fix'|trans }}');
+	}
+});
+
+$('button#hide_chart').on('click', function() {
+	if ($(this).text() == '{{ 'formChart.hide'|trans }}') {
+		$('#container').hide();
+		$(this).text('{{ 'formChart.show'|trans }}');
+	} else {
+		$('#container').show();
+		$(this).text('{{ 'formChart.hide'|trans }}');
+	}
+});
+
+$(creditsChart).change(function() {
+	var creditsDisplay = $('#container').children('div').children('svg').children('text:last');
+	$(creditsDisplay).html($(this).val());
+});
+
+$(titleChart).on('change', function() {
+	chart.setTitle({ text: $(this).val() });
+});
+
+$(urlcreditsChart).on('change', function() {
+	var credits = $(creditsChart).val();
+	var creditsDisplay = $('#container').children('div').children('svg').children('text:last');
+
+	if (credits != '') {
+		if ($(this).val() != '') {
+			$(creditsDisplay).on('click', function(e) {
+				if (e.target) {
+			        $("form").submit(function (ev) {
+						ev.preventDefault();
+						window.location.href = $(this).val();
+					});
+			    }
+			});
+		} else {
+			$(creditsDisplay).click(false);
+		}
+	} else {
+		$(creditsChart).focus();
+		$(this).val('');
+	}
+});
+
+$(subtitleChart).on('change', function() {
+	chart.setTitle(null, { text: $(this).val() });
+});
+
+$(legendChart).on('change', function() {
+	var legend = chart.legend;
+
+	if ($(this).is(':checked')) {
+		if (!legend.display) {
+			legend.update({
+			   enabled:true
+			});
+		}
+	} else {
+		if (legend.display) {
+			legend.update({
+			   enabled:false
+			});
+		}
+	}
+	chart.isDirtyBox = true;
+	chart.redraw();
+});
+
+$(tooltipChart).on('change', function() {
+	if ($(this).is(':checked')) {
+		chart.update({
+			tooltip: {
+				enabled: true
+		  }
+		})
+	} else {
+		chart.update({
+			tooltip: {
+				enabled: false
+		  }
+		})		
+	}
+});
+
+$(titleXAxis).on('change', function() {
+	chart.xAxis[0].setTitle({ text: produceTitleWithUnit($(this).val(), $(unitXAxis).val()) })
+});
+
+$(unitXAxis).on('change', function() {
+	chart.xAxis[0].setTitle({ text: produceTitleWithUnit($(titleXAxis).val(), $(this).val()) })
+});
+
+$(exportCSVChart).on('change', function() {
+	if ($(this).is(':checked')) {
+		$(exportPrintChart).prop('checked', true);
+	}
+});
+
+$(typestacked).on('change', function() {
+	/* Mise à jour de TOUTES les séries du graphique */
+	for (var i=0 ; i<chart.series.length ; i++) {
+		chart.series[i].update({
+			stacking: $(this).val()
+		});
+	}
+});
+
+$(invertedChart).on('change', function() {
+	if ($(this).is(':checked')) {
+		chart.inverted = true;
+		chart.xAxis[0].update({}, false);
+	    if (typeof chart.yAxis[0] !== 'undefined') { chart.yAxis[0].update({}, false); }
+		chart.redraw();
+	} else {
+		chart.inverted = false;
+		chart.xAxis[0].update({}, true);
+	    if (typeof chart.yAxis[0] !== 'undefined') { chart.yAxis[0].update({}, true); }
+		chart.redraw();
+	}
+});
+
+$(polarType).on('change', function() {
+	if ($(this).val() == 'polar') {
+		chart.yAxis[0].update({ gridLineInterpolation: 'circle' });
+	} else {
+		chart.yAxis[0].update({ gridLineInterpolation: 'polygon' });
+	}
+});
+
+{#$(heatmapType).on('change', function() {
+	if ($(this).val() == 'heatmap') {
+		chart.yAxis[0].update({ type: 'heatmap' });
+		options.chart.heatmap = true;
+		options.chart.heatmap = 'heatmap';
+	} else {
+		chart.yAxis[0].update({ type: 'heatmap' });
+		options.chart.heatmap = true;
+		options.chart.heatmap = 'heatmap';
+	}
+});#}
+
+$('#submit').on('click', function() {
+	$('form').animate({
+		'opacity': '0.5'
+	});
+	$('div.cssload-loader').show();
+});
+
+function require(script) {
+	$.ajax({
+		url: script,
+		dataType: 'script',
+		async: false,
+		success: function() {},
+		error: function() {
+			toastr.error('{{ 'formChart.scriptError.description'|trans() }}', '{{ 'formChart.scriptError.name'|trans() }}');
+		}
+	});
+}

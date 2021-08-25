@@ -1,0 +1,138 @@
+{# src/Mc/ChartBundle/Resources/views/Chart/Piechart/edit.html.twig #}
+{# Template affichant le formulaire d'édition d'un graphique circulaire #}
+
+{% extends "layout.html.twig" %}
+
+{% block body %}
+	{% if is_granted('ROLE_SCIENTIFIC') %}
+		{% include 'chart/form/formChart.html.twig' with {'title' : 'chart.editHighchart'|trans(), 'typeChart': 'piechart'} %}
+	{% endif %}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}	
+
+    <script type="text/javascript" src="/js/Chart/color.js"></script>
+    <script type="text/javascript" src="/js/Chart/yaxis.js"></script>
+    <script type="text/javascript" src="/js/Chart/seriepie.js"></script>
+    <script type="text/javascript" src="/js/Chart/highcharts.js"></script>
+    <script type="text/javascript" src="/js/Chart/highcharts-more.js"></script>
+    <script type="text/javascript" src="/js/Chart/boost.js"></script>
+    <script type="text/javascript" src="/js/Chart/piechart.js"></script>
+
+	{% include 'chart/js/iframe.js.twig' with {'typeChart': 'piechart'} %}	
+
+	<script type="text/javascript">
+		{% block document_ready %}
+			$('#submitbtn').click(function (e) {
+			    if (e.target) {
+			        $("form")[0].submit();
+			    }
+			});
+		{% endblock %}
+
+		{% include 'chart/js/createChart.js.twig' %}
+
+		load = true;
+
+		options.chart.pie = true;
+		var chart = new Highcharts.Chart(options);
+		var typeXAxis = $('select#mc_chartbundle_chart_xAxisType');
+		var axis = $('#container').highcharts().xAxis[0];
+		updateTypeAxis(typeXAxis, axis);
+		chart.yAxis[0].remove();
+
+		$(typeXAxis).change(function() {
+			updateTypeAxis(this, axis);
+		});
+
+		$(creditsDisplay).on('click', function(e) {
+			if (e.target) {
+		        $("form").submit(function (ev) {
+					ev.preventDefault();
+				});
+		    }
+		});
+
+		$('#container').css('width', (chart.chartWidth + 3));
+
+		/* Ajout de la fonctionnalité drag'n drop au graphique */
+		$('#container').append('<img id="drag" src="{{ asset("img/drag\'n drop.png") }}" />');
+		$("#container").draggable({ handle: "#drag" });
+
+		/* Le graphique circulaire ne dispose que d'un seul axe Y. L'ajout de cet axe se fait dans le fichier "web/js/Chart/piechart.js" */
+
+		/* Pour chaque axes-Y et ses séries, on recupère les valeurs en base et on appel l'évènement change pour mettre à jours le graphique */
+		$(document).ready(function()
+		{
+	     	var pieType = $('select#mc_chartbundle_chart_pieType');
+			if ($(pieType).val() == 'pie') {
+				chart.series[0].update({ type : 'pie' })
+				chart.yAxis[0].update({ type: 'pie' });
+			} else {
+				chart.yAxis[0].update({ gridLineInterpolation: 'polygon' });
+			}
+
+			{% for yAxis in list_yAxis %}
+				var indexS = 1;
+				/* 
+				 * Reverse du tableau des séries obligatoire car elles sont enregistrées par ordre décroissant en BD.
+				 * Comme pour les autres types de graphiques, on pourrait utiliser les propriétés "yaxisOrder" pour charger correctement les séries dans le bon ordre.
+				 * Dans le cas d'un graphique circulaire qui n'a qu'un seul axe Y, inverser simplement le tableau des séries est plus adapté.
+				 */
+				{% for serie in yAxis.series|reverse %}
+					var containerSerie = $('div#container_series_1');
+					addOneSerie(containerSerie, false);
+
+					$.ajaxSetup({async: false});
+						$('select#mc_chartbundle_chart_list_yAxis_1_series_' + indexS + '_dataList').val('{{ serie.dataList.id }}').change();
+						$('select#mc_chartbundle_chart_list_yAxis_1_series_' + indexS + '_parameterDataList').val('{{ serie.parameterDataList }}').change();
+						$('input#mc_chartbundle_chart_list_yAxis_1_series_' + indexS + '_titleSerie').val('{{ serie.titleSerie|e('js') }}').change();
+						{% if serie.unitSerie == true %}
+							$('input#mc_chartbundle_chart_list_yAxis_1_series_' + indexS + '_unitSerie').val('{{ serie.unitSerie|e('js') }}').change();
+						{% endif %}
+					$.ajaxSetup({async: true});
+					
+					// Ajout des couleurs personnalisées dans la liste des couleurs
+					var selectColor = $('select#mc_chartbundle_chart_list_yAxis_1_series_' + indexS + '_colorSerie');
+					var optionExists = false; 
+					selectColor.children().each(function(){
+						if (this.value == '{{ serie.colorSerie }}') 
+							optionExists = true;
+					});
+					
+					if(!optionExists) {
+						var option = new Option('{{ serie.colorSerie }}', '{{ serie.colorSerie }}');
+						selectColor.append($(option));
+						selectColor.children().last().css('background-color', '{{ serie.colorSerie }}');
+					}
+					// Fin ajout couleurs
+					
+					$('select#mc_chartbundle_chart_list_yAxis_1_series_' + indexS + '_typeSerie').val('{{ serie.typeSerie|e('js') }}').change();
+					$('select#mc_chartbundle_chart_list_yAxis_1_series_' + indexS + '_size').val('{{ serie.size|e('js') }}').change();
+   					$('select#mc_chartbundle_chart_list_yAxis_1_series_' + indexS + '_innersize').val('{{ serie.innersize|e('js') }}').change();
+				  	$('select#mc_chartbundle_chart_list_yAxis_1_series_' + indexS + '_colorSerie').val('{{ serie.colorSerie|e('js') }}').change();	
+				  			
+					indexS++;
+				{% endfor %}
+			{% endfor %}
+			
+			/* Il n'y a qu'un seul axe Y */
+			{% for yAxis in list_yAxis %}
+				$('input#mc_chartbundle_chart_list_yAxis_1_titleYAxis').val('{{ yAxis.titleYAxis|e('js') }}').change();
+				$('select#mc_chartbundle_chart_list_yAxis_1_typeYAxis').val('{{ yAxis.typeYAxis|e('js') }}').change();
+				$('select#mc_chartbundle_chart_list_yAxis_1_top').val('{{ yAxis.top|e('js') }}').change();
+				$('select#mc_chartbundle_chart_list_yAxis_1_height').val('{{ yAxis.height|e('js') }}').change();
+				{% if yAxis.opposite == true %}
+					$('input#mc_chartbundle_chart_list_yAxis_1_opposite').prop('checked', true).change();
+				{% else %}
+					$('input#mc_chartbundle_chart_list_yAxis_1_opposite').prop('checked', false).change();
+				{% endif %}
+			{% endfor %}
+		});
+
+		{% include 'chart/js/docReady.js.twig' %}
+
+		load = false;
+	</script>
+{% endblock %}

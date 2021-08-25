@@ -1,0 +1,83 @@
+{# src/Mc/ChartBundle/Resources/views/Chart/Timedynamicchart/edit.html.twig #}
+{# Template affichant le formulaire d'édition d'un graphique dynamique temporel #}
+
+{% extends "layout.html.twig" %}
+
+{% block body %}
+	{% if is_granted('ROLE_SCIENTIFIC') %}
+		{% include 'chart/form/formChart.html.twig' with {'title' : 'chart.editHighchart'|trans(), 'typeChart': 'timedynamicchart' } %}
+	{% endif %}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+    <script type="text/javascript" src="/js/Chart/yaxis.js"></script>
+    <script type="text/javascript" src="/js/Chart/highstock.js"></script>
+    <script type="text/javascript" src="/js/Chart/boost.js"></script>
+    <script type="text/javascript" src="/js/Chart/dynamicchart.js"></script>
+
+	{% include 'chart/js/iframe.js.twig' with {'typeChart': 'timedynamicchart'} %}	
+	
+	<script type="text/javascript">
+		{% include 'chart/js/createChart.js.twig' %}
+
+		load = true;
+
+		/* Creation du chart */
+		var chart = new Highcharts.StockChart(options);
+		chart.setSize(chart.chartWidth, 400); // On augmente la taille du graphique
+		chart.series[0].remove();
+
+		$(creditsDisplay).on('click', function(e) {
+			if (e.target) {
+		        $("form").submit(function (ev) {
+					ev.preventDefault();
+				});
+		    }
+		});
+
+		$('#container').css('width', (chart.chartWidth + 3));
+
+		/* Ajout de la fonctionnalité drag'n drop au graphique */
+		$('#container').append('<img id="drag" src="{{ asset("img/drag\'n drop.png") }}" />');
+		$("#container").draggable({ handle: "#drag" });
+
+		/* 	
+		 * Ici il n'existe qu'un seul axe-Y et une seul série au niveau du formulaire et dans la base de données 
+		 * Dans le graphique, il y a un seul axe Y et autant de série que compose la requête.
+		 * On met à jour le formulaire en fonction des valeurs présentes en base et on appel l'évènement "change" pour mettre à jour le graphique.
+		*/
+		$(document).ready(function() {
+			{% for yAxis in list_yAxis %}
+				$('input[id$=_titleYAxis]').val('{{ yAxis.titleYAxis|e('js') }}').change();
+				$('select[id$=_typeYAxis]').val('{{ yAxis.typeYAxis|e('js') }}').change();
+				$('select[id$=_top]').val('{{ yAxis.top|e('js') }}').change();
+				$('select[id$=_height]').val('{{ yAxis.height|e('js') }}').change();
+				{% if yAxis.opposite == true %}
+					$('input[id$=_opposite]').prop('checked', true).change();
+				{% else %}
+					$('input[id$=_opposite]').prop('checked', false).change();
+				{% endif %}
+
+				{% for serie in yAxis.series %}
+					$.ajaxSetup({async: false});
+						$('select[id$=_dataList]').val('{{ serie.dataList.id }}').change();
+					$.ajaxSetup({async: true});
+					
+					$('select[id$=_typeSerie]').val('{{ serie.typeSerie }}').change();
+					{% if serie.markerSerie == true %}
+						$('input[id$=_markerSerie]').prop('checked', true).change();
+					{% else %}
+						$('input[id$=_markerSerie]').prop('checked', false).change();
+					{% endif %}
+					$('select[id$=_dashStyleSerie]').val('{{ serie.dashStyleSerie }}').change();
+				{% endfor %}
+			{% endfor %}
+		});
+
+		{% include 'chart/js/docReady.js.twig' %}
+
+		load = false;
+	</script>
+{% endblock %}

@@ -1,0 +1,121 @@
+{% set form = form.list_yAxis.vars.prototype %}
+{% set form = form.series.vars.prototype %}
+
+<div class="serie">
+	
+	<div class="form-group">
+		<div class="col-sm-8">
+			<hr style="height:1px;border:none;color:#ddd;background-color:#ddd;text-align:left;margin-left:0;margin-top:0;margin-bottom:0;" />
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label class="col-sm-2 col-md-2 control-label">{{ 'formSerie.label'|trans() }} __name__</label>
+		<div class="col-md-6">
+			<button type="button" onClick="removeSerie(this)" class="btn btn-danger pull-right">{{ 'formSerie.delete'|trans }}</button>
+		</div>
+	</div>
+
+	<div class="form-group">
+		{{ form_label(form.titleSerie, 'formSerie.title'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+		{{ form_errors(form.titleSerie) }}
+		<div class="col-md-2">
+	    	{{ form_widget(form.titleSerie, {'attr': {'class': 'form-control'}}) }}
+		</div>
+		{{ form_label(form.unitSerie, 'formSerie.unit'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+		{{ form_errors(form.unitSerie) }}
+		<div class="col-md-2">
+	    	{{ form_widget(form.unitSerie, {'attr': {'class': 'form-control'}}) }}
+		</div>
+	</div>
+
+	<div class="form-group">
+		{{ form_label(form.dataList, 'formSerie.dataList'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+		{{ form_errors(form.dataList) }}
+		<div class="col-md-2">
+	    	{{ form_widget(form.dataList, {'attr': {'class': 'form-control'}}) }}
+		</div>
+		{{ form_label(form.parameterDataList, 'formSerie.parameterDataList'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+		{{ form_errors(form.parameterDataList) }}
+		<div class="col-md-2">
+	    	{{ form_widget(form.parameterDataList, {'attr': {'class': 'form-control'}}) }}
+		</div>
+	</div>
+	
+	<div class="form-group">
+		{% if (typeChart == 'piechart' or typeChart == 'heatmapchart') %}
+			{{ form_label(form.typeSerie, 'formSerie.type'|trans(), {'label_attr': {'class': 'col-md-2 control-label', 'style': 'visibility:hidden'}}) }}
+		{% else %}
+			{{ form_label(form.typeSerie, 'formSerie.type'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+		{% endif %}
+		{{ form_errors(form.typeSerie) }}
+		<div class="col-md-2">
+	    	{# ASFLAG : Mettre les valeurs par défaut pour Heatmap #}
+	    	{% if (typeChart == 'piechart') %}
+	    		{{ form_widget(form.typeSerie, { 'attr': {'style': 'display:none'}, 'value' : 'pie'}) }}
+			{% elseif (typeChart == 'heatmapchart') %}
+				{{ form_widget(form.typeSerie, { 'attr': {'style': 'display:none'}, 'value' : 'heatmap'}) }}
+	    	{% else %}
+				{{ form_widget(form.typeSerie, {'attr': {'class': 'form-control'}}) }}
+			{% endif %}
+			{# END ASFLAG #}
+		</div>
+		{{ form_label(form.colorSerie, 'formSerie.color'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+		{{ form_errors(form.colorSerie) }}
+		<div class="col-md-2">
+	    	{{ form_widget(form.colorSerie, {'attr': {'class': 'form-control'}}) }}
+		</div>
+
+		<input type="color" id="mc_chartbundle_chart_list_yAxis___nameyaxis___series___name___colorPicker" name="mc_chartbundle_chart[list_yAxis][__nameyaxis__][series][__name__][colorPicker]" style="margin-top: 5px; margin-left: -7px;">
+
+	</div>
+	{% if (typeChart != 'piechart') %}
+		<div class="form-group">
+			{{ form_label(form.markerSerie, 'formSerie.marker'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+			{{ form_errors(form.markerSerie) }}
+			<div class="col-md-2">
+				{{ form_widget(form.markerSerie, {'attr': {'class': 'form-control'}}) }}
+			</div>
+			{{ form_label(form.dashStyleSerie, 'formSerie.dashstyle'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+			{{ form_errors(form.dashStyleSerie) }}
+			<div class="col-md-2">
+				{{ form_widget(form.dashStyleSerie, {'attr': {'class': 'form-control'}}) }}
+			</div>
+		</div>
+	{% else %}
+		{#<div class="form-group">#}
+			{{ form_widget(form.markerSerie, { 'attr': {'style': 'display:none'}, 'value' : false}) }}
+			{{ form_widget(form.dashStyleSerie, { 'attr': {'style': 'display:none'}, 'value' : 'Solid'}) }}
+		{#</div>#}
+	{% endif %}
+	{% if (typeChart == 'piechart') %}
+		<div class="form-group">
+			{{ form_label(form.size, 'formSerie.size'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+			{{ form_errors(form.size) }}
+			<div class="col-md-2">
+				{{ form_widget(form.size, {'attr': {'class': 'form-control'}}) }}
+			</div>
+			{{ form_label(form.innersize, 'formSerie.innersize'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+			{{ form_errors(form.innersize) }}
+			<div class="col-md-2">
+				{{ form_widget(form.innersize, {'attr': {'class': 'form-control'}}) }}
+			</div>
+		</div>
+	{% endif %}
+	{% if (typeChart == 'heatmapchart') %}
+		<div class="form-group">
+			{{ form_label(form.colsize, 'formSerie.colsize'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+			{{ form_errors(form.colsize) }}
+			<div class="col-md-2">
+				{{ form_widget(form.colsize, {'attr': {'class': 'form-control'}}) }}
+			</div>
+		</div>
+	{% endif %}
+
+	<div class="form-group">
+		<div class="col-md-2">
+	    	{{ form_widget(form.yaxisOrder, {'attr' : { 'style':'display:none'}}) }}
+		</div>
+	</div>
+</div>
+

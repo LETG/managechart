@@ -7,9 +7,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Chart;
 use App\Entity\DataList;
 use App\Entity\YAxis;
-use Mc\ChartBundle\Form\Type\ChartType;
+use App\Form\ChartType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use App\Chart\AvailableChoice\AvailableColorSerie;
 use App\Chart\AvailableChoice\AvailableTypeSerie;
 use App\Chart\AvailableChoice\AvailableTypeAxis;
@@ -20,9 +21,16 @@ class ChartController extends AbstractController
 {
     private static $varTwig;
 
+    private $translator;
+
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
+
     protected function initializeVarTwig($manager)
     {
-        $translator = $this->get('translator');
+        $translator = $this->translator;
 
         $jsTranslate = array(
             'formYAxis_logarithmicError_name' => $translator->trans('formYAxis.logarithmicError.name'),
@@ -51,7 +59,7 @@ class ChartController extends AbstractController
      */
     protected static function getListDataList($manager)
     {
-        $repository = $manager->getRepository('McDataListBundle:DataList');
+        $repository = $manager->getRepository(DataList::class);
         return $repository->findAll();
     }
 
@@ -70,7 +78,7 @@ class ChartController extends AbstractController
      * Prépare le formulaire de création d'un graphique
      * @isGranted("ROLE_SCIENTIFIC")
      */
-    public function create($typeChart)
+    public function create(Request $request, $typeChart)
     {
         $chart = new Chart();
         $chart->setTypeChart($typeChart);
@@ -80,8 +88,7 @@ class ChartController extends AbstractController
             $chart->setXAxisType('datetime');
         }
 
-        $form = $this->createForm(new ChartType(), $chart);
-        $request = $this->get('request');
+        $form = $this->createForm(ChartType::class, $chart);
 
         if ($request->getMethod() == 'POST') {
             $form->bind($request);
@@ -103,7 +110,7 @@ class ChartController extends AbstractController
      * Prépare le formulaire d'édition d'un graphique
      * @isGranted("ROLE_SCIENTIFIC")
      */
-    protected function edit($chart)
+    protected function edit(Request $request, $chart)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -123,8 +130,7 @@ class ChartController extends AbstractController
         $chart->getListYAxis()->clear();
 
         // On pré-remplie le formulaire avec les données du graphique + ses axes + ses séries/flags
-        $form = $this->createForm(new ChartType(), $chart);
-        $request = $this->get('request');
+        $form = $this->createForm(ChartType::class, $chart);
 
         if ($request->getMethod() == 'POST') {
             $form->bind($request);
@@ -249,7 +255,7 @@ class ChartController extends AbstractController
      */
     public function confirmed(Chart $chart)
     {
-        return $this->render('McChartBundle:Chart:confirmed.html.twig', array('chart' => $chart));
+        return $this->render('chart/confirmed.html.twig', array('chart' => $chart));
     }
 
     /**
@@ -326,14 +332,14 @@ class ChartController extends AbstractController
      * Création d'un graphique simple
      * @isGranted("ROLE_SCIENTIFIC")
      */
-    public function newSimplechart()
+    public function newSimplechart(Request $request)
     {
-        $returnCreate = $this->create('simplechart');
+        $returnCreate = $this->create($request, 'simplechart');
 
         if ($returnCreate instanceof Chart) {
             return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnCreate->getId())));
         } else {
-            return $this->render('McChartBundle:Chart:Simplechart/new.html.twig', $returnCreate);
+            return $this->render('chart/simplechart/new.html.twig', $returnCreate);
         }
     }
 
@@ -341,14 +347,14 @@ class ChartController extends AbstractController
      * Modification d'un graphique simple
      * @isGranted("ROLE_SCIENTIFIC")
      */
-    public function editSimplechart(Chart $chart)
+    public function editSimplechart(Request $request, Chart $chart)
     {
-        $returnEdit = $this->edit($chart);
+        $returnEdit = $this->edit($request, $chart);
 
         if ($returnEdit instanceof Chart) {
             return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnEdit->getId())));
         } else {
-            return $this->render('McChartBundle:Chart:Simplechart/edit.html.twig', $returnEdit);
+            return $this->render('chart/simplechart/edit.html.twig', $returnEdit);
         }
     }
 
@@ -358,14 +364,14 @@ class ChartController extends AbstractController
      * Création d'un graphique temporel
      * @isGranted("ROLE_SCIENTIFIC")
      */
-    public function newTimechart()
+    public function newTimechart(Request $request)
     {
-        $returnCreate = $this->create('timechart');
+        $returnCreate = $this->create($request, 'timechart');
 
         if ($returnCreate instanceof Chart) {
             return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnCreate->getId())));
         } else {
-            return $this->render('McChartBundle:Chart:Timechart/new.html.twig', $returnCreate);
+            return $this->render('chart/timechart/new.html.twig', $returnCreate);
         }
     }
 
@@ -373,14 +379,14 @@ class ChartController extends AbstractController
      * Modification d'un graphique temporel
      * @isGranted("ROLE_SCIENTIFIC")
      */
-    public function editTimechart(Chart $chart)
+    public function editTimechart(Request $request, Chart $chart)
     {
-        $returnEdit = $this->edit($chart);
+        $returnEdit = $this->edit($request, $chart);
 
         if ($returnEdit instanceof Chart) {
             return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnEdit->getId())));
         } else {
-            return $this->render('McChartBundle:Chart:Timechart/edit.html.twig', $returnEdit);
+            return $this->render('chart/timechart/edit.html.twig', $returnEdit);
         }
     }
 
@@ -390,14 +396,14 @@ class ChartController extends AbstractController
      * Création d'un graphique temporel multi-axes
      * @isGranted("ROLE_SCIENTIFIC")
      */
-    public function newMultiaxistimechart()
+    public function newMultiaxistimechart(Request $request)
     {
-        $returnCreate = $this->create('multiaxistimechart');
+        $returnCreate = $this->create($request, 'multiaxistimechart');
 
         if ($returnCreate instanceof Chart) {
             return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnCreate->getId())));
         } else {
-            return $this->render('McChartBundle:Chart:Multiaxistimechart/new.html.twig', $returnCreate);
+            return $this->render('chart/multiaxistimechart/new.html.twig', $returnCreate);
         }
     }
 
@@ -405,14 +411,14 @@ class ChartController extends AbstractController
      * Modification d'un graphique temporel multi-axes
      * @isGranted("ROLE_SCIENTIFIC")
      */
-    public function editMultiaxistimechart(Chart $chart)
+    public function editMultiaxistimechart(Request $request, Chart $chart)
     {
-        $returnEdit = $this->edit($chart);
+        $returnEdit = $this->edit($request, $chart);
 
         if ($returnEdit instanceof Chart) {
             return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnEdit->getId())));
         } else {
-            return $this->render('McChartBundle:Chart:Multiaxistimechart/edit.html.twig', $returnEdit);
+            return $this->render('chart/multiaxistimechart/edit.html.twig', $returnEdit);
         }
     }
 
@@ -422,14 +428,14 @@ class ChartController extends AbstractController
      * Création d'un graphique circulaire
      * @isGranted("ROLE_SCIENTIFIC")
      */
-    public function newPiechart()
+    public function newPiechart(Request $request)
     {
-        $returnCreate = $this->create('piechart');
+        $returnCreate = $this->create($request, 'piechart');
 
         if ($returnCreate instanceof Chart) {
             return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnCreate->getId())));
         } else {
-            return $this->render('McChartBundle:Chart:Piechart/new.html.twig', $returnCreate);
+            return $this->render('chart/piechart/new.html.twig', $returnCreate);
         }
     }
 
@@ -437,14 +443,14 @@ class ChartController extends AbstractController
      * Modification d'un graphique circulaire
      * @isGranted("ROLE_SCIENTIFIC")
      */
-    public function editPiechart(Chart $chart)
+    public function editPiechart(Request $request, Chart $chart)
     {
-        $returnEdit = $this->edit($chart);
+        $returnEdit = $this->edit($request, $chart);
 
         if ($returnEdit instanceof Chart) {
             return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnEdit->getId())));
         } else {
-            return $this->render('McChartBundle:Chart:Piechart/edit.html.twig', $returnEdit);
+            return $this->render('chart/piechart/edit.html.twig', $returnEdit);
         }
     }
 
@@ -454,14 +460,14 @@ class ChartController extends AbstractController
      * Création d'un graphique dynamique
      * @isGranted("ROLE_SCIENTIFIC")
      */
-    public function newDynamicchart()
+    public function newDynamicchart(Request $request)
     {
-        $returnCreate = $this->create('dynamicchart');
+        $returnCreate = $this->create($request, 'dynamicchart');
 
         if ($returnCreate instanceof Chart) {
             return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnCreate->getId())));
         } else {
-            return $this->render('McChartBundle:Chart:Dynamicchart/new.html.twig', $returnCreate);
+            return $this->render('chart/dynamicchart/new.html.twig', $returnCreate);
         }
     }
 
@@ -469,14 +475,14 @@ class ChartController extends AbstractController
      * Modification d'un graphique dynamique
      * @isGranted("ROLE_SCIENTIFIC")
      */
-    public function editDynamicchart(Chart $chart)
+    public function editDynamicchart(Request $request, Chart $chart)
     {
-        $returnEdit = $this->edit($chart);
+        $returnEdit = $this->edit($request, $chart);
 
         if ($returnEdit instanceof Chart) {
             return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnEdit->getId())));
         } else {
-            return $this->render('McChartBundle:Chart:Dynamicchart/edit.html.twig', $returnEdit);
+            return $this->render('chart/dynamicchart/edit.html.twig', $returnEdit);
         }
     }
 
@@ -486,14 +492,14 @@ class ChartController extends AbstractController
      * Création d'un graphique polar et spiderweb
      * @isGranted("ROLE_SCIENTIFIC")
      */
-    public function newPolarchart()
+    public function newPolarchart(Request $request)
     {
-        $returnCreate = $this->create('polarchart');
+        $returnCreate = $this->create($request, 'polarchart');
 
         if ($returnCreate instanceof Chart) {
             return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnCreate->getId())));
         } else {
-            return $this->render('McChartBundle:Chart:Polarchart/new.html.twig', $returnCreate);
+            return $this->render('chart/polarchart/new.html.twig', $returnCreate);
         }
     }
 
@@ -501,14 +507,14 @@ class ChartController extends AbstractController
      * Modification d'un graphique polar et spiderweb
      * @isGranted("ROLE_SCIENTIFIC")
      */
-    public function editPolarchart(Chart $chart)
+    public function editPolarchart(Request $request, Chart $chart)
     {
-        $returnEdit = $this->edit($chart);
+        $returnEdit = $this->edit($request, $chart);
 
         if ($returnEdit instanceof Chart) {
             return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnEdit->getId())));
         } else {
-            return $this->render('McChartBundle:Chart:Polarchart/edit.html.twig', $returnEdit);
+            return $this->render('chart/polarchart/edit.html.twig', $returnEdit);
         }
     }
 
@@ -518,14 +524,14 @@ class ChartController extends AbstractController
      * Création d'un graphique heatmap
      * @isGranted("ROLE_SCIENTIFIC")
      */
-    public function newHeatmapchart()
+    public function newHeatmapchart(Request $request)
     {
-        $returnCreate = $this->create('heatmapchart');
+        $returnCreate = $this->create($request, 'heatmapchart');
 
         if ($returnCreate instanceof Chart) {
             return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnCreate->getId())));
         } else {
-            return $this->render('McChartBundle:Chart:Heatmapchart/new.html.twig', $returnCreate);
+            return $this->render('chart/heatmapchart/new.html.twig', $returnCreate);
         }
     }
 
@@ -533,14 +539,14 @@ class ChartController extends AbstractController
      * Modification d'un graphique heatmap
      * @isGranted("ROLE_SCIENTIFIC")
      */
-    public function editHeatmapchart(Chart $chart)
+    public function editHeatmapchart(Request $request, Chart $chart)
     {
-        $returnEdit = $this->edit($chart);
+        $returnEdit = $this->edit($request, $chart);
 
         if ($returnEdit instanceof Chart) {
             return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnEdit->getId())));
         } else {
-            return $this->render('McChartBundle:Chart:Heatmapchart/edit.html.twig', $returnEdit);
+            return $this->render('chart/heatmapchart/edit.html.twig', $returnEdit);
         }
     }
 
@@ -550,14 +556,14 @@ class ChartController extends AbstractController
      * Création d'un graphique dynamique temporel
      * @isGranted("ROLE_SCIENTIFIC")
      */
-    public function newTimedynamicchart()
+    public function newTimedynamicchart(Request $request)
     {
-        $returnCreate = $this->create('timedynamicchart');
+        $returnCreate = $this->create($request, 'timedynamicchart');
 
         if ($returnCreate instanceof Chart) {
             return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnCreate->getId())));
         } else {
-            return $this->render('McChartBundle:Chart:Timedynamicchart/new.html.twig', $returnCreate);
+            return $this->render('chart/timedynamicchart/new.html.twig', $returnCreate);
         }
     }
 
@@ -565,14 +571,14 @@ class ChartController extends AbstractController
      * Modification d'un graphique dynamique temporel
      * @isGranted("ROLE_SCIENTIFIC")
      */
-    public function editTimedynamicchart(Chart $chart)
+    public function editTimedynamicchart(Request $request, Chart $chart)
     {
-        $returnEdit = $this->edit($chart);
+        $returnEdit = $this->edit($request, $chart);
 
         if ($returnEdit instanceof Chart) {
             return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnEdit->getId())));
         } else {
-            return $this->render('McChartBundle:Chart:Timedynamicchart/edit.html.twig', $returnEdit);
+            return $this->render('chart/timedynamicchart/edit.html.twig', $returnEdit);
         }
     }
 }

@@ -1,0 +1,80 @@
+{% set form = form.list_yAxis.vars.prototype %}
+{% set form = form.flag.vars.prototype %}
+
+<div class="flag">
+	
+	<div class="form-group">
+		<div class="col-sm-8">
+			<hr style="height:1px;border:none;color:#ddd;background-color:#ddd;text-align:left;margin-left:0;margin-top:0;margin-bottom:0;" />
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label class="col-sm-2 col-md-2 control-label">{{ 'formFlag.label'|trans() }} __name__</label>
+		<div class="col-md-6">
+			<button type="button" onClick="removeFlag(this)" class="btn btn-danger pull-right">{{ 'formFlag.delete'|trans }}</button>
+		</div>
+	</div>
+
+	<div class="form-group">
+		{{ form_label(form.titleFlag, 'formFlag.title'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+		{{ form_errors(form.titleFlag) }}
+		<div class="col-md-2">
+	    	{{ form_widget(form.titleFlag, {'attr': {'class': 'form-control'}}) }}
+		</div>
+		{{ form_label(form.onseries, 'formFlag.onseries'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+		{{ form_errors(form.onseries) }}
+		<div class="col-md-2">
+	    	{{ form_widget(form.onseries, {'attr': {'class': 'form-control', 'title': 'L\'option Axe X ne fonctionne que pour le dernier axe Y'}}) }}
+		</div>
+	</div>
+
+	<div class="form-group">
+		{{ form_label(form.dataList, 'formFlag.dataList'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+		{{ form_errors(form.dataList) }}
+		<div class="col-md-2">
+	    	{{ form_widget(form.dataList, {'attr': {'class': 'form-control'}}) }}
+		</div>
+		{{ form_label(form.parameterDataList, 'formFlag.parameter'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+		{{ form_errors(form.parameterDataList) }}
+		<div class="col-md-2">
+	    	{{ form_widget(form.parameterDataList, {'attr': {'class': 'form-control'}}) }}
+		</div>
+	</div>
+
+	<div class="form-group">
+		{{ form_label(form.shapeflag, 'formFlag.shape'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+		{{ form_errors(form.shapeflag) }}
+		<div class="col-md-2">
+	    	{{ form_widget(form.shapeflag, {'attr': {'class': 'form-control'}}) }}
+		</div>
+		{{ form_label(form.colorflag, 'formFlag.color'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+		{{ form_errors(form.colorflag) }}
+		<div class="col-md-2">
+	    	{{ form_widget(form.colorflag, {'attr': {'class': 'form-control'}}) }}
+		</div>
+		
+		<input type="color" id="mc_chartbundle_chart_list_yAxis___nameyaxis___flag___name___colorPickerFlag" name="mc_chartbundle_chart[list_yAxis][__nameyaxis__][flag][__name__][colorPicker]" style="margin-top: 5px; margin-left: -7px;">
+		
+	</div>
+
+	<div class="form-group">
+		{{ form_label(form.styleflag, 'formFlag.style'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+		{{ form_errors(form.styleflag) }}
+		<div class="col-md-2">
+	    	{{ form_widget(form.styleflag, {'attr': {'class': 'form-control'}}) }}
+		</div>
+			{{ form_label(form.widthflag, 'formFlag.width'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+		{{ form_errors(form.widthflag) }}
+		<div class="col-md-2">
+	    	{{ form_widget(form.widthflag, {'attr': {'class': 'form-control'}}) }}
+		</div>
+	</div>
+
+	<div class="form-group">
+		<div class="col-md-2">
+	    	{{ form_widget(form.yaxisOrder, {'attr' : { 'style':'display:none'}}) }}
+		</div>
+	</div>
+</div>
+

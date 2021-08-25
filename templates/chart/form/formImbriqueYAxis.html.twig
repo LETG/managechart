@@ -1,0 +1,155 @@
+
+{# On ajoute le tab-panel seulement pour les types de graphiques qui peuvent avoir plusieurs axes Y #}
+{% if (typeChart == 'simplechart' or typeChart == 'timechart' or typeChart == 'multiaxistimechart') %}
+	<div id="tab-panel-__nameyaxis__" class="tab-pane fade" role="tabpanel">
+{% else %}
+	<div class="form-group">
+		<div class="col-sm-8">
+			<hr style="height:1px;border:none;color:#ddd;background-color:#ddd;text-align:left;margin-left:0;" />
+		</div>
+	</div>
+{% endif %}
+
+{% set form = form.list_yAxis.vars.prototype %}
+
+	<div class="list_yAxis">
+		<div class="form-group">
+			<label style="visibility:hidden">{{ 'formYAxis.label'|trans() }} __nameyaxis__</label>
+			{{ form_label(form.titleYAxis, 'formYAxis.title'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+			<div class="col-md-3">
+				{{ form_errors(form.titleYAxis) }}
+				{{ form_widget(form.titleYAxis, {'attr': {'class': 'form-control'}}) }}
+			</div>
+			{% if (typeChart == 'simplechart' or typeChart == 'timechart' or typeChart == 'multiaxistimechart') %}
+				<label class="col-md-2">
+					<button type="button" onClick="removeYaxis(this);" class="btn btn-danger pull-right">{{ 'formYAxis.delete'|trans }}</button>
+				</label>
+			{% endif %}
+		</div>
+		<div class="form-group">
+			{{ form_label(form.typeYAxis, 'formYAxis.type'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+			<div class="col-md-2">
+				{{ form_errors(form.typeYAxis) }}
+				{{ form_widget(form.typeYAxis, {'attr': {'class': 'form-control'}}) }}
+			</div>
+		</div>
+		<div class="form-group">
+			{{ form_label(form.top, 'formYAxis.top'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+			<div class="col-md-2">
+				{{ form_errors(form.top) }}
+				{% if typeChart != 'multiaxistimechart' %}
+					{{ form_widget(form.top, {'attr': {'class': 'form-control'}}) }}
+				{% else %}
+					{{ form_widget(form.top, {'attr': {'class': 'form-control'}, 'disabled': true}) }} {# Définie automatiquement dans 'multiyaxis.js' #}
+				{% endif %}
+			</div>
+		</div>
+		<div class="form-group">
+			{{ form_label(form.height, 'formYAxis.height'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+			<div class="col-md-2">
+				{{ form_errors(form.height) }}
+				{% if typeChart != 'multiaxistimechart' %}
+					{{ form_widget(form.height, {'attr': {'class': 'form-control'}}) }}
+				{% else %}
+					{{ form_widget(form.height, {'attr': {'class': 'form-control'}, 'disabled': true}) }} {# Définie automatiquement dans 'multiyaxis.js' #}
+				{% endif %}
+			</div>
+		</div>
+		<div class="form-group">
+			{{ form_label(form.opposite, 'formYAxis.opposite'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+			<div class="col-md-2 control-label"> {# classe "control-label" pour aligner horizontalement le label et la case à cocher #}
+				{{ form_errors(form.opposite) }}
+				{{ form_widget(form.opposite, {'attr': {'class': 'form-control'}}) }}
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-md-2">
+				{{ form_widget(form.orderY, {'attr' : { 'style':'display:none'}}) }}
+			</div>
+		</div>
+	</div>
+	
+	{% set form = form.series.vars.prototype %}
+
+	{% if (typeChart != 'polarchart' and typeChart != 'piechart') %}
+		{% if (typeChart == 'heatmapchart' or typeChart == 'timedynamicchart' or typeChart == 'dynamicchart') %}
+			<div class="form-group"></div>
+		{% endif %}
+	<div class="form-group addSeries">
+		<div class="row">
+			<div class="col-sm-8">
+				<hr style="height:1px;border:none;color:#ddd;background-color:#ddd;text-align:left;margin-left:0;" />
+			</div>
+		</div>
+		<div class="col-md-3 col-md-offset-1">
+			<div id="addAllSeries" class="panel panel-info">
+				<div id="addAllSeries_heading" class="panel-heading">{{ 'formYAxis.panel.addAll.title'|trans }}</div>
+				<div id="addAllSeries_body" class="panel-body">
+					<select id="mc_chartbundle_chart_list_yAxis___nameyaxis___dataList" name="mc_chartbundle_chart[list_yAxis][__nameyaxis__][dataList]" onChange="updateSelectRequest(this)" required="required" class="form-control">
+						<option value="-1" selected="selected">{{ 'formSerie.dataListChoice'|trans }}</option>
+						{% for dataList in listDataList %} {# |sortbyfield('nameData') #}
+							<option value="{{ dataList.id }}">{{ dataList.nameData }}</option>
+						{% endfor %}
+					</select>
+					<button type="button" id="addAllSeries___nameyaxis__" style="margin-top:15px;" class="btn btn-info center-block" disabled>{{ 'formYAxis.panel.addAll.button'|trans }}</button>
+
+					<button type="button" id="addAllFlag___nameyaxis__" style="margin-top:15px;" class="btn btn-info center-block" disabled>{{ 'formYAxis.panel.addAllFlag.button'|trans }}</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-3 col-md-offset-1">
+			<div id="addOneSeries" class="panel panel-info">
+				<div id="addOneSeries_heading" class="panel-heading">{{ 'formYAxis.panel.addOne.title'|trans }}</div>
+				<div class="panel-body">
+					<div id="addOneSeries_body">
+						<button type="button" id="addOneSerie___nameyaxis__" class="btn btn-info center-block">{{ 'formYAxis.panel.addOne.title'|trans }}</button>
+					</div>
+					<div id="addFlag_body" style="margin-top:15px;">
+						<button type="button" id="addFlag___nameyaxis__"  class="btn btn-info center-block">{{ 'formYAxis.panel.addOne.titleFlag'|trans }}</button>
+					</div>		
+				</div>	
+			</div>
+		</div>
+	</div>
+	{% else %}
+	<div class="form-group addSeries">
+		<div class="row">
+			<div class="col-sm-8">
+				<hr style="height:1px;border:none;color:#ddd;background-color:#ddd;text-align:left;margin-left:0;" />
+			</div>
+		</div>
+		<div class="col-md-3 col-md-offset-1">
+			<div id="addAllSeries" class="panel panel-info">
+				<div id="addAllSeries_heading" class="panel-heading">{{ 'formYAxis.panel.addAll.title'|trans }}</div>
+				<div id="addAllSeries_body" class="panel-body">
+					<select id="mc_chartbundle_chart_list_yAxis___nameyaxis___dataList" name="mc_chartbundle_chart[list_yAxis][__nameyaxis__][dataList]" onChange="updateSelectRequest(this)" required="required" class="form-control">
+						<option value="-1" selected="selected">{{ 'formSerie.dataListChoice'|trans }}</option>
+						{% for dataList in listDataList %} {# |sortbyfield('nameData') #}
+							<option value="{{ dataList.id }}">{{ dataList.nameData }}</option>
+						{% endfor %}
+					</select>
+					<button type="button" id="addAllSeries___nameyaxis__" style="margin-top:15px;" class="btn btn-info center-block" disabled>{{ 'formYAxis.panel.addAll.button'|trans }}</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-3 col-md-offset-1">
+			<div id="addOneSeries" class="panel panel-info">
+				<div id="addOneSeries_heading" class="panel-heading">{{ 'formYAxis.panel.addOne.title'|trans }}</div>
+				<div class="panel-body">
+					<div id="addOneSeries_body">
+						<button type="button" id="addOneSerie___nameyaxis__" class="btn btn-info center-block">{{ 'formYAxis.panel.addOne.title'|trans }}</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+	
+	<div id="container_series___nameyaxis__"></div>
+	
+{% if (typeChart == 'simplechart' or typeChart == 'timechart' or typeChart == 'multiaxistimechart') %}
+	</div>
+{% endif %}
+

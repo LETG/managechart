@@ -1,0 +1,207 @@
+{# src/Mc/ChartBundle/Resources/views/Chart/Multiaxistimechart/edit.html.twig #}
+{# Template affichant le formulaire d'édition d'un graphique temporel multi-axes #}
+
+{% extends "layout.html.twig" %}
+
+{% block body %}
+	{% if is_granted('ROLE_SCIENTIFIC') %}
+		{% include 'chart/form/formChart.html.twig' with {'title' : 'chart.editHighchart'|trans(), 'typeChart': 'multiaxistimechart'} %}
+	{% endif %}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+    <script type="text/javascript" src="/js/Chart/multiyaxis.js"></script>
+    <script type="text/javascript" src="/js/Chart/timechartflag.js"></script>
+    <script type="text/javascript" src="/js/Chart/timechartserie.js"></script>
+    <script type="text/javascript" src="/js/Chart/highstock.js"></script>
+    <script type="text/javascript" src="/js/Chart/boost.js"></script>
+
+	{% include 'chart/js/iframe.js.twig' with {'typeChart': 'multiaxistimechart'} %}	
+
+	<script type="text/javascript">
+		{% block document_ready %}
+			$('#submitbtn').click(function (e) {
+			    if (e.target) {
+			        $("form")[0].submit();
+			    }
+			});
+			
+			$('#tabs_yAxis').on("click", "a", function (e) {
+				e.preventDefault();
+				if (!$(this).hasClass('add-y-axis')) {
+					$(this).tab('show');
+				}
+			});
+		{% endblock %}
+
+		{% include 'chart/js/createChart.js.twig' %}
+
+		load = true;
+
+		var chart = new Highcharts.StockChart(options);
+		chart.series[0].remove();
+
+		$(creditsDisplay).on('click', function(e) {
+			if (e.target) {
+		        $("form").submit(function (ev) {
+					ev.preventDefault();
+				});
+		    }
+		});
+
+		/* Ajout d'un évènement sur la molette de la souris pour modifier la valeur du gapSize */
+		$(gapSize).on("mousewheel DOMMouseScroll", function(e) {
+			e.preventDefault();
+
+			$(this).one('mousewheel', function(ev, delta) {
+				if ($(this).val() >= 0) {
+					if (delta > 0) { $(this).val(parseInt($(this).val()) +1); }
+				} 
+				if ($(this).val() >= 1) {
+					if (delta < 0) { $(this).val(parseInt($(this).val()) -1); }
+				}
+			});
+		});
+
+		$('#container').css('width', (chart.chartWidth + 3));
+
+		/* Ajout de la fonctionnalité drag'n drop au graphique */
+		$('#container').append('<img id="drag" src="{{ asset("img/drag\'n drop.png") }}" />');
+		$("#container").draggable({ handle: "#drag" });
+
+		/* 
+		 * Pour chaque axes-Y et ses séries, on recupère les valeurs en base et on appel l'évènement change pour mettre à jour le graphique.
+		 * Les boucles sur les variables maxYAxisOrder et maxSerieOrder permettent de remettre tous les axes et séries/flags dans le bon ordre
+		 * au cas ou il y ait une inversion d'axes ou de séries/flags (cf. bug inversion des tableaux d'objets entre mode dev et prod). 
+		*/
+		{% set maxYAxisOrder = '' %}
+		{% for yAxis in list_yAxis %} 
+			{% set maxYAxisOrder =  max(maxYAxisOrder, yAxis.orderY) %}
+		{% endfor %}
+		
+		{% for indexY in 1..maxYAxisOrder %}
+			{% for yAxis in list_yAxis %}
+				{% if indexY == yAxis.orderY %}
+			
+					addyAxis();
+
+					{% set maxSerieOrder = '' %}
+					{% for serie in yAxis.series %} 
+						{% set maxSerieOrder =  max(maxSerieOrder, serie.yaxisOrder) %}
+					{% endfor %}
+					{% for flag in yAxis.flag %} 	
+						{% set maxSerieOrder =  max(maxSerieOrder, flag.yaxisOrder) %}
+					{% endfor %}
+
+					{% for indexSerie in 1..maxSerieOrder %}
+						
+						/* Séries */
+						{% for serie in yAxis.series %} 
+							{% if indexSerie == serie.yaxisOrder %}
+								var containerSerie = $('div#container_series_' + {{indexY}});
+								addOneSerie(containerSerie, false);
+					
+								// Ajout des couleurs personnalisées dans la liste des couleurs
+								var selectColor = $('select#mc_chartbundle_chart_list_yAxis_' + {{indexY}} + '_series_' + {{indexSerie}} + '_colorSerie');
+								var optionExists = false; 
+								selectColor.children().each(function(){
+									if (this.value == '{{ serie.colorSerie }}') 
+										optionExists = true;
+								});
+								
+								if(!optionExists) {
+									var option = new Option('{{ serie.colorSerie }}', '{{ serie.colorSerie }}');
+									selectColor.append($(option));
+									selectColor.children().last().css('background-color', '{{ serie.colorSerie }}');
+								}
+								// Fin ajout couleurs
+							
+								$('select#mc_chartbundle_chart_list_yAxis_' + {{indexY}} + '_series_' + {{indexSerie}} + '_typeSerie').val('{{ serie.typeSerie }}').change();
+								$('select#mc_chartbundle_chart_list_yAxis_' + {{indexY}} + '_series_' + {{indexSerie}} + '_colorSerie').val('{{ serie.colorSerie }}').change();
+								{% if serie.markerSerie == true %}
+									$('input#mc_chartbundle_chart_list_yAxis_' + {{indexY}} + '_series_' + {{indexSerie}} + '_markerSerie').prop('checked', true).change();
+								{% else %}
+									$('input#mc_chartbundle_chart_list_yAxis_' + {{indexY}} + '_series_' + {{indexSerie}} + '_markerSerie').prop('checked', false).change();
+								{% endif %}
+								$('select#mc_chartbundle_chart_list_yAxis_' + {{indexY}} + '_series_' + {{indexSerie}} + '_dashStyleSerie').val('{{ serie.dashStyleSerie }}').change();
+
+								$.ajaxSetup({async: false});
+									$('select#mc_chartbundle_chart_list_yAxis_' + {{indexY}} + '_series_' + {{indexSerie}} + '_dataList').val('{{ serie.dataList.id }}').change();
+									$('select#mc_chartbundle_chart_list_yAxis_' + {{indexY}} + '_series_' + {{indexSerie}} + '_parameterDataList').val('{{ serie.parameterDataList }}').change();
+									$('input#mc_chartbundle_chart_list_yAxis_' + {{indexY}} + '_series_' + {{indexSerie}} + '_titleSerie').val('{{ serie.titleSerie|e('js') }}').change();
+									{% if serie.unitSerie == true %}
+										$('input#mc_chartbundle_chart_list_yAxis_' + {{indexY}} + '_series_' + {{indexSerie}} + '_unitSerie').val('{{ serie.unitSerie|e('js') }}').change();
+									{% endif %}				
+								$.ajaxSetup({async: true});
+							{% endif %}						
+						{% endfor %}
+						
+						/* Flags */
+						{% for flag in yAxis.flag %}
+							{% if indexSerie == flag.yaxisOrder %}
+								var containerFlag = $('div#container_series_' + {{indexY}});
+								addFlag(containerFlag, false);
+
+								$.ajaxSetup({async: false});
+									var dataList = $('select#mc_chartbundle_chart_list_yAxis_' + {{indexY}} + '_flag_' + {{indexSerie}} + '_dataList').val('{{ flag.dataList.id }}').change();
+									$('select#mc_chartbundle_chart_list_yAxis_' + {{indexY}} + '_flag_' + {{indexSerie}} + '_parameterDataList').val('{{ flag.parameterDataList }}').change();
+								$.ajaxSetup({async: true});
+								
+								// Ajout des couleurs personnalisées dans la liste des couleurs
+								var selectColor = $('select#mc_chartbundle_chart_list_yAxis_' + {{indexY}} + '_flag_' + {{indexSerie}} + '_colorflag');
+								var optionExists = false; 
+								selectColor.children().each(function(){
+									if (this.value == '{{ flag.colorFlag }}') 
+										optionExists = true;
+								});
+								
+								if(!optionExists) {
+									var option = new Option('{{ flag.colorFlag }}', '{{ flag.colorFlag }}');
+									selectColor.append($(option));
+									selectColor.children().last().css('background-color', '{{ flag.colorFlag }}');
+								}
+								// Fin ajout couleurs
+								
+								$(dataList).parents('.form-group').prev().find('input[id$=' + {{indexSerie}} + '_titleFlag]').val('{{ flag.titleFlag|e('js') }}').change();
+								$(dataList).parents('.form-group').prev().find('select[id$=' + {{indexSerie}} + '_onseries]').val('{{ flag.onseries }}').change();
+								$(dataList).parents('.form-group').next().find('select[id$=' + {{indexSerie}} + '_colorflag]').val('{{ flag.colorFlag }}').change();
+								$(dataList).parents('.form-group').next().find('select[id$=' + {{indexSerie}} + '_shapeflag]').val('{{ flag.shapeFlag }}').change();
+								$(dataList).parents('.form-group').next().next().find('select[id$=' + {{indexSerie}} + '_styleflag]').val('{{ flag.styleFlag }}').change();
+								$(dataList).parents('.form-group').next().next().find('select[id$=' + {{indexSerie}} + '_widthflag]').val('{{ flag.widthFlag }}').change();
+							{% endif %}	
+						{% endfor %}
+
+					{% endfor %}
+
+				{% endif %}
+			{% endfor %}
+		{% endfor %}
+		
+		/* On renseigne les informations des axes Y (nom, type, taille, top, ...) */
+		{% for yAxis in list_yAxis %} 
+			{% set maxYAxisOrder =  max(maxYAxisOrder, yAxis.orderY) %}
+		{% endfor %}
+		
+		{% for indexY in 1..maxYAxisOrder %}
+			{% for yAxis in list_yAxis %}
+				{% if indexY == yAxis.orderY %}
+					$('input#mc_chartbundle_chart_list_yAxis_' + {{indexY}} + '_titleYAxis').val('{{ yAxis.titleYAxis|e('js') }}').change();
+					$('select#mc_chartbundle_chart_list_yAxis_' + {{indexY}} + '_typeYAxis').val('{{ yAxis.typeYAxis|e('js') }}').change();
+					$('select#mc_chartbundle_chart_list_yAxis_' + {{indexY}} + '_top').val('{{ yAxis.top|e('js') }}').change();
+					$('select#mc_chartbundle_chart_list_yAxis_' + {{indexY}} + '_height').val('{{ yAxis.height|e('js') }}').change();
+					{% if yAxis.opposite == true %}
+						$('input#mc_chartbundle_chart_list_yAxis_' + {{indexY}} + '_opposite').prop('checked', true).change();
+					{% else %}
+						$('input#mc_chartbundle_chart_list_yAxis_' + {{indexY}} + '_opposite').prop('checked', false).change();
+					{% endif %}
+				{% endif %}
+			{% endfor %}
+		{% endfor %}
+
+		{% include 'chart/js/docReady.js.twig' %}
+
+		load = false;
+	</script>
+{% endblock %}

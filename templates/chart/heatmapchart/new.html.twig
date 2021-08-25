@@ -1,0 +1,73 @@
+{# Template affichant le formulaire de création d'un graphique heatmap #}
+
+{% extends "layout.html.twig" %}
+
+{% block body %}
+	{% if is_granted('ROLE_SCIENTIFIC') %}
+		{% include 'chart/form/formChart.html.twig' with {'title' : 'chart.newHighchart'|trans(), 'typeChart': 'heatmapchart'} %}
+	{% endif %}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+    <script type="text/javascript" src="/js/Chart/heatmapscript.js"></script>
+    <script type="text/javascript" src="/js/Chart/yaxis.js"></script>
+    <script type="text/javascript" src="/js/Chart/highcharts.js"></script>
+    <script type="text/javascript" src="/js/Chart/highcharts-more.js"></script>
+    <script type="text/javascript" src="/js/Chart/boost.js"></script>
+    <script type="text/javascript" src="/js/Chart/heatmap.js"></script>
+    <script type="text/javascript" src="/js/Chart/heatmapchart.js"></script>
+
+	{% include 'chart/js/iframe.js.twig' with {'typeChart': 'heatmapchart'} %}	
+
+	<script type="text/javascript">
+		{% block document_ready %}
+			$('#submitbtn').click(function (e) {
+			    if (e.target) {
+			        $("form")[0].submit();
+			    }
+			});
+		{% endblock %}
+
+		{% include 'chart/js/createChart.js.twig' %}
+
+		load = false;
+
+		var typeXAxis = $('select#mc_chartbundle_chart_xAxisType');
+		options.xAxis.type = getTypeAxis($(typeXAxis).val());
+		options.chart.heatmap = true;
+		options.chart.type = 'heatmap';
+		options.colorAxis = {
+			stops: colorJet,
+    		labels: {
+    			format: '{value}'
+    		}
+		};
+
+		/* Creation du chart */
+		var chart = new Highcharts.Chart(options);
+		chart.yAxis[0].remove();
+
+		$(typeXAxis).change(function() {
+			var axis = $('#container').highcharts().xAxis[0];
+			updateTypeAxis(this, axis);
+		});
+
+		$(creditsDisplay).on('click', function(e) {
+			if (e.target) {
+		        $("form").submit(function (ev) {
+					ev.preventDefault();
+				});
+		    }
+		});
+
+		$('#container').css('width', (chart.chartWidth + 3));
+
+		/* Ajout de la fonctionnalité drag'n drop au graphique */
+		$('#container').append('<img id="drag" src="{{ asset("img/drag\'n drop.png") }}" />');
+		$("#container").draggable({ handle: "#drag" });
+
+		{% include 'chart/js/docReady.js.twig' %}
+	</script>
+{% endblock %}
