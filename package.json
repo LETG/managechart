@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "bootstrap": "^3.4.1",
-    "datatables.net": "1.10.15",
+    "datatables.net": "^1.10.22",
     "jquery": "2.2.4"
   }
 }
