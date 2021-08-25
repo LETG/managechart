@@ -18,10 +18,10 @@ import './styles/dataTables.bootstrap.min.css';
 
 const $ = require('jquery');
 global.$ = global.jQuery = global.jquery = $;
-import 'bootstrap';
+import './js/jquery-ui.min.js';
 const Cookies = require('./js/js.cookie.js');
 global.Cookies = Cookies;
-import './js/jquery-ui.min.js';
+import 'bootstrap';
 import './js/navColor.js';
 const toastr = require('./js/toastr.min.js');
 global.toastr = toastr;
