@@ -37,7 +37,7 @@ class DataList
      * @var \DateTime
      *
      * @ORM\Column(name="dateData", type="datetime")
-     * @Assert\DateTime()
+     * @Assert\Type("\DateTimeInterface")
      */
     private $dateData;
 

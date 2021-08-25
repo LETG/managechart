@@ -4,11 +4,13 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use App\Bdd\Controller\Bdd;
 use App\Entity\DataList;
-use Mc\DataListBundle\Form\Type\DataListType;
-use Mc\BddBundle\Controller\Bdd;
 use App\Entity\DataSource;
+use App\Form\DataListType;
 
 class DataListController extends AbstractController
 {
@@ -25,15 +27,14 @@ class DataListController extends AbstractController
     /**
      * @isGranted("ROLE_SCIENTIFIC_PLUS")
      */
-    public function new() {
+    public function new(Request $request, TranslatorInterface $translator) {
         $dataList = new DataList();
-        $form = $this->createForm(new DataListType, $dataList);
+        $form = $this->createForm(DataListType::class, $dataList);
 
-        $request = $this->get('request');
         if ($request->getMethod() == 'POST') {
-            $form->bind($request);
+            $form->handleRequest($request);
 
-            if ($form->isValid()) {
+            if ($form->isSubmitted() && $form->isValid()) {
                 /* Enregistrement de la dataList seul -> Generation d'un id
                    Enregistrement des attributs spatiaux correspondant */
                 $attributsSpatiaux = $dataList->getAttributsSpatiaux()->toArray();
@@ -56,7 +57,6 @@ class DataListController extends AbstractController
                 return $this->redirect($this->generateUrl('data_list_registration_confirmed', array('id' =>$dataList->getId())));
             }
         }
-        $translator = $this->get('translator');
 
         $jsTranslate = array(
             'formAttributes_add'    => $translator->trans('formAttributes.add'),
@@ -65,7 +65,7 @@ class DataListController extends AbstractController
             'spatialAttribute'      => $translator->trans('spatialAttribute')
         );
 
-        return $this->render('McDataListBundle:DataList:form.html.twig', array(
+        return $this->render('data_list/form.html.twig', array(
             'form'                  => $form->createView(),
             'listMsgGetTimestamp'   => Bdd::getMsgTimestamp(),
             'title'                 => $translator->trans('datalist.new'),
@@ -78,7 +78,7 @@ class DataListController extends AbstractController
      * Retourne un DataList pour test
      */
     protected function getDataList($idDatasource, $request, $attributsSpatiaux, $test) {
-        $repository = $this->getDoctrine()->getRepository('McDataSourcesBundle:DataSource');
+        $repository = $this->getDoctrine()->getRepository(DataSource::class);
 
         $dataSource = $repository->find($idDatasource);
 
@@ -153,7 +153,7 @@ class DataListController extends AbstractController
      * @isGranted("ROLE_SCIENTIFIC_PLUS")
      */
     public function confirmed(DataList $dataList) {
-        return $this->render('McDataListBundle:DataList:confirmed.html.twig', array('dataList' => $dataList));
+        return $this->render('data_list/confirmed.html.twig', array('dataList' => $dataList));
     }
 
     /**
@@ -170,7 +170,7 @@ class DataListController extends AbstractController
     /**
      * @isGranted("ROLE_SCIENTIFIC_PLUS")
      */
-    public function edit(DataList $dataList) {
+    public function edit(Request $request, TranslatorInterface $translator,  DataList $dataList) {
         $attributsSpatiaux = $dataList->getAttributsSpatiaux()->toArray();//array_reverse($dataList->getAttributsSpatiaux()->toArray());
 
         $em = $this->getDoctrine()->getManager();
@@ -179,13 +179,12 @@ class DataListController extends AbstractController
         }
         $dataList->getAttributsSpatiaux()->clear();
 
-        $form = $this->createForm(new DataListType, $dataList);
-        $request = $this->get('request');
+        $form = $this->createForm(DataListType::class, $dataList);
 
         if ($request->getMethod() == 'POST') {
-            $form->bind($request);
+            $form->handleRequest($request);
 
-            if ($form->isValid()) {
+            if ($form->isSubmitted() && $form->isValid()) {
                 /* Enregistrement de la dataList seul -> Generation d'un id
                    Enregistrement des attributs spatiaux correspondant */
                 $attributsSpatiaux = $dataList->getAttributsSpatiaux()->toArray();
@@ -204,7 +203,6 @@ class DataListController extends AbstractController
                 return $this->redirect($this->generateUrl('data_list_registration_confirmed', array('id' => $dataList->getId())));
             }
         }
-        $translator = $this->get('translator');
 
         $jsTranslate = array(
             'formAttributes_add'    => $translator->trans('formAttributes.add'),
@@ -213,7 +211,7 @@ class DataListController extends AbstractController
             'spatialAttribute'      => $translator->trans('spatialAttribute')
         );
 
-        return $this->render('McDataListBundle:DataList:form.html.twig', array(
+        return $this->render('data_list/form.html.twig', array(
             'form'                  => $form->createView(),
             'listMsgGetTimestamp'   => Bdd::getMsgTimestamp(),
             'title'                 => $translator->trans('datalist.edit'),
@@ -227,7 +225,7 @@ class DataListController extends AbstractController
      * @isGranted("ROLE_SCIENTIFIC_PLUS")
      */
     public function show(DataList $dataList) {
-        return $this->render('McDataListBundle:DataList:show.html.twig', array('dataList' => $dataList));
+        return $this->render('data_list/show.html.twig', array('dataList' => $dataList));
     }
 
     /**

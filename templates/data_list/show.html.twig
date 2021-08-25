@@ -1,0 +1,165 @@
+{# template d'affichage d'un dataList #}
+
+{% extends "layout.html.twig" %}
+
+{% block body %}
+	{% if is_granted('ROLE_SCIENTIFIC_PLUS') %}
+		<header class="page-header">
+	   		<h1>
+	   			{{ dataList.nameData }}
+	   			<div class="pull-right">
+	   				<a class="btn btn-primary" href="{{ path('data_list_edit', {'id': dataList.id}) }}" title="DataList">{{ 'button.edit'|trans }}</a>
+	   			</div>
+	   		</h1>
+		</header>
+
+		<div class="cssload-loader" id="loader" style="display: none">
+			<div class="cssload-inner cssload-one"></div>
+			<div class="cssload-inner cssload-two"></div>
+			<div class="cssload-inner cssload-three"></div>
+		</div>
+
+		<table class="table table-striped">		
+			<tbody>
+				<tr>
+					<td>{{ 'datalist.table.titlecolumn.id'|trans() }}</td>
+					<td>{{ dataList.id }}</td>
+				</tr>
+				<tr>
+					<td>{{ 'datalist.table.titlecolumn.nameData'|trans() }}</td>
+					<td>{{ dataList.nameData }}<input type="text" id="mc_datalistbundle_datalist_nameData" style="display: none" value="{{ dataList.nameData }}"></input></td>
+				</tr>
+				<tr>
+					<td>{{ 'datalist.table.titlecolumn.nameBDD'|trans() }}</td>
+					<td>{{ dataList.dataSource.nameBDD }}<select id="mc_datalistbundle_datalist_dataSource" style="display: none"><option selected="selected" value="{{ dataList.dataSource.id }}">{{ dataList.dataSource.namecon }} - {{ dataList.dataSource.nameBDD }} - {{ dataList.dataSource.typestrbdd }}</option></select></td>
+				</tr>				
+				<tr>
+					<td>{{ 'datalist.table.titlecolumn.dateData'|trans() }}</td>
+					<td>{{ dataList.dateData|date('Y/m/d') }}</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<textarea id="mc_datalistbundle_datalist_requestData" rows="10" cols="100" style="display: none" readonly>{{ dataList.requestData }}</textarea>
+
+		<table class="table table-bordered table-striped">
+			<tbody>
+				{% set index = 0 %}
+					{% for attributSpatial in dataList.attributsSpatiaux|reverse %} {# ajout du reverse #}
+						<tr>
+							<td>{{ 'datalist.table.label.attributSpatial.num'|trans() }}{{ (index +1) }}</td>
+							<td><b>{{ 'datalist.table.label.attributSpatial.name'|trans() }} </b> : {{ attributSpatial.nameAttribut }}</td>
+							<td><b>{{ 'datalist.table.label.attributSpatial.value'|trans() }} </b> : {{ attributSpatial.valueAttribut }}</td>
+							<td><b>{{ 'datalist.table.label.attributSpatial.keyword'|trans() }} </b> : {{ attributSpatial.keywordAttribut }}</td>
+						</tr>
+						{% set index = index + 1 %}
+				{% endfor %}
+			</tbody>
+		</table>
+
+		<div id="container_attribut"></div>
+
+		<div class="form-group">
+    		<div class="col-sm-offset-2 col-sm-9">
+				<button id="apercu" onClick="apercuReq()" class="btn btn-primary">{{ 'formDataList.apercu'|trans }}</button>				
+				{# icone chargement pour export csv #}
+				<input type="hidden" id="img_path" value="{{ asset('img/chargement.gif') }}"> 
+			</div>
+    	</div>
+
+    	<br/>
+    	<br/>
+    	<br/>
+
+		<div id="containerQuery"></div>		
+
+	{% endif %}
+{% endblock body %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+    <script type="text/javascript" src="/js/widearea.min.js"></script>
+    <script type="text/javascript" src="/js/DataList/testQuery.js"></script>
+    <script type="text/javascript" src="/js/DataList/exportcsv.js"></script>
+
+	<script type="text/javascript">
+		wideArea();
+
+		var info = '{{ 'paginate.info'|trans() }}';
+		var lengthMenu = '{{ 'paginate.lengthMenu'|trans() }}';
+		var searchPlaceholder = '{{ 'paginate.searchPlaceholder'|trans() }}';
+
+		var paginate = [info, lengthMenu, searchPlaceholder];
+		
+		{% block document_ready %}			
+			$('#apercu').click(function (e) {
+			    if (e.target) {
+			        $("form").submit(function (ev) {
+						ev.preventDefault();
+					});
+			    }
+			});
+
+			function apercuReq() {
+				console.log('Demande d\'apercu.');
+
+				$('#containerQuery').addClass('testBrut');
+				var request = $('textarea#mc_datalistbundle_datalist_requestData').val();
+
+				var attributsSpatiauxInitialises = false;
+				
+				// On initialise directement les attributs spatiaux ici si il y en a
+				{% if dataList.attributsSpatiaux is not empty %}
+					attributsSpatiauxInitialises = '';
+					{% for attributSpatial in dataList.attributsSpatiaux|reverse %} {# ajout du reverse #}
+						attributsSpatiauxInitialises = attributsSpatiauxInitialises +
+						'{{ attributSpatial.nameAttribut }}' + '@' +
+						'{{ attributSpatial.valueAttribut }}' + '@' +
+						'{{ attributSpatial.typeAttribut }}' + '@' +
+						'{{ attributSpatial.keywordAttribut }}' + ',';
+					{% endfor %}
+					attributsSpatiauxInitialises = attributsSpatiauxInitialises.substring(0, attributsSpatiauxInitialises.length - 1);
+				{% endif %}
+
+				/* Test si la requete est un SELECT */
+				var regexSelect = /^select/i;
+				var isSelect = regexSelect.test(request);
+
+				if (isSelect == false) {
+					console.log('La requete n\'est pas un SELECT');
+					toastr.error('{{ 'test.qb.select.description'|trans() }}', '{{ 'test.qb.select.name'|trans() }}');
+				} else {
+					console.log('La requete est un SELECT');
+
+					/* On test si la requete est un SELECT * FROM */
+					var regexAllSelect = /^select\ ([\*])\ from/i;
+					var isAllSelect = regexAllSelect.test(request);
+
+					if (isAllSelect == false) {
+						console.log('La requete n\'est pas un SELECT * FROM');
+
+						/* On test si la requete contient au moins trois parametre */
+						var regexNbParam = /^select(\ |\n)*([\w\d\sàâçéèêëîïôùûüÿ\(\)\=\*\-\+\/\<\>\\\.\'\"\_\:\,]+),\ ?([\w\d\sàâçéèêëîïôùûüÿ\(\)\=\*\-\+\/\<\>\\\.\'\"\_\:\,]+),\ ?(\n.*)*([\w\d\sàâçéèêëîïôùûüÿ\(\)\=\*\-\+\/\<\>\\\.\'\"\_\:\,]+)\ ?from/im;
+						var hasNbParam = regexNbParam.test(request);
+
+						if (hasNbParam == false) {
+							console.log('La requete ne contient pas le nombre minimun de parametre requis');
+							toastr.warning('{{ 'test.qb.select.nbParam'|trans() }}', '{{ 'test.qb.select.warning'|trans() }}');
+
+							console.log('Appel de la fonction query()');
+							query('{{ path('data_list_query_brut') }}', request, paginate, attributsSpatiauxInitialises);
+						} else {
+							console.log('Appel de la fonction query()');
+							query('{{ path('data_list_query_brut') }}', request, paginate, attributsSpatiauxInitialises);
+						}
+					} else {
+						console.log('La requete est un SELECT * FROM, appel de la fonction query()');
+						query('{{ path('data_list_query_brut') }}', request, paginate, attributsSpatiauxInitialises);
+					}
+				}
+			}
+		{% endblock %}
+		
+	</script>
+{% endblock %}

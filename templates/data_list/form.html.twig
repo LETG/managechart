@@ -1,0 +1,200 @@
+{# Formulaire de creation/edition d'une dataList #}
+
+{% extends "layout.html.twig" %}
+
+{% block body %}
+	{% if is_granted('ROLE_SCIENTIFIC_PLUS') %}
+		<header class="page-header">
+	   		<h1>{{ title }}</h1>
+		</header>
+
+		<div class="cssload-loader" id="loader" style="display: none">
+			<div class="cssload-inner cssload-one"></div>
+			<div class="cssload-inner cssload-two"></div>
+			<div class="cssload-inner cssload-three"></div>
+		</div>
+
+		{{ form_start(form, {'attr': {'class': 'form-horizontal', 'id': 'mc_datalistbundle_datalist'}}) }}
+
+		{{ form_errors(form) }}
+
+		<div class="form-group">
+			{{ form_label(form.nameData, 'formDataList.name'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+			{{ form_errors(form.nameData) }}
+			<div class="col-md-4">
+	        	{# Génération de l'input. #}
+	        	{{ form_widget(form.nameData, {'attr': {'class': 'form-control'}}) }}
+      		</div>
+    	</div>
+
+    	<div class="form-group">
+			{{ form_label(form.dataSource, 'formDataList.dataSource'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+			{{ form_errors(form.dataSource) }}
+			<div class="col-md-4">
+	        	{# Génération de l'input. #}
+	        	{{ form_widget(form.dataSource, {'attr': {'class': 'form-control'}}) }}
+      		</div>
+    	</div>
+
+    	<div class="form-group">
+			{{ form_label(form.requestData, 'formDataList.request'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+			{{ form_errors(form.requestData) }}
+			<div class="col-md-4">
+	        	{# Génération de l'input. #}
+	        	{{ form_widget(form.requestData, {'attr': {'class': 'form-control', 'data-widearea': 'enable'}}) }}
+      		</div>
+      		<div class="col-md-5" id="helpbox">
+				<ul>
+					{{ 'formDataList.help.format'|trans }}
+					<li>{{ 'formDataList.help.field1'|trans }}</li>
+					<li>{{ 'formDataList.help.field2'|trans }}</li>
+					<li>{{ 'formDataList.help.field3'|trans }}</li>
+					<li><i>{{ 'formDataList.help.field4'|trans }}</i></li>
+					<br />
+				</ul>
+				<ul>
+				{{ 'formDataList.help.type'|trans }}<br />
+				</ul>
+				<ul>
+				{{ 'formDataList.help.unix_timestamp'|trans }} <a href="http://www.unixtimestamp.com/index.php">UNIX TIMESTAMP</a>
+					{% for msgGetTimestamp in listMsgGetTimestamp %}
+						<li>{{ msgGetTimestamp }}</li>
+					{% endfor %}
+					<br />
+					<b>{{ 'formDataList.help.js_unix_timestamp'|trans }}</b>
+					<br />
+					<a href="https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Objets_globaux/Date">JavaScript Date class</a>
+				</ul>
+      		</div>
+    	</div>
+
+    	<div id="prototype_attributSpatial" data-prototype='{% include 'data_list/formImbriqueAttributSpatial.html.twig' %}'></div>
+
+    	<div id="container_attribut"></div>
+
+    	<div class="form-group">
+    		<div class="col-sm-offset-2 col-sm-9">
+				<button id="apercu" onClick="apercuReq()" class="btn btn-primary">{{ 'formDataList.apercu'|trans }}</button>
+				<button id="ajout_attributSpatial" onClick="addAttributes()" class="btn btn-info">{{ 'formAttributes.add'|trans }}</button>
+				<input class="btn btn-primary pull-right" type="submit" id="submitbtn" value="{{ 'formDataList.submit'|trans }}" />
+				{# icone chargement pour export csv #}
+				<input type="hidden" id="img_path" value="{{ asset('img/chargement.gif') }}"> 
+			</div>
+    	</div>
+
+    	<div class="form-group">
+    		{{ form_widget(form.attributsSpatiaux) }}
+		</div>
+
+		{{ form_end(form) }}
+
+		<div id="containerQuery"></div>
+	{% endif %}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+    <script type="text/javascript" src="/js/widearea.min.js"></script>
+    <script type="text/javascript" src="/js/DataList/attributSpatial.js"></script>
+    <script type="text/javascript" src="/js/DataList/testQuery.js"></script>
+    <script type="text/javascript" src="/js/DataList/exportcsv.js"></script>
+
+	<script type="text/javascript">
+		wideArea();
+
+		var info = '{{ 'paginate.info'|trans() }}';
+		var lengthMenu = '{{ 'paginate.lengthMenu'|trans() }}';
+		var searchPlaceholder = '{{ 'paginate.searchPlaceholder'|trans() }}';
+
+		var paginate = [info, lengthMenu, searchPlaceholder];
+		
+		{% if (edit) %}
+			var index = 0;
+			{% for attributSpatial in attributsSpatiaux|reverse %}
+				var attributsSpatiaux = $($('#prototype_attributSpatial').attr('data-prototype')
+								.replace(/__name__/g, (index + 1)));
+				$('#container_attribut').prepend(attributsSpatiaux);
+
+				$('input#mc_datalistbundle_datalist_attributsSpatiaux_' + (index + 1) + '_nameAttribut').val('{{ attributSpatial.nameAttribut }}');
+				$('input#mc_datalistbundle_datalist_attributsSpatiaux_' + (index + 1) + '_valueAttribut').val('{{ attributSpatial.valueAttribut }}');
+				$('select#mc_datalistbundle_datalist_attributsSpatiaux_' + (index + 1) + '_typeAttribut').val('{{ attributSpatial.typeAttribut }}');
+				$('select#mc_datalistbundle_datalist_attributsSpatiaux_' + (index + 1) + '_keywordAttribut').val('{{ attributSpatial.keywordAttribut }}');
+
+				index++;
+			{% endfor %}
+		{% endif %}
+
+		{% block document_ready %}
+			$('#ajout_attributSpatial').click(function (e) {
+			    if (e.target) {
+			        $("form").submit(function (ev) {
+						ev.preventDefault();
+					});
+			    }
+			});
+
+			$('#apercu').click(function (e) {
+			    if (e.target) {
+			        $("form").submit(function (ev) {
+						ev.preventDefault();
+					});
+			    }
+			});
+
+			$('#submitbtn').click(function (e) {
+			    if (e.target) {
+			        $("form")[0].submit();
+			    }
+			});
+
+			function apercuReq() {
+				console.log('Demande d\'apercu.');
+
+				$('#containerQuery').addClass('testBrut');
+				var request = $('textarea#mc_datalistbundle_datalist_requestData').val();
+				
+				// Les attributs spatiaux seront récupérés dans la fonction "query" (js/DataList/testQuery.js) donc on ne les initialise pas ici
+				var attributsSpatiauxInitialises = false;
+
+				/* Test si la requete est un SELECT */
+				var regexSelect = /^select/i;
+				var isSelect = regexSelect.test(request);
+
+				if (isSelect == false) {
+					console.log('La requete n\'est pas un SELECT');
+					toastr.error('{{ 'test.qb.select.description'|trans() }}', '{{ 'test.qb.select.name'|trans() }}');
+				} else {
+					console.log('La requete est un SELECT');
+
+					/* On test si la requete est un SELECT * FROM */
+					var regexAllSelect = /^select\ ([\*])\ from/i;
+					var isAllSelect = regexAllSelect.test(request);
+
+					if (isAllSelect == false) {
+						console.log('La requete n\'est pas un SELECT * FROM');
+
+						/* On test si la requete contient au moins trois parametre */
+						var regexNbParam = /^select(\ |\n)*([\w\d\sàâçéèêëîïôùûüÿ\(\)\=\*\-\+\/\<\>\\\.\'\"\_\:\,]+),\ ?([\w\d\sàâçéèêëîïôùûüÿ\(\)\=\*\-\+\/\<\>\\\.\'\"\_\:\,]+),\ ?(\n.*)*([\w\d\sàâçéèêëîïôùûüÿ\(\)\=\*\-\+\/\<\>\\\.\'\"\_\:\,]+)\ ?from/im;
+						var hasNbParam = regexNbParam.test(request);
+
+						if (hasNbParam == false) {
+							console.log('La requete ne contient pas le nombre minimun de parametre requis');
+							toastr.warning('{{ 'test.qb.select.nbParam'|trans() }}', '{{ 'test.qb.select.warning'|trans() }}');
+
+							console.log('Appel de la fonction query()');
+							query('{{ path('data_list_query_brut') }}', request, paginate, attributsSpatiauxInitialises);
+						} else {
+							console.log('Appel de la fonction query()');
+							query('{{ path('data_list_query_brut') }}', request, paginate, attributsSpatiauxInitialises);
+						}
+					} else {
+						console.log('La requete est un SELECT * FROM, appel de la fonction query()');
+						query('{{ path('data_list_query_brut') }}', request, paginate, attributsSpatiauxInitialises);
+					}
+				}
+			}
+		{% endblock %}
+		
+	</script>
+{% endblock %}

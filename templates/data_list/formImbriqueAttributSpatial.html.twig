@@ -1,0 +1,41 @@
+{% set form = form.attributsSpatiaux.vars.prototype %}
+
+<div class="attributSpatial">
+	<div class="form-group">
+		<label class="col-sm-2 col-md-2 control-label">{{ 'formAttributes.label'|trans() }} __name__</label>
+
+		{{ form_label(form.nameAttribut, 'formAttributes.name'|trans(), {'label_attr': {'class': 'col-md-1 control-label'}}) }}
+		{{ form_errors(form.nameAttribut) }}
+		<div class="col-md-3">
+	    	{# Génération de l'input. #}
+	    	{{ form_widget(form.nameAttribut, {'attr': {'class': 'form-control'}}) }}
+		</div>
+
+		{{ form_label(form.valueAttribut, 'formAttributes.value'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+		{{ form_errors(form.valueAttribut) }}
+		<div class="col-md-3">
+	    	{# Génération de l'input. #}
+	    	{{ form_widget(form.valueAttribut, {'attr': {'class': 'form-control'}}) }}
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-md-2">
+			<button onClick="removeAttribut(this)" class="btn btn-danger pull-right">{{ 'formAttributes.delete'|trans }}</button>
+		</label>
+
+		{{ form_label(form.typeAttribut, 'formAttributes.type'|trans(), {'label_attr': {'class': 'col-md-1 control-label'}}) }}
+		{{ form_errors(form.typeAttribut) }}
+		<div class="col-md-3">
+	    	{# Génération de l'input. #}
+	    	{{ form_widget(form.typeAttribut, {'attr': {'class': 'form-control'}}) }}
+		</div>
+
+		{{ form_label(form.keywordAttribut, 'formAttributes.keyword'|trans(), {'label_attr': {'class': 'col-md-2 control-label'}}) }}
+		{{ form_errors(form.keywordAttribut) }}
+		<div class="col-md-3">
+	    	{# Génération de l'input. #}
+	    	{{ form_widget(form.keywordAttribut, {'attr': {'class': 'form-control'}}) }}
+		</div>
+	</div>
+</div>
