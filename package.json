@@ -18,6 +18,6 @@
   "dependencies": {
     "bootstrap": "^3.4.1",
     "datatables.net": "^1.10.22",
-    "jquery": "2.2.4"
+    "jquery": "^3.0.0"
   }
 }
