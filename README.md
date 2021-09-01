@@ -38,6 +38,10 @@ $ yarn run build
 The default database configuration can be found in the `.env` file, under the
 `DATABASE_URL` variable.
 
+Migration
+```
+php bin/console doctrine:migrations:migrate
+```
 ## Launching a local server for development
 
 ```
