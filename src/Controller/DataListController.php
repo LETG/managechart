@@ -103,7 +103,7 @@ class DataListController extends AbstractController
     /**
      * @isGranted("ROLE_SCIENTIFIC_PLUS")
      */
-    public function queryBrut() {
+    public function queryBrut(TranslatorInterface $translator) {
         $idDatasource = $_POST['dataSource'];
         $request = $_POST['request'];
         $attributsSpatiaux = $_POST['attributsSpatiaux'];
@@ -125,7 +125,7 @@ class DataListController extends AbstractController
 
         $fields = $dataList->getFields();
         $listData = $dataList->getData();
-        $button = $this->get('translator')->trans('request.button');
+        $button = $translator->trans('request.button');
 
         $html = '<div style="margin-bottom:10px"><button class="btn btn-default" id="btncsvExp" type="button">' . $button . '</button></div>';
         $html .= '<table class="table table-striped"><thead><tr>';
