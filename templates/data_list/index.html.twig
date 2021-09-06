@@ -33,11 +33,11 @@
 								<span class="glyphicon glyphicon-pencil"></span>
 							</a>
 							{# Lien de duplication #}
-							<a class="tablebtn btn btn-primary btn-sm" href="{{ path('data_list_duplicate', {'id': dataList.id}) }}" title="Duplicate" onClick="return confirmeDelete(event, '{{ 'datalist.table.duplicate.msgconfirm'|trans({'nameData': dataList.nameData}) }}')">
+							<a class="tablebtn btn btn-primary btn-sm" href="{{ path('data_list_duplicate', {'id': dataList.id}) }}" title="Duplicate" onClick="return confirmeDelete(event, '{{ 'datalist.table.duplicate.msgconfirm'|trans({'%nameData%': dataList.nameData}) }}')">
 								<span class="glyphicon glyphicon-duplicate"></span>
 							</a>
 							{# Lien de suppression avec confirmation #}
-							<a class="tablebtn btn btn-danger btn-sm" href="{{ path('data_list_delete', {'id': dataList.id}) }}" title="Delete" onClick="return confirmeDelete(event, '{{ 'datalist.table.delete.msgconfirm'|trans({'nameData': dataList.nameData}) }}')">
+							<a class="tablebtn btn btn-danger btn-sm" href="{{ path('data_list_delete', {'id': dataList.id}) }}" title="Delete" onClick="return confirmeDelete(event, '{{ 'datalist.table.delete.msgconfirm'|trans({'%nameData%': dataList.nameData}) }}')">
 								<span class="glyphicon glyphicon-trash"></span>
 							</a>
 						</td>
