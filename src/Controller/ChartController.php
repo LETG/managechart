@@ -91,10 +91,10 @@ class ChartController extends AbstractController
         $form = $this->createForm(ChartType::class, $chart);
 
         if ($request->getMethod() == 'POST') {
-            $form->bind($request);
-            if ($form->isValid()) {
-            $this->register($chart, false);
-            return $chart;
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $this->register($chart, false);
+                return $chart;
             }
         }
 
@@ -133,10 +133,10 @@ class ChartController extends AbstractController
         $form = $this->createForm(ChartType::class, $chart);
 
         if ($request->getMethod() == 'POST') {
-            $form->bind($request);
-            if ($form->isValid()) {
-            $this->register($chart, true);
-            return $chart;
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $this->register($chart, true);
+                return $chart;
             }
         }
 
