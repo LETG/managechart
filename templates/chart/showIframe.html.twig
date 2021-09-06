@@ -38,6 +38,7 @@
         {% include 'chart/js/iframe.js.twig' with {'typeChart': chart.typeChart} %}
 
         {% block javascripts %}
+            <script src="{{ asset('js/Chart/color.js') }}"></script>
             {{ encore_entry_script_tags('chart') }}
         {% endblock %}
 
