@@ -1,0 +1,17 @@
+{# template affichant un message "chart bien enregistre" #}
+
+{% extends "layout.html.twig" %}
+
+{% block body %}
+	{% if is_granted('ROLE_SCIENTIFIC') %}
+		<p>{{ 'chart.registration.confirmed'|trans({'%nameChart%': chart.nameChart}, 'messages') }}</p>
+	{% endif %}
+{% endblock body %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+	<script type="text/javascript">
+		window.setTimeout("window.location.assign('{{ path('index2', {'_locale' : app.request.locale}) }}')");
+	</script>
+{% endblock %}
