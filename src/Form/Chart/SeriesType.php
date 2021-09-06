@@ -48,7 +48,7 @@ class SeriesType extends AbstractType
             ->add('typeSerie',      ChoiceType::class,   array(
                 'label' => 'formSerie.type',
                 //'placeholder' => 'Choisir une option',
-                'choices' => AvailableTypeSerie::$typesSerie
+                'choices' => array_flip(AvailableTypeSerie::$typesSerie),
             ))
     		->add('colorSerie',		ChoiceType::class,	array(
     			'label' => 'formSerie.color',
@@ -60,7 +60,7 @@ class SeriesType extends AbstractType
     		))
     		->add('dashStyleSerie',	ChoiceType::class,	array(
     			'label' => 'formSerie.dashStyle',
-    			'choices' => AvailableDashStyleSerie::$dashStyleSerie
+    			'choices' => array_flip(AvailableDashStyleSerie::$dashStyleSerie)
     		))        
             ->add('yaxisOrder',      TextType::class,     array(
                 'label' => 'formSerie.yaxisOrder',
@@ -94,7 +94,7 @@ class SeriesType extends AbstractType
     			$form
     				->add('parameterDataList',	ChoiceType::class,	array(
     					'label' => 'formSerie.parameter',
-    					'choices' => $parameter
+    					'choices' => array_flip($parameter)
     				));
     		} else {
     			$form

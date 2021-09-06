@@ -83,7 +83,7 @@ class ChartType extends AbstractType
     		$builder
                 ->add('xAxisType',      ChoiceType::class,   array(
                     'label' => 'formChart.xAxisType',
-                    'choices' => AvailableTypeAxis::$typesAxis,
+                    'choices' => array_flip(AvailableTypeAxis::$typesAxis),
                     'choice_translation_domain' => true,
                 ))
                 ->add('invertedChart',  CheckboxType::class, array(
@@ -92,7 +92,7 @@ class ChartType extends AbstractType
                 ))
                 ->add('typestacked',      ChoiceType::class,   array(
                     'label' => 'formChart.typestacked',
-                    'choices' => AvailableTypeSerie::$typesStack,
+                    'choices' => array_flip(AvailableTypeSerie::$typesStack),
                     'placeholder' => 'Choisir une option',
                     'required' => false,
                     'choice_translation_domain' => true,
@@ -103,7 +103,7 @@ class ChartType extends AbstractType
                 $builder
                  ->add('xAxisType',      ChoiceType::class,   array(
                     'label' => 'formChart.xAxisType',
-                    'choices' => AvailableTypeAxis::$typesAxis,
+                    'choices' => array_flip(AvailableTypeAxis::$typesAxis),
                     'choice_translation_domain' => true,
                 ))
                 ->add('invertedChart',  CheckboxType::class, array(
@@ -117,7 +117,7 @@ class ChartType extends AbstractType
             $builder
                 ->add('xAxisType',      ChoiceType::class,   array(
                     'label' => 'formChart.xAxisType',
-                    'choices' => AvailableTypeAxis::$typesAxis,
+                    'choices' => array_flip(AvailableTypeAxis::$typesAxis),
                     'choice_translation_domain' => true
                 ))
                 ->add('invertedChart',  CheckboxType::class, array(
@@ -130,7 +130,7 @@ class ChartType extends AbstractType
             $builder
                 ->add('xAxisType',      ChoiceType::class,   array(
                     'label' => 'formChart.xAxisType',
-                    'choices' => AvailableTypeAxis::$typesAxis,
+                    'choices' => array_flip(AvailableTypeAxis::$typesAxis),
                     'choice_translation_domain' => true
                 ))
                 ->add('invertedChart',  CheckboxType::class, array(
@@ -139,7 +139,7 @@ class ChartType extends AbstractType
                 ))
                 ->add('polarType',      ChoiceType::class,   array(
                     'label' => 'formChart.polarType',
-                    'choices' => AvailablePolarType::$polarTypes,
+                    'choices' => array_flip(AvailablePolarType::$polarTypes),
                     'choice_translation_domain' => true
                 ));
         }
@@ -154,7 +154,7 @@ class ChartType extends AbstractType
             $builder
                 ->add('xAxisType',      ChoiceType::class,   array(
                     'label' => 'formChart.xAxisType',
-                    'choices' => AvailableTypeAxis::$typesAxis,
+                    'choices' => array_flip(AvailableTypeAxis::$typesAxis),
                     'choice_translation_domain' => true
                 ))
                 ->add('invertedChart',  CheckboxType::class, array(

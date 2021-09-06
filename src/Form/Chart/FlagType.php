@@ -36,11 +36,11 @@ class FlagType extends AbstractType
             ))                    
             ->add('onseries', ChoiceType::class,   array(
                 'label' => 'formFlag.onseries',
-                'choices' => AvailableNumberofSerie::$nbSerie
+                'choices' => array_flip(AvailableNumberofSerie::$nbSerie)
             ))
             ->add('shapeflag', ChoiceType::class,   array(
                 'label' => 'formFlag.shape',
-                'choices' => AvailableShapeFlag::$shapeFlag
+                'choices' => array_flip(AvailableShapeFlag::$shapeFlag)
             ))
             ->add('colorflag', ChoiceType::class,   array(
                 'label' => 'formFlag.color',
@@ -48,11 +48,11 @@ class FlagType extends AbstractType
             ))
             ->add('widthflag', ChoiceType::class,     array(
                 'label' => 'formFlag.width',
-                'choices' => AvailableWidthFlag::$widthFlag
+                'choices' => array_flip(AvailableWidthFlag::$widthFlag)
             ))
             ->add('styleflag', ChoiceType::class,   array(
                 'label' => 'formFlag.style',
-                'choices' => AvailableStyleFlag::$StyleFlag
+                'choices' => array_flip(AvailableStyleFlag::$StyleFlag)
             ))
             ->add('dataList', EntityType::class,    array(
                 'label' => 'formFlag.dataList',
@@ -80,7 +80,7 @@ class FlagType extends AbstractType
                 $form
                     ->add('parameterDataList',  ChoiceType::class,   array(
                         'label' => 'formSerie.parameter',
-                        'choices' => $parameter
+                        'choices' => array_flip($parameter)
                     ));
             } else {
                 $form
