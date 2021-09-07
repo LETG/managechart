@@ -8,6 +8,7 @@ menu:
 
 form:
   roles: Roles
+  enabled: Account enabled
 
 button:
   submit: Save
@@ -297,3 +298,48 @@ formAttributes:
 
 request:
   button: CSV export
+
+#-----------
+#  USERS
+#-----------
+
+user:
+  isconnect: "%name%"
+  disconnect: Logout
+  connect: Login
+  edit: Edit profile
+  register: New user registration
+  resetting: Reset password
+  changePassword: Change password
+  new: New user
+  username: Username
+  password: Password
+
+security:
+  login:
+    resetting: Password forgot ?
+    remember_me: Remember me
+
+userlist:
+  table:
+    titlecolumn:
+      id: id
+      username: Name
+      roles: Role
+      actions: Actions
+      lastLogin: Last login
+    label:
+      email: E-mail
+      enabled: Account enabled
+      yes: Yes
+      no: No
+    deleteuser:
+      msgconfirm: Do you really want to delete %username% ?
+
+registration:
+  confirmed: The account has been registered.
+  submit: Save
+
+userlistcontroller:
+  deleteitself:
+    msgerror: Can not delete your own account.

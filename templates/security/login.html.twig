@@ -1,9 +1,12 @@
-{% extends 'base.html.twig' %}
+{% extends 'layout.html.twig' %}
 
-{% block title %}Log in!{% endblock %}
+{% block title %}{{ 'user.connect' | trans() }}{% endblock %}
 
 {% block body %}
-<form method="post">
+<header class="page-header">
+  <h1>{{ 'user.connect' | trans() }}</h1>
+</header>
+<form class="form-horizontal" method="post">
     {% if error %}
         <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
@@ -14,30 +17,45 @@
         </div>
     {% endif %}
 
-    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-    <label for="inputUsername">Username</label>
-    <input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control" autocomplete="username" required autofocus>
-    <label for="inputPassword">Password</label>
-    <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+    <div class="form-group">
+        <label class="col-sm-2 control-label" for="inputUsername">{{ 'user.username' | trans() }}</label>
+        <div class="col-sm-5">
+            <input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control" autocomplete="username" required autofocus>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label" for="inputPassword">{{ 'user.password' | trans() }}</label>
+        <div class="col-sm-5">
+            <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+        </div>
+    </div>
 
     <input type="hidden" name="_csrf_token"
            value="{{ csrf_token('authenticate') }}"
     >
 
-    {#
-        Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
-        See https://symfony.com/doc/current/security/remember_me.html
-
-        <div class="checkbox mb-3">
-            <label>
-                <input type="checkbox" name="_remember_me"> Remember me
-            </label>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-5">
+            <div class="checkbox">
+                <label>
+                    <input id="remember_me" type="checkbox" name="_remember_me">
+                    {{ 'security.login.remember_me' | trans() }}
+                </label>
+            </div>
         </div>
-    #}
+    </div>
 
-    <button class="btn btn-lg btn-primary" type="submit">
-        Sign in
-    </button>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-5">
+            <button class="btn btn-default" type="submit">
+                Sign in
+            </button>
+        </div>
+    </div>
 </form>
-<a href="{{ path('app_forgot_password_request') }}">Mot de passe oublié ?</a>
+<div class="row">
+    <div class="col-sm-offset-2 col-sm-5">
+        <a href="{{ path('app_forgot_password_request') }}">Mot de passe oublié ?</a>
+    </div>
+</div>
 {% endblock %}

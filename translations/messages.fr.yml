@@ -6,6 +6,7 @@ menu:
 
 form:
   roles: Rôles
+  enabled: Compte activé
 
 button:
   submit: Enregistrer
@@ -318,3 +319,48 @@ formAttributes:
 
 request:
   button: Export CSV
+
+#-----------
+#  USERS
+#-----------
+
+user:
+  isconnect: "%name%"
+  disconnect: Déconnexion
+  connect: Connexion
+  edit: Édition du profil
+  register: Enregistrer un nouvel utilisateur
+  resetting: Réinitialiser le mot de passe
+  changePassword: Changer le mot de passe
+  new: Nouvel utilisateur
+  username: Nom d'utilisateur
+  password: Mot de passe
+
+security:
+  login:
+    resetting: Mot de passe oublié ?
+    remember_me: Se souvenir de moi
+
+userlist:
+  table:
+    titlecolumn:
+      id: id
+      username: Nom
+      roles: Rôle
+      actions: Actions
+      lastLogin: Dernière connexion
+    label:
+      email: E-mail
+      enabled: Compte activé
+      yes: Oui
+      no: Non
+    deleteuser:
+      msgconfirm: Voulez-vous vraiment supprimer %username% ?
+
+registration:
+  confirmed: Le compte a bien été enregistré.
+  submit: Enregistrer
+
+userlistcontroller:
+  deleteitself:
+    msgerror: Impossible de supprimer votre propre compte.
