@@ -1,22 +1,22 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Reset your password{% endblock %}
+{% block title %}{{ 'security.password_reset.title' | trans() }}{% endblock %}
 
 {% block body %}
     {% for flashError in app.flashes('reset_password_error') %}
         <div class="alert alert-danger" role="alert">{{ flashError }}</div>
     {% endfor %}
-    <h1>Reset your password</h1>
+    <header class="page-header">
+        <h1>{{ 'security.password_reset.title' | trans() }}</h1>
+    </header>
+
+    <p class="mb-3">{{ 'security.password_reset.body' | trans() }}</p>
 
     {{ form_start(requestForm) }}
-        {{ form_row(requestForm.email) }}
-        <div>
-            <small>
-                Enter your email address and we we will send you a
-                link to reset your password.
-            </small>
+        <div class="form-group">
+            {{ form_row(requestForm.email) }}
         </div>
 
-        <button class="btn btn-primary">Send password reset email</button>
+        <button class="btn btn-primary">{{ 'security.password_reset.send_reset_email' | trans() }}</button>
     {{ form_end(requestForm) }}
 {% endblock %}
