@@ -101,7 +101,7 @@
                         enabled: {% if chart.legendChart == true %} true {% else %} false {% endif %},
                     },
                     exporting:{
-                        filename: '{{ chart.titleChart|e('js') }}',
+                        filename: '{{ chart.nameChart|e('js') }}',
                         chartOptions: {
                             legend: {
                                 itemWidth: 250,
@@ -160,12 +160,12 @@
                     {% endif %}
                     tooltip: {
                         style: {
-                            color: '#303030',
+                            /*color: '#303030',
                             fontSize: '12px',
                             fontWeight: 'normal',
                             fontFamily: 'Serif',
                             fontSizeAdjust: '0.70',
-                            padding: '8px',
+                            padding: '8px',*/
                         },
                         valueDecimals: 2,
                         xDateFormat: {% if app.request.locale == 'fr' %} '%d/%m/%Y' {% else %} '%Y/%m/%d' {% endif %} + ' %H:%M:%S',
