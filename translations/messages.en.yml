@@ -42,12 +42,12 @@ chart:
       piechart: Pie
       heatmapchart: Heatmap
     delete:
-      msgconfirm: Do you really want to delete {nameChart} ?
+      msgconfirm: Do you really want to delete %nameChart% ?
     duplicate:
-      msgconfirm: Do you want to duplicate {nameChart} ?
+      msgconfirm: Do you want to duplicate %nameChart% ?
   newHighchart: New chart
   registration:
-    confirmed: "{nameChart} has been registered"
+    confirmed: "%nameChart% has been registered"
   editHighchart: Edit
   newHighstock: New time chart
   copy: Copied
@@ -200,7 +200,7 @@ datasources:
       dateBDD: Date
       actions: Actions
     delete:
-      msgconfirm: Do you want to delete {nameBDD} ?
+      msgconfirm: Do you want to delete %nameCon% ?
     label:
       host: Host
       port: Port
@@ -253,9 +253,9 @@ datalist:
       dateData: Date
       actions: Actions
     delete:
-      msgconfirm: Do you want to delete {nameData} ?
+      msgconfirm: Do you want to delete %nameData% ?
     duplicate:
-      msgconfirm: Do you want to duplicate {nameData} ?
+      msgconfirm: Do you want to duplicate %nameData% ?
     label:
       requestData: Request
       attributSpatial:
@@ -265,7 +265,7 @@ datalist:
         keyword: Keyword
   new: New request
   registration:
-    confirmed: "{nameData} has been registered"
+    confirmed: "%nameData% has been registered"
   edit: Edit request
 
 formDataList:

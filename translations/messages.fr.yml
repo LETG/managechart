@@ -221,7 +221,7 @@ datasources:
       dateBDD: Date
       actions: Actions
     delete:
-      msgconfirm: Voulez-vous supprimer %nameBDD% ?
+      msgconfirm: Voulez-vous supprimer %nameCon% ?
     label:
       host: Hôte
       port: Port
