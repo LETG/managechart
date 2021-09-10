@@ -26,7 +26,7 @@ class YAxisType extends AbstractType
 			))
 			->add('typeYAxis', ChoiceType::class, array(
 				'label' => 'formYAxis.type',
-				'choices' => AvailableTypeAxis::$typesAxis
+				'choices' => array_flip(AvailableTypeAxis::$typesAxis)
 			))
 			->add('flag', CollectionType::class, array(
 				'label' => 'formYAxis.flag',
