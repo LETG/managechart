@@ -1,0 +1,56 @@
+{# template d'affichage de la liste des utilisateurs #}
+
+{% extends "layout.html.twig" %}
+
+{% block body %}
+	<header class="page-header">
+   		<h1>
+   			{{ 'menu.user'|trans() }}
+
+   			<div class="pull-right">
+				<a href="{{ path('user_register') }}" class="btn btn-primary btn-new">{{ 'user.new'|trans() }}</a>
+			</div>
+   		</h1>
+	</header>
+
+	{% for flashMessage in app.session.flashbag.get('deleteItSelf') %}
+		<section>
+			<div class="flash-notice">
+    			{{ flashMessage }}
+			</div>
+		</section>
+	{% endfor %}
+
+	<table class="table table-striped" id="table">
+		<thead>
+			<tr>
+				<th>{{ 'userlist.table.titlecolumn.actions'|trans() }}</th>
+				<th>{{ 'userlist.table.titlecolumn.id'|trans }}</th>
+				<th>{{ 'userlist.table.titlecolumn.username'|trans() }}</th>
+				<th>{{ 'userlist.table.titlecolumn.roles'|trans() }}</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			{% for user in listUsers %}
+				<tr onClick="document.location.href='{{ path('user_show', {'id': user.id}) }}'" onmouseover="this.className='info';" onmouseout="this.className='';">
+					<td class="tabletdbtn">
+						{# Affiche le lien d'edition de compte uniquement sur le compte de l'utilisateur connecte #}
+                        <a class="tablebtn btn btn-primary" href="{{ path('user_edit', {'id': user.id}) }}" title="Edit">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </a>
+
+						{% if user.id != app.user.id %}
+							<a 	class="tablebtn btn btn-danger" href="{{ path('user_delete', {'id': user.id}) }}" title="Delete" onClick="return confirmeDelete(event, '{{ 'userlist.table.deleteuser.msgconfirm'|trans({'%username%': user.username}) }}')">
+								<span class="glyphicon glyphicon-trash"></span>
+							</a>
+						{% endif %}
+					</td>
+					<td>{{ user.id }}</td>
+					<td>{{ user.username }}</td>
+					<td>{{ user.roles[0] }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}

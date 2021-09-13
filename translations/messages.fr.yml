@@ -345,6 +345,8 @@ security:
     email: E-mail
     send_reset_email: Envoyer l'e-mail de réinitialisation
     body: Entrez votre e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe
+  register:
+    confirm: Confirmez votre mot de passe
 
 userlist:
   table:

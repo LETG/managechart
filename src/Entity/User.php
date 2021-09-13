@@ -41,6 +41,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $email;
 
+    private $plainPassword;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -111,6 +113,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getSalt(): ?string
     {
         return null;
+    }
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword($plainPassword)
+    {
+        $this->plainPassword = $plainPassword;
     }
 
     /**

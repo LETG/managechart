@@ -324,6 +324,8 @@ security:
     email: e-mail
     send_reset_email: Send password reset email
     body:  Enter your email address and we we will send you a link to reset your password.
+  register:
+    confirm: Confirm your password
 
 userlist:
   table:

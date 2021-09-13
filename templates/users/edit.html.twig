@@ -1,0 +1,49 @@
+{# template d'affichage de la liste des utilisateurs #}
+
+{% extends "layout.html.twig" %}
+
+{% block body %}
+	<header class="page-header">
+		<h1>{{ 'user.edit'|trans({}, 'messages') }} ({{ user.username|capitalize }})</h1>
+	</header>
+
+	{{ form_start(form, {'attr': {'class': 'fos_user_profile_edit form-horizontal'}}) }}
+
+	{{ form_errors(form) }}
+
+	<div class="form-group">
+		{{ form_label(form.username, 'user.username'|trans(), {'label_attr': {'class': 'col-md-3 control-label'}}) }}
+		<div class="col-md-5">
+			{# Génération de l'input. #}
+			{{ form_widget(form.username, {'attr': {'class': 'form-control'}}) }}
+			{{ form_errors(form.username) }}
+		</div>
+	</div>
+
+	<div class="form-group">
+		{{ form_label(form.email, 'security.password_reset.email'|trans(), {'label_attr': {'class': 'col-md-3 control-label'}}) }}
+		<div class="col-md-5">
+			{# Génération de l'input. #}
+			{{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+			{{ form_errors(form.email) }}
+		</div>
+	</div>
+
+	<div class="form-group">
+		{{ form_label(form.roles, 'form.roles'|trans({}, 'messages'), {'label_attr': {'class': 'col-md-3 control-label'}}) }}
+		<div class="col-md-5">
+			{# Génération de l'input. #}
+			{{ form_widget(form.roles, {'attr': {'class': 'form-control'}}) }}
+			{{ form_errors(form.roles) }}
+		</div>
+	</div>
+
+	<div class="form-group">
+		<div class="col-sm-offset-3 col-sm-5">
+			<input class="btn btn-primary pull-right" type="submit" value="{{ 'button.submit'|trans({}, 'messages') }}" />
+		</div>
+	</div>
+
+{{ form_end(form) }}
+
+{% endblock %}
