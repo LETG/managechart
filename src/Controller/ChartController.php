@@ -60,7 +60,7 @@ class ChartController extends AbstractController
     protected static function getListDataList($manager)
     {
         $repository = $manager->getRepository(DataList::class);
-        return $repository->findAll();
+        return $repository->findBy([], ["nameData" => "ASC"]);
     }
 
     /**
