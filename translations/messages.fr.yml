@@ -340,6 +340,7 @@ security:
   login:
     resetting: Mot de passe oublié ?
     remember_me: Se souvenir de moi
+    sign_in: Se connecter
   password_reset:
     title: Réinitialiser votre mot de passe
     email: E-mail

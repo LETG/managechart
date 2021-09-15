@@ -319,6 +319,7 @@ security:
   login:
     resetting: Password forgot ?
     remember_me: Remember me
+    sign_in: Sign in
   password_reset:
     title: Reset your password
     email: e-mail
