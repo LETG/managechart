@@ -316,14 +316,14 @@ class ChartController extends AbstractController
     /**
      * @isGranted("ROLE_SCIENTIFIC_PLUS")
      */
-    public function delete(Chart $chart)
+    public function delete(Request $request, Chart $chart)
     {
         $em = $this->getDoctrine()->getManager();
 
         $em->remove($chart);
         $em->flush();
 
-        return $this->redirect($this->generateUrl('index2', array('_locale' =>$this->getRequest()->getLocale())));
+        return $this->redirect($this->generateUrl('index2', array('_locale' =>$request->getLocale())));
     }
 
     /* * * * * * * GRAPHIQUE SIMPLE * * * * * * */
