@@ -27,7 +27,7 @@ It is particularly suitable for operation with the [geoCMS](https://github.com/L
 
 ![Chart](Readme_img/Chart.PNG)
 
-**6. Embed wit iframe**
+**6. Embed with iframe**
 
 
 ```
