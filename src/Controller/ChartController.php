@@ -309,7 +309,9 @@ class ChartController extends AbstractController
             'height' => $height === "auto" ? "null" : $height,
             'attributsSpatiaux' => $attributsSpatiaux,
             'test' => $test, // Le paramètre test sert à définir si on utilise les attributs spatiaux présents dans l'URL ou ceux présent en BDD (true : BDD / false : URL)
-            'background' =>$request->get('background')
+            'background' =>$request->get('background'),
+            'axis' =>$request->get('axis'),
+            'label' =>$request->get('label')
         ));
     }
 

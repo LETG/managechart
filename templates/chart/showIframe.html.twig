@@ -198,14 +198,24 @@
                             labels: {
                                 formatter: function(){
                                     return '' + Math.exp(this.value).toFixed(2);
-                                }
+                                },
+                                style: {color: 'red'}
                             },
                         {% endif %}
                         type: {% if (chart.typeChart == 'simplechart' or chart.typeChart == 'dynamicchart' or chart.typeChart == 'polarchart' or chart.typeChart== 'heatmapchart') %}
                                   '{{ chart.xAxisType|e('js') }}'
                               {% else %}
                                   null
-                              {% endif %}
+                              {% endif %},
+                        {% if label is not null %}                     
+                        labels: {
+                            style: {color: '{{ label | e('js') }}'}
+                        },
+                        {% endif %}
+                        {% if axis is not null %}
+                            lineColor: '{{ axis | e('js') }}',
+                        {% endif %}
+                       
                     },
                     
                     
@@ -244,6 +254,14 @@
                                                 left: '{{ yAxis.top|e('js') }}',
                                                 width: '{{ yAxis.height|e('js') }}',
                                             {% endif %}
+                                        {% endif %}
+                                        {% if label is not null %}                     
+                                        labels: {
+                                            style: {color: '{{ label | e('js') }}'}
+                                        },
+                                        {% endif %}
+                                        {% if axis is not null %}
+                                            lineColor: '{{ axis | e('js') }}',
                                         {% endif %}
                                     },
                                 {% endif %}
