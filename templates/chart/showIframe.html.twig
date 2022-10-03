@@ -92,13 +92,16 @@
                         text: '{{ chart.titleChart|e('js') }}',
                         style: { 
                             fontSize: '28px',
+                            color: '{{ label | e('js') }}'
                         }
                     },
                     subtitle: {
                         text: '{{ chart.subtitleChart|e('js') }}',
+                        style: {color: '{{ label | e('js') }}'}
                     },
                     legend: {
                         enabled: {% if chart.legendChart == true %} true {% else %} false {% endif %},
+                        itemStyle: {color: '{{ label | e('js') }}'}
                     },
                     exporting:{
                         filename: '{{ chart.nameChart|e('js') }}',
@@ -192,6 +195,7 @@
                     xAxis: {
                         title: {
                             text : produceTitleWithUnit('{{ chart.xAxisTitle|e('js') }}', '{{ chart.xAxisUnit|e('js') }}'),
+                            style: {color: '{{ label | e('js') }}',fontSize: '{{ fontSize | e('js') }}'}
                         },
                         ordinal: false,
                         {% if(chart.typeChart == 'heatmapchart') %}
@@ -199,7 +203,7 @@
                                 formatter: function(){
                                     return '' + Math.exp(this.value).toFixed(2);
                                 },
-                                style: {color: 'red'}
+                                style: {color: '{{ label | e('js') }}',fontSize: '{{ fontSize | e('js') }}'}
                             },
                         {% endif %}
                         type: {% if (chart.typeChart == 'simplechart' or chart.typeChart == 'dynamicchart' or chart.typeChart == 'polarchart' or chart.typeChart== 'heatmapchart') %}
@@ -209,7 +213,7 @@
                               {% endif %},
                         {% if label is not null %}                     
                         labels: {
-                            style: {color: '{{ label | e('js') }}'}
+                            style: {color: '{{ label | e('js') }}',fontSize: '{{ fontSize | e('js') }}'}
                         },
                         {% endif %}
                         {% if axis is not null %}
@@ -232,7 +236,7 @@
                                 {% if indexY == yAxis.orderY %}
                                     {
                                         id: 'yAxis' + {{ yAxis.id|e('js') }},
-                                        title: { text: '{{ yAxis.titleYAxis|e('js') }}' },
+                                        title: { text: '{{ yAxis.titleYAxis|e('js') }}', style: {color: '{{ label | e('js') }}',fontSize: '{{ fontSize | e('js') }}'} },
                                         type: '{{ yAxis.typeYAxis|e('js') }}',
                                         {% if yAxis.opposite %}
                                             opposite: true,
@@ -257,7 +261,7 @@
                                         {% endif %}
                                         {% if label is not null %}                     
                                         labels: {
-                                            style: {color: '{{ label | e('js') }}'}
+                                            style: {color: '{{ label | e('js') }}',fontSize: '{{ fontSize | e('js') }}'}
                                         },
                                         {% endif %}
                                         {% if axis is not null %}
