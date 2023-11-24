@@ -15,17 +15,24 @@ use App\Chart\AvailableChoice\AvailableColorSerie;
 use App\Chart\AvailableChoice\AvailableTypeSerie;
 use App\Chart\AvailableChoice\AvailableTypeAxis;
 use App\Chart\AvailableChoice\AvailableDashStyleSerie;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\Persistence\ManagerRegistry;
 
 class ChartController extends AbstractController
 {
     private static $varTwig;
 
     private $translator;
+    
+    /**
+     * @author Philippe Grison  <philippe.grison@mnhn.fr>
+     */
+    private $doctrine;
 
-    public function __construct(TranslatorInterface $translator)
+    public function __construct(TranslatorInterface $translator, ManagerRegistry $doctrine)
     {
         $this->translator = $translator;
+        $this->doctrine = $doctrine;
     }
 
     protected function initializeVarTwig($manager)
@@ -68,7 +75,7 @@ class ChartController extends AbstractController
      */
     public function index()
     {
-        $repository = $this->getDoctrine()->getRepository(Chart::class);
+        $repository = $this->doctrine->getRepository(Chart::class);
         $list_chart = $repository->findAll();
 
         return $this->render('chart/index.html.twig', array('list_chart' => $list_chart));
@@ -99,7 +106,7 @@ class ChartController extends AbstractController
         }
 
         /* Initialisation des varibles twig */
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
         $varTwig = self::initializeVarTwig($em);
         $varTwig['form'] = $form->createView();
 
@@ -112,7 +119,7 @@ class ChartController extends AbstractController
      */
     protected function edit(Request $request, $chart)
     {
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
 
         $listYAxis = $chart->getListYAxis()->toArray();
 
@@ -153,7 +160,7 @@ class ChartController extends AbstractController
      */
     protected function register($chart, $edit)
     {
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
 
             // On enregistre le graphique
             if (!$edit) {
@@ -263,7 +270,7 @@ class ChartController extends AbstractController
      */
     public function duplicate(Chart $chart)
     {
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
 
         // Duplication du graphique
         $duplicatedChart = clone $chart;
@@ -321,7 +328,7 @@ class ChartController extends AbstractController
      */
     public function delete(Request $request, Chart $chart)
     {
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
 
         $em->remove($chart);
         $em->flush();

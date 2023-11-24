@@ -11,15 +11,24 @@ use App\Entity\DataSource;
 use App\Form\DataSourceType;
 use App\Bdd\Controller\AvailableType;
 use App\Controller\EncryptController;
+use Doctrine\Persistence\ManagerRegistry;
 
 class DataSourcesController extends AbstractController
 {
+    /**
+     * @author Philippe Grison  <philippe.grison@mnhn.fr>
+     */
+    private $doctrine;
+    public function __construct(ManagerRegistry $doctrine) {
+        $this->doctrine = $doctrine;
+    }
+    
     /**
      * @isGranted("ROLE_ADMIN")
      */
     public function index()
     {
-        $repository = $this->getDoctrine()->getRepository(DataSource::class);
+        $repository = $this->doctrine->getRepository(DataSource::class);
         $list_dataSources = $repository->findAll();
 
         // On vérifie si la clé de chiffrement existe
@@ -57,7 +66,7 @@ class DataSourcesController extends AbstractController
                 $dataSource->setLoginBDD(EncryptController::chiffrer($dataSource->getLoginBDD()));
                 $dataSource->setPasswordBDD(EncryptController::chiffrer($dataSource->getPasswordBDD()));
 
-                $em = $this->getDoctrine()->getManager();
+                $em = $this->doctrine->getManager();
                 $em->persist($dataSource);
                 $em->flush();
 
@@ -134,7 +143,7 @@ class DataSourcesController extends AbstractController
                 $dataSource->setLoginBDD(EncryptController::chiffrer($dataSource->getLoginBDD()));
                 $dataSource->setPasswordBDD(EncryptController::chiffrer($dataSource->getPasswordBDD()));
 
-                $em = $this->getDoctrine()->getManager();
+                $em = $this->doctrine->getManager();
                 $em->flush();
 
                 return $this->redirect($this->generateUrl('data_sources_registration_confirmed', array('id' => $dataSource->getId())));
@@ -153,7 +162,7 @@ class DataSourcesController extends AbstractController
      */
     public function delete(DataSource $dataSource)
     {
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
         $em->remove($dataSource);
         $em->flush();
 

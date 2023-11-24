@@ -11,14 +11,23 @@ use App\Bdd\Controller\Bdd;
 use App\Entity\DataList;
 use App\Entity\DataSource;
 use App\Form\DataListType;
+use Doctrine\Persistence\ManagerRegistry;
 
 class DataListController extends AbstractController
 {
     /**
+     * @author Philippe Grison  <philippe.grison@mnhn.fr>
+     */
+    private $doctrine;
+    public function __construct(ManagerRegistry $doctrine) {
+        $this->doctrine = $doctrine;
+    }
+       
+    /**
      * @isGranted("ROLE_SCIENTIFIC_PLUS")
      */
     public function index() {
-        $repository = $this->getDoctrine()->getRepository(DataList::class);
+        $repository = $this->doctrine->getRepository(DataList::class);
         $list_dataList = $repository->findAll();
 
         return $this->render('data_list/index.html.twig', array('list_dataList' =>$list_dataList));
@@ -40,7 +49,7 @@ class DataListController extends AbstractController
                 $attributsSpatiaux = $dataList->getAttributsSpatiaux()->toArray();
                 $dataList->getAttributsSpatiaux()->clear();
 
-                $em = $this->getDoctrine()->getManager();
+                $em = $this->doctrine->getManager();
                 $em->persist($dataList);
                 $em->flush();
 
@@ -78,7 +87,7 @@ class DataListController extends AbstractController
      * Retourne un DataList pour test
      */
     protected function getDataList($idDatasource, $request, $attributsSpatiaux, $test) {
-        $repository = $this->getDoctrine()->getRepository(DataSource::class);
+        $repository = $this->doctrine->getRepository(DataSource::class);
 
         $dataSource = $repository->find($idDatasource);
 
@@ -160,7 +169,7 @@ class DataListController extends AbstractController
      * @isGranted("ROLE_SCIENTIFIC_PLUS")
      */
     public function delete(DataList $dataList) {
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
         $em->remove($dataList);
         $em->flush();
 
@@ -173,7 +182,7 @@ class DataListController extends AbstractController
     public function edit(Request $request, TranslatorInterface $translator,  DataList $dataList) {
         $attributsSpatiaux = $dataList->getAttributsSpatiaux()->toArray();//array_reverse($dataList->getAttributsSpatiaux()->toArray());
 
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
         foreach ($dataList->getAttributsSpatiaux()->toArray() as $attributSpatial) {
             $em->remove($attributSpatial);
         }
@@ -233,7 +242,7 @@ class DataListController extends AbstractController
      */
     public function duplicate(DataList $dataList) {
 
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
 
         // Duplication de la requête
         $duplicatedDataList = clone $dataList;

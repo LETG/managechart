@@ -9,10 +9,19 @@ use App\Form\User\AdminEditFormType;
 use App\Form\User\RegistrationFormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Doctrine\Persistence\ManagerRegistry;
 
 class UserController extends AbstractController
 {
+    /**
+     * @author Philippe Grison  <philippe.grison@mnhn.fr>
+     */
+    private $doctrine;
+    public function __construct(ManagerRegistry $doctrine) {
+        $this->doctrine = $doctrine;
+    }
+      
     /**
      * Affiche l'utilisateur
      * @isGranted("IS_AUTHENTICATED_REMEMBERED")
@@ -33,7 +42,7 @@ class UserController extends AbstractController
      */
     public function index()
     {
-        $repository = $this->getDoctrine()->getRepository(User::class);
+        $repository = $this->doctrine->getRepository(User::class);
         $users = $repository->findAll();
 
         return $this->render('users/index.html.twig', array('listUsers' => $users));
@@ -52,7 +61,7 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $password = $passwordEncoder->encodePassword($user, $user->getPlainPassword());
             $user->setPassword($password);
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->doctrine->getManager();
             $em->persist($user);
             $em->flush();
 
@@ -75,7 +84,7 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->doctrine->getManager();
             $em->persist($user);
             $em->flush();
 
@@ -101,7 +110,7 @@ class UserController extends AbstractController
 
             $this->get('session')->getFlashBag()->add('deleteItSelf', $msgError);
         } else {
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->doctrine->getManager();
             $em->remove($user);
             $em->flush();
         }
