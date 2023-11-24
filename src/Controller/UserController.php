@@ -28,8 +28,9 @@ class UserController extends AbstractController
      */
     public function show(User $user)
     {
-        /* Si l'utilisateur n'est pas admin, affiche son profile */
-        if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN') && $user->getId() != $this->getUser()->getId()) {
+        /* Si l'utilisateur n'est pas admin, affiche son profile */ 
+        // if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN') && $user->getId() != $this->getUser()->getId()) {
+        if (!in_array('ROLE_ADMIN', $user->getRoles()) && $user->getId() != $this->getUser()->getId()) {
             throw new AccessDeniedHttpException("Accès interdit");
         } else {
             return $this->render('users/show.html.twig', array('user' => $user));

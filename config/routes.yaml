@@ -48,7 +48,7 @@ mc_data_list:
 
 user_show:
   path:  /users/show/{id}
-  controller: App\Controller\UserController:show
+  controller: App\Controller\UserController::show
   requirements:
     id: \d+
 
@@ -58,22 +58,22 @@ user_show:
 
 user_list:
   path:     /users/list
-  controller: App\Controller\UserController:index
+  controller: App\Controller\UserController::index
 
 user_edit:
   path:     /users/edit/{id}
-  controller: App\Controller\UserController:edit
+  controller: App\Controller\UserController::edit
   requirements:
     id: \d+
 
 user_delete:
   path:     /users/delete/{id}
-  controller: App\Controller\UserController:delete
+  controller: App\Controller\UserController::delete
   requirements:
     id: \d+
 
 user_register:
   path:     /users/register
-  controller: App\Controller\UserController:register
+  controller: App\Controller\UserController::register
   requirements:
     id: \d+
