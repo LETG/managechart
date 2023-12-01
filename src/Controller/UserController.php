@@ -53,15 +53,16 @@ class UserController extends AbstractController
     * Création d'utilisateurs
     * @isGranted("ROLE_ADMIN")
     */
-    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder)
+    public function register(Request $request, UserPasswordHasherInterface $hasher)
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $password = $passwordEncoder->encodePassword($user, $user->getPlainPassword());
-            $user->setPassword($password);
+            $plainPassword = $user->getPlainPassword();
+            $passwordHash = $hasher->hashPassword($user, $plainPassword);
+            $user->setPassword($passwordHash);            
             $em = $this->doctrine->getManager();
             $em->persist($user);
             $em->flush();
