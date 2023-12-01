@@ -9,7 +9,7 @@
 	   			{{ 'menu.datasource'|trans() }}
 
 	   			<div class="pull-right">
-					<a href="{{ path('data_sources_new_key') }}" class="btn btn-primary btn-new" data-toggle="tooltip" data-placement="bottom" title="{{ 'datasources.privateKey.new'|trans() }}">{{ 'datasources.privateKey.button'|trans() }}</a>
+					{#  <a href="{{ path('data_sources_new_key') }}" class="btn btn-primary btn-new" data-toggle="tooltip" data-placement="bottom" title="{{ 'datasources.privateKey.new'|trans() }}">{{ 'datasources.privateKey.button'|trans() }}</a>  #}
 					
 					{% if privateKey %}
 						<a href="{{ path('data_sources_registration') }}" class="btn btn-primary btn-new">{{ 'datasources.new'|trans() }}</a>
