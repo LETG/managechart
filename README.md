@@ -39,6 +39,11 @@ Exemple : [https://www-iuem.univ-brest.fr/wapps/managechart/en/chart/show/291/80
 
 # Installation
 
+## NEW ! Docker install
+
+https://gitlab.in2p3.fr/Mathias.Rouan/docker-managechart
+
+## Manual install
 ## Pre-requisites
 
 - PHP >= 7.2.5
