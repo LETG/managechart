@@ -19,6 +19,8 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\Email;
 
+use App\Form\Type\ActionFormType;
+
 class RegistrationFormType extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options) 
@@ -52,11 +54,13 @@ class RegistrationFormType extends AbstractType
 					'ROLE_SCIENTIFIC' => 'Scientific'
 				]),
 				'multiple' => true,
-			]);
+			])
+            ->addEventSubscriber($this->addUserDate);
 	}
+        
 	
 	
-    public function configureOptions(OptionsResolver $resolver)
+    public function setDefaultOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => User::class,
