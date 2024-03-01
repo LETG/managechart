@@ -60,7 +60,7 @@ class RegistrationFormType extends AbstractType
         
 	
 	
-    public function setDefaultOptions(OptionsResolver $resolver)
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
             'data_class' => User::class,
