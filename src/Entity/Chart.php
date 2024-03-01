@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -164,9 +167,35 @@ class Chart
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\YAxis", mappedBy="chart", cascade={"persist", "remove"})
      */
-    private $list_yAxis;
-   
+    private $list_yAxis;  
 
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="date_cre", type="datetime", nullable=true, options={"default"="CURRENT_TIMESTAMP"})
+     */
+    private $dateCre;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="date_maj", type="datetime", nullable=true, options={"default"="CURRENT_TIMESTAMP"})
+     */
+    private $dateMaj;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="user_cre", type="bigint", nullable=true, options={"default"="1"})
+     */
+    private $userCre = '1';
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="user_maj", type="bigint", nullable=true, options={"default"="1"})
+     */
+    private $userMaj = '1';
 
 
     public function __construct() {
@@ -624,5 +653,90 @@ class Chart
 
         return $this->pieType;
 
+    }
+
+    public function isLegendChart(): ?bool
+    {
+        return $this->legendChart;
+    }
+
+    public function isTooltipChart(): ?bool
+    {
+        return $this->tooltipChart;
+    }
+
+    public function isInvertedChart(): ?bool
+    {
+        return $this->invertedChart;
+    }
+
+    public function isExportPrintChart(): ?bool
+    {
+        return $this->exportPrintChart;
+    }
+
+    public function isExportCSVChart(): ?bool
+    {
+        return $this->exportCSVChart;
+    }
+
+    public function getDateCre(): ?\DateTimeInterface
+    {
+        return $this->dateCre;
+    }
+
+    public function setDateCre(?\DateTimeInterface $dateCre): static
+    {
+        $this->dateCre = $dateCre;
+
+        return $this;
+    }
+
+    public function getDateMaj(): ?\DateTimeInterface
+    {
+        return $this->dateMaj;
+    }
+
+    public function setDateMaj(?\DateTimeInterface $dateMaj): static
+    {
+        $this->dateMaj = $dateMaj;
+
+        return $this;
+    }
+
+    public function getUserCre(): ?string
+    {
+        return $this->userCre;
+    }
+
+    public function setUserCre(?string $userCre): static
+    {
+        $this->userCre = $userCre;
+
+        return $this;
+    }
+
+    public function getUserMaj(): ?string
+    {
+        return $this->userMaj;
+    }
+
+    public function setUserMaj(?string $userMaj): static
+    {
+        $this->userMaj = $userMaj;
+
+        return $this;
+    }
+
+    public function removeListYAxi(YAxis $listYAxi): static
+    {
+        if ($this->list_yAxis->removeElement($listYAxi)) {
+            // set the owning side to null (unless already changed)
+            if ($listYAxi->getChart() === $this) {
+                $listYAxi->setChart(null);
+            }
+        }
+
+        return $this;
     }
 }

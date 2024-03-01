@@ -17,7 +17,9 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\Email;
 
-class AdminEditFormType extends AbstractType
+use App\Form\Type\ActionFormType;
+
+class AdminEditFormType extends ActionFormType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options) 
 	{
@@ -45,11 +47,12 @@ class AdminEditFormType extends AbstractType
 					'ROLE_SCIENTIFIC' => 'Scientific'
 				]),
 				'multiple' => true,
-			]);
+			])
+                        ->addEventSubscriber($this->addUserDate);
 	}
 	
 	
-    public function configureOptions(OptionsResolver $resolver)
+    public function setDefaultOptions(OptionsResolverInterface $resolver) 
     {
         $resolver->setDefaults([
             'csrf_protection' => false,

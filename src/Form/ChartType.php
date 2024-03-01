@@ -17,7 +17,9 @@ use App\Chart\AvailableChoice\AvailableHeatmapType;
 use App\Entity\Chart;
 use App\Form\Chart\YAxisType;
 
-class ChartType extends AbstractType
+use App\Form\Type\ActionFormType;
+
+class ChartType extends ActionFormType
 {
 	/**
      * @param FormBuilderInterface $builder
@@ -169,12 +171,14 @@ class ChartType extends AbstractType
                 ));*/
         } 
        
+        $builder->addEventSubscriber($this->addUserDate);
+        
     }
 
     /**
      * @param OptionsResolver $resolver
      */
-    public function configureOptions(OptionsResolver $resolver) {
+    public function setDefaultOptions(OptionsResolverInterface $resolver) {
         $resolver->setDefaults(array(
             'data_class' => Chart::class,
             'allow_extra_fields' => true

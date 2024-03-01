@@ -13,7 +13,9 @@ use App\Entity\AttributSpatial;
 use App\Entity\DataList;
 use App\Entity\DataSource;
 
-class DataListType extends AbstractType
+use App\Form\Type\ActionFormType;
+
+class DataListType extends ActionFormType
 {
 	/**
 	 * @param FormBuilderInterface $builder
@@ -38,6 +40,8 @@ class DataListType extends AbstractType
   				'allow_add'    	=> true,
   				'allow_delete' 	=> true
 			));
+                
+                $builder->addEventSubscriber($this->addUserDate);
 	}
 
 	/**

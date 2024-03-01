@@ -121,12 +121,12 @@ class Series
 /*CONSTRUCTOR*/
 
  public function __construct() {
- 
-        $this->size = '100%';
-        $this->innersize = '0%';
-        $this->typeSerie = 'line';
-        $this->colsize = 1.00;
-    }
+    
+           $this->size = '100%';
+           $this->innersize = '0%';
+           $this->typeSerie = 'line';
+           $this->colsize = 1.00;
+       }
 
     /**
      * Set yaxisOrder
@@ -445,6 +445,11 @@ class Series
     public function getColsize()
     {
         return $this->colsize;
+    }
+
+    public function isMarkerSerie(): ?bool
+    {
+        return $this->markerSerie;
     }  
 }
 

@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Form\Enums\Action;
 
 class UserController extends AbstractController
 {
@@ -56,7 +57,7 @@ class UserController extends AbstractController
     public function register(Request $request, UserPasswordHasherInterface $hasher)
     {
         $user = new User();
-        $form = $this->createForm(RegistrationFormType::class, $user);
+        $form = $this->createForm(RegistrationFormType::class, $user, ['action_type' => Action::create->value,]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -82,7 +83,7 @@ class UserController extends AbstractController
     */
     public function edit(User $user, Request $request)
     {
-        $form = $this->createForm(AdminEditFormType::class, $user);
+        $form = $this->createForm(AdminEditFormType::class, $user, ['action_type' => Action::edit->value,]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

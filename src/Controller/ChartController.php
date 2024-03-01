@@ -17,6 +17,7 @@ use App\Chart\AvailableChoice\AvailableTypeAxis;
 use App\Chart\AvailableChoice\AvailableDashStyleSerie;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Form\Enums\Action;
 
 class ChartController extends AbstractController
 {
@@ -95,7 +96,7 @@ class ChartController extends AbstractController
             $chart->setXAxisType('datetime');
         }
 
-        $form = $this->createForm(ChartType::class, $chart);
+        $form = $this->createForm(ChartType::class, $chart, ['action_type' => Action::create->value,]);
 
         if ($request->getMethod() == 'POST') {
             $form->handleRequest($request);
@@ -137,7 +138,7 @@ class ChartController extends AbstractController
         $chart->getListYAxis()->clear();
 
         // On pré-remplie le formulaire avec les données du graphique + ses axes + ses séries/flags
-        $form = $this->createForm(ChartType::class, $chart);
+        $form = $this->createForm(ChartType::class, $chart, ['action_type' => Action::edit->value,]);
 
         if ($request->getMethod() == 'POST') {
             $form->handleRequest($request);

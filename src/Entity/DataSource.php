@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Bdd\Controller\Bdd;
@@ -98,6 +99,35 @@ class DataSource
      * @ORM\Column(name="nameCon", type="string", length=255)
      */
     private $nameCon;
+    
+    
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="date_cre", type="datetime", nullable=true, options={"default"="CURRENT_TIMESTAMP"})
+     */
+    private $dateCre;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="date_maj", type="datetime", nullable=true, options={"default"="CURRENT_TIMESTAMP"})
+     */
+    private $dateMaj;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="user_cre", type="bigint", nullable=true, options={"default"="1"})
+     */
+    private $userCre = '1';
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="user_maj", type="bigint", nullable=true, options={"default"="1"})
+     */
+    private $userMaj = '1';
 
 
     public function __construct() {
@@ -413,5 +443,53 @@ class DataSource
     public function getNameCon()
     {
         return $this->nameCon;
+    }
+
+    public function getDateCre(): ?\DateTimeInterface
+    {
+        return $this->dateCre;
+    }
+
+    public function setDateCre(?\DateTimeInterface $dateCre): static
+    {
+        $this->dateCre = $dateCre;
+
+        return $this;
+    }
+
+    public function getDateMaj(): ?\DateTimeInterface
+    {
+        return $this->dateMaj;
+    }
+
+    public function setDateMaj(?\DateTimeInterface $dateMaj): static
+    {
+        $this->dateMaj = $dateMaj;
+
+        return $this;
+    }
+
+    public function getUserCre(): ?string
+    {
+        return $this->userCre;
+    }
+
+    public function setUserCre(?string $userCre): static
+    {
+        $this->userCre = $userCre;
+
+        return $this;
+    }
+
+    public function getUserMaj(): ?string
+    {
+        return $this->userMaj;
+    }
+
+    public function setUserMaj(?string $userMaj): static
+    {
+        $this->userMaj = $userMaj;
+
+        return $this;
     }
 }

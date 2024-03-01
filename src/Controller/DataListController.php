@@ -12,6 +12,7 @@ use App\Entity\DataList;
 use App\Entity\DataSource;
 use App\Form\DataListType;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Form\Enums\Action;
 
 class DataListController extends AbstractController
 {
@@ -38,7 +39,7 @@ class DataListController extends AbstractController
      */
     public function new(Request $request, TranslatorInterface $translator) {
         $dataList = new DataList();
-        $form = $this->createForm(DataListType::class, $dataList);
+        $form = $this->createForm(DataListType::class, $dataList, ['action_type' => Action::create->value,]);
 
         if ($request->getMethod() == 'POST') {
             $form->handleRequest($request);
@@ -188,7 +189,7 @@ class DataListController extends AbstractController
         }
         $dataList->getAttributsSpatiaux()->clear();
 
-        $form = $this->createForm(DataListType::class, $dataList);
+        $form = $this->createForm(DataListType::class, $dataList, ['action_type' => Action::edit->value,]);
 
         if ($request->getMethod() == 'POST') {
             $form->handleRequest($request);

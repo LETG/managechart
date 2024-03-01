@@ -12,6 +12,7 @@ use App\Form\DataSourceType;
 use App\Bdd\Controller\AvailableType;
 use App\Controller\EncryptController;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Form\Enums\Action;
 
 class DataSourcesController extends AbstractController
 {
@@ -49,7 +50,7 @@ class DataSourcesController extends AbstractController
     public function new(Request $request, TranslatorInterface $translator)
     {
         $dataSource = new DataSource;
-        $form = $this->createForm(DataSourceType::class, $dataSource);
+        $form = $this->createForm(DataSourceType::class, $dataSource, ['action_type' => Action::create->value,]);
 
         // On vérifie si la clé de chiffrement existe
         $keyExists = false;
@@ -127,7 +128,7 @@ class DataSourcesController extends AbstractController
     public function edit(Request $request, TranslatorInterface $translator, DataSource $dataSource)
     {
         $dataSource->setLoginBDD(EncryptController::dechiffrer($dataSource->getLoginBDD()));
-        $form = $this->createForm(DataSourceType::class, $dataSource);
+        $form = $this->createForm(DataSourceType::class, $dataSource, ['action_type' => Action::edit->value,]);
 
         // On vérifie si la clé de chiffrement existe
         $keyExists = false;

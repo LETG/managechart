@@ -13,7 +13,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use App\Bdd\Controller\AvailableType;
 
-class DataSourceType extends AbstractType
+use App\Form\Type\ActionFormType;
+
+class DataSourceType extends ActionFormType
 {
 	/**
 	 * @param FormBuilderInterface $builder
@@ -47,6 +49,8 @@ class DataSourceType extends AbstractType
 				'choices' => array_flip(AvailableType::$types)
 			))
 			->add('typeStrBDD',		HiddenType::class);
+                
+                $builder->addEventSubscriber($this->addUserDate);
 	}
 
 	/**
