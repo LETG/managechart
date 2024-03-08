@@ -58,7 +58,7 @@
 								<span class="glyphicon glyphicon-pencil"></span>
 							</a>
 							{# Lien de duplication #}
-							<a class="tablebtn btn btn-primary btn-sm" href="" disabled title="Duplicate">
+							<a class="tablebtn btn btn-primary btn-sm" href="{{ path('chart_duplicate', {'id': chart.id}) }}" title="Duplicate" onClick="return confirmeDelete(event, '{{ 'chart.table.duplicate.msgconfirm'|trans({'%nameChart%': chart.nameChart}) }}')">
 								<span class="glyphicon glyphicon-duplicate"></span>
 							</a>
                                                         {# Lien de suppression avec confirmation #}
