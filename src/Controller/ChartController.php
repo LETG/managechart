@@ -379,6 +379,10 @@ class ChartController extends AbstractController
     {
 
         $returnEdit = $this->edit($request, $chart);
+        $user = $this->getUser();
+        if ($user->getRoles()[1] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'ACCESS DENIED');
+        }
 
         if ($returnEdit instanceof Chart) {
             return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnEdit->getId())));
@@ -411,6 +415,10 @@ class ChartController extends AbstractController
     public function editTimechart(Request $request, Chart $chart)
     {
         $returnEdit = $this->edit($request, $chart);
+        $user = $this->getUser();
+        if ($user->getRoles()[1] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'ACCESS DENIED');
+        }
 
         if ($returnEdit instanceof Chart) {
             return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnEdit->getId())));
@@ -443,6 +451,10 @@ class ChartController extends AbstractController
     public function editMultiaxistimechart(Request $request, Chart $chart)
     {
         $returnEdit = $this->edit($request, $chart);
+        $user = $this->getUser();
+        if ($user->getRoles()[1] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'ACCESS DENIED');
+        }
 
         if ($returnEdit instanceof Chart) {
             return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnEdit->getId())));
@@ -475,6 +487,10 @@ class ChartController extends AbstractController
     public function editPiechart(Request $request, Chart $chart)
     {
         $returnEdit = $this->edit($request, $chart);
+        $user = $this->getUser();
+        if ($user->getRoles()[1] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'ACCESS DENIED');
+        }
 
         if ($returnEdit instanceof Chart) {
             return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnEdit->getId())));
@@ -507,6 +523,10 @@ class ChartController extends AbstractController
     public function editDynamicchart(Request $request, Chart $chart)
     {
         $returnEdit = $this->edit($request, $chart);
+        $user = $this->getUser();
+        if ($user->getRoles()[1] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'ACCESS DENIED');
+        }
 
         if ($returnEdit instanceof Chart) {
             return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnEdit->getId())));
@@ -539,6 +559,10 @@ class ChartController extends AbstractController
     public function editPolarchart(Request $request, Chart $chart)
     {
         $returnEdit = $this->edit($request, $chart);
+        $user = $this->getUser();
+        if ($user->getRoles()[1] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'ACCESS DENIED');
+        }
 
         if ($returnEdit instanceof Chart) {
             return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnEdit->getId())));
@@ -571,6 +595,10 @@ class ChartController extends AbstractController
     public function editHeatmapchart(Request $request, Chart $chart)
     {
         $returnEdit = $this->edit($request, $chart);
+        $user = $this->getUser();
+        if ($user->getRoles()[1] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'ACCESS DENIED');
+        }
 
         if ($returnEdit instanceof Chart) {
             return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnEdit->getId())));
@@ -603,6 +631,10 @@ class ChartController extends AbstractController
     public function editTimedynamicchart(Request $request, Chart $chart)
     {
         $returnEdit = $this->edit($request, $chart);
+        $user = $this->getUser();
+        if ($user->getRoles()[1] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'ACCESS DENIED');
+        }
 
         if ($returnEdit instanceof Chart) {
             return $this->redirect($this->generateUrl('chart_registration_confirmed', array('chart' => $returnEdit->getId())));
