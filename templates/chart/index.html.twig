@@ -33,7 +33,7 @@
 		<tbody>
 			{% for chart in list_chart %}
 				<tr onClick="document.location.href='{{ path('chart_show', {'id': chart.id}) }}'" onmouseover="this.className='info';" onmouseout="this.className='';">
-					{% if is_granted('ROLE_SCIENTIFIC') and (chart.userCre == app.user.id) %}
+					{% if (is_granted('ROLE_SCIENTIFIC') and (chart.userCre == app.user.id)) or is_granted('ROLE_ADMIN') %}
 						<td class="tabletdbtn">
 							{# Lien d'edition #}
 							<a class="tablebtn btn btn-primary btn-sm" href="{{ path('chart_edit_' ~ chart.typeChart, {'id': chart.id}) }}" title="Edit">
@@ -44,14 +44,12 @@
 								<span class="glyphicon glyphicon-duplicate"></span>
 							</a>
                                                         {# Lien de suppression avec confirmation #}
-                                                        {% if is_granted('ROLE_SCIENTIFIC_PLUS') %}
                                                                 <a 	class="tablebtn btn btn-danger btn-sm" href="{{ path('chart_delete', {'id': chart.id}) }}" title="Delete" onClick="return confirmeDelete(event, '{{ 'chart.table.delete.msgconfirm'|trans({'%nameChart%': chart.nameChart}) }}')">
                                                                         <span class="glyphicon glyphicon-trash"></span>
-                                                                </a>
-                                                        {% endif %}                                                                
+                                                                </a>                                                            
 
 						</td>
-                                        {% else %}  
+                                        {% elseif is_granted('ROLE_SCIENTIFIC') %}  
                                             	<td class="tabletdbtn">
 							{# Lien d'edition #}
 							<a class="tablebtn btn btn-primary btn-sm" href="" disabled title="Edit">
@@ -62,13 +60,10 @@
 								<span class="glyphicon glyphicon-duplicate"></span>
 							</a>
                                                         {# Lien de suppression avec confirmation #}
-                                                        {% if is_granted('ROLE_SCIENTIFIC_PLUS') %}
-                                                                <a 	class="tablebtn btn btn-danger btn-sm" href="" disabled title="Delete">
-                                                                        <span class="glyphicon glyphicon-trash"></span>
-                                                                </a>
-                                                        {% endif %}  
-
-						</td>
+                                                        <a 	class="tablebtn btn btn-danger btn-sm" href="" disabled title="Delete">
+                                                                <span class="glyphicon glyphicon-trash"></span>
+                                                        </a>
+						</td> 
 					{% endif %}
 
 					<td>{{ chart.id }}</td>

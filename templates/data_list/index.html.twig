@@ -27,7 +27,8 @@
 			<tbody>
 				{% for dataList in list_dataList %}
 					<tr onClick="document.location.href='{{ path('data_list_show', {'id': dataList.id}) }}'" onmouseover="this.className='info';" onmouseout="this.className='';">
-						<td class="tabletdbtn">
+                                            {% if (is_granted('ROLE_SCIENTIFIC_PLUS') and (dataList.userCre == app.user.id)) or is_granted('ROLE_ADMIN') %}						
+                                                <td class="tabletdbtn">
 							{# Lien d'edition #}
 							<a class="tablebtn btn btn-primary btn-sm" href="{{ path('data_list_edit', {'id': dataList.id}) }}" title="Edit">
 								<span class="glyphicon glyphicon-pencil"></span>
@@ -41,6 +42,22 @@
 								<span class="glyphicon glyphicon-trash"></span>
 							</a>
 						</td>
+                                        {% elseif is_granted('ROLE_SCIENTIFIC') %}  
+                                            	<td class="tabletdbtn">
+							{# Lien d'edition #}
+							<a class="tablebtn btn btn-primary btn-sm" href="" disabled title="Edit">
+								<span class="glyphicon glyphicon-pencil"></span>
+							</a>
+							{# Lien de duplication #}
+							<a class="tablebtn btn btn-primary btn-sm" href="{{ path('data_list_duplicate', {'id': dataList.id}) }}" title="Duplicate" onClick="return confirmeDelete(event, '{{ 'datalist.table.duplicate.msgconfirm'|trans({'%nameData%': dataList.nameData}) }}')">
+								<span class="glyphicon glyphicon-duplicate"></span>
+							</a>
+                                                        {# Lien de suppression avec confirmation #}
+                                                        <a 	class="tablebtn btn btn-danger btn-sm" href="" disabled title="Delete">
+                                                                <span class="glyphicon glyphicon-trash"></span>
+                                                        </a>
+						</td> 
+					{% endif %}
 						<td>{{ dataList.id }}</td>
 						<td>{{ dataList.nameData }}</td>
 						<td>{{ dataList.dataSource.getUniqueName }}</td>

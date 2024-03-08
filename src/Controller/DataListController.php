@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -244,11 +245,16 @@ class DataListController extends AbstractController
     public function duplicate(DataList $dataList) {
 
         $em = $this->doctrine->getManager();
+        $user = $this->getUser();
 
         // Duplication de la requête
         $duplicatedDataList = clone $dataList;
         $duplicatedDataList->setNameData('Copie de ' . $dataList->getNameData());
         $duplicatedDataList->setDateData(new \DateTime());
+        $duplicatedDataList->setUserCre($user->getId());
+        $duplicatedDataList->setDateCre(new \DateTime());
+        $duplicatedDataList->setUserMaj($user->getId());
+        $duplicatedDataList->setDateMaj(new \DateTime());
         $em->persist($duplicatedDataList);
 
         // Duplication des attributs spatiaux

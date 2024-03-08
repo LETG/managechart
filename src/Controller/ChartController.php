@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use App\Entity\Chart;
 use App\Entity\DataList;
 use App\Entity\YAxis;
@@ -18,6 +19,7 @@ use App\Chart\AvailableChoice\AvailableDashStyleSerie;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Form\Enums\Action;
+
 
 class ChartController extends AbstractController
 {
@@ -272,10 +274,16 @@ class ChartController extends AbstractController
     public function duplicate(Chart $chart)
     {
         $em = $this->doctrine->getManager();
+        $user = $this->getUser();
 
         // Duplication du graphique
         $duplicatedChart = clone $chart;
         $duplicatedChart->setNameChart('Copie de ' . $chart->getNameChart());
+        $duplicatedChart->setUserCre($user->getId());
+        $duplicatedChart->setDateCre(new \DateTime());
+        $duplicatedChart->setUserMaj($user->getId());
+        $duplicatedChart->setDateMaj(new \DateTime());
+
         $em->persist($duplicatedChart);
 
         // Duplication de chaque axe Y avec ses séries et/ou flags
@@ -325,7 +333,7 @@ class ChartController extends AbstractController
     }
 
     /**
-     * @isGranted("ROLE_SCIENTIFIC_PLUS")
+     * @isGranted("ROLE_SCIENTIFIC")
      */
     public function delete(Request $request, Chart $chart)
     {
