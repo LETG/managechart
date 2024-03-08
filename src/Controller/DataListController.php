@@ -172,6 +172,11 @@ class DataListController extends AbstractController
      */
     public function delete(DataList $dataList) {
         $em = $this->doctrine->getManager();
+        $user = $this->getUser();
+
+        if ($user->getRoles()[1] != 'ROLE_ADMIN' || $chart->getUserCre() != $user->getId()) {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'ACCESS DENIED');
+        }
         $em->remove($dataList);
         $em->flush();
 
@@ -185,6 +190,12 @@ class DataListController extends AbstractController
         $attributsSpatiaux = $dataList->getAttributsSpatiaux()->toArray();//array_reverse($dataList->getAttributsSpatiaux()->toArray());
 
         $em = $this->doctrine->getManager();
+        $user = $this->getUser();
+
+        if ($user->getRoles()[1] != 'ROLE_ADMIN' || $chart->getUserCre() != $user->getId()) {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'ACCESS DENIED');
+        }
+        
         foreach ($dataList->getAttributsSpatiaux()->toArray() as $attributSpatial) {
             $em->remove($attributSpatial);
         }

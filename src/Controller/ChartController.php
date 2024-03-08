@@ -123,6 +123,10 @@ class ChartController extends AbstractController
     protected function edit(Request $request, $chart)
     {
         $em = $this->doctrine->getManager();
+        $user = $this->getUser();
+        if ($user->getRoles()[1] != 'ROLE_ADMIN' || $chart->getUserCre() != $user->getId()) {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'ACCESS DENIED');
+        }
 
         $listYAxis = $chart->getListYAxis()->toArray();
 
@@ -338,7 +342,12 @@ class ChartController extends AbstractController
     public function delete(Request $request, Chart $chart)
     {
         $em = $this->doctrine->getManager();
+        $user = $this->getUser();
 
+        if ($user->getRoles()[1] != 'ROLE_ADMIN' || $chart->getUserCre() != $user->getId()) {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'ACCESS DENIED');
+        }
+        
         $em->remove($chart);
         $em->flush();
 
@@ -368,6 +377,7 @@ class ChartController extends AbstractController
      */
     public function editSimplechart(Request $request, Chart $chart)
     {
+
         $returnEdit = $this->edit($request, $chart);
 
         if ($returnEdit instanceof Chart) {
