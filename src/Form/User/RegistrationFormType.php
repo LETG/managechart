@@ -21,6 +21,9 @@ use Symfony\Component\Validator\Constraints\Email;
 
 use App\Form\Type\ActionFormType;
 
+use App\Entity\DataSource;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+
 class RegistrationFormType extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options) 
@@ -44,17 +47,24 @@ class RegistrationFormType extends AbstractType
                 'first_options'  => array('label' => 'Password'),
                 'second_options' => array('label' => 'Repeat Password'),
             ))
-			->add('roles', ChoiceType::class, [
-				'constraints' => [
-					new NotBlank()
-				],
-				'choices' => array_flip([
-					'ROLE_ADMIN' => 'Admin',
-					'ROLE_SCIENTIFIC_PLUS' => 'Scientific+',
-					'ROLE_SCIENTIFIC' => 'Scientific'
-				]),
-				'multiple' => true,
-			])
+            ->add('roles', ChoiceType::class, [
+                    'constraints' => [
+                            new NotBlank()
+                    ],
+                    'choices' => array_flip([
+                            'ROLE_ADMIN' => 'Admin',
+                            'ROLE_SCIENTIFIC_PLUS' => 'Scientific+',
+                            'ROLE_SCIENTIFIC' => 'Scientific'
+                    ]),
+                    'multiple' => true,
+            ])
+            ->add('dataSource', EntityType::class, array(
+                    'label' => 'formDataList.dataSource',
+                    'class' => DataSource::class,
+                    'choice_label' => 'getUniqueName',
+                    'placeholder'   => 'Nom de la base de donnée',
+                    'required'      => false
+            ))
             ->addEventSubscriber($this->addUserDate);
 	}
         

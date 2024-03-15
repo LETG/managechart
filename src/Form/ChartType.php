@@ -55,6 +55,10 @@ class ChartType extends ActionFormType
     			'label' => 'formChart.tooltip',
     			'required' => false
     		))
+                ->add('publicChart',      CheckboxType::class,	array(
+    			'label' => 'formChart.public',
+    			'required' => true
+    		))
             ->add('xAxisTitle',       TextType::class,        array(
                 'label' => 'formChart.xAxisTitle',
                 'required' => false

@@ -174,7 +174,7 @@ class DataListController extends AbstractController
         $em = $this->doctrine->getManager();
         $user = $this->getUser();
 
-        if ($user->getRoles()[1] != 'ROLE_ADMIN' && $dataList->getUserCre() != $user->getId()) {
+        if ($user->getRoles()[0] != 'ROLE_ADMIN' && $dataList->getUserCre() != $user->getId()) {
             $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'ACCESS DENIED');
         }
         $em->remove($dataList);
@@ -192,7 +192,7 @@ class DataListController extends AbstractController
         $em = $this->doctrine->getManager();
         $user = $this->getUser();
 
-        if ($user->getRoles()[1] != 'ROLE_ADMIN' && $dataList->getUserCre() != $user->getId()) {
+        if ($user->getRoles()[0] != 'ROLE_ADMIN' && $dataList->getUserCre() != $user->getId()) {
             $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'ACCESS DENIED');
         }
         

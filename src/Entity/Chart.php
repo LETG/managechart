@@ -60,6 +60,14 @@ class Chart
      * @ORM\Column(name="tooltipChart", type="boolean", options={"default" : true})
      */
     private $tooltipChart;
+    
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="publicChart", type="boolean", options={"default" : true})
+     */
+    private $publicChart = 1 ;
+    
 
     /**
      * @var string
@@ -736,6 +744,18 @@ class Chart
                 $listYAxi->setChart(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isPublicChart(): ?bool
+    {
+        return $this->publicChart;
+    }
+
+    public function setPublicChart(bool $publicChart): static
+    {
+        $this->publicChart = $publicChart;
 
         return $this;
     }

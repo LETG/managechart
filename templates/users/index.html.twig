@@ -28,6 +28,7 @@
 				<th>{{ 'userlist.table.titlecolumn.id'|trans }}</th>
 				<th>{{ 'userlist.table.titlecolumn.username'|trans() }}</th>
 				<th>{{ 'userlist.table.titlecolumn.roles'|trans() }}</th>
+                                <th>{{ 'userlist.table.titlecolumn.nameBDD'|trans() }}</th>
 			</tr>
 		</thead>
 
@@ -49,6 +50,11 @@
 					<td>{{ user.id }}</td>
 					<td>{{ user.username }}</td>
 					<td>{{ user.roles[0] }}</td>
+                                        {% if (user.dataSource is defined and user.dataSource != null) %}
+                                            <td>{{ user.dataSource.getUniqueName }}</td>
+                                        {% else %}
+                                            <td>&nbsp;</td>
+                                        {% endif %}
 				</tr>
 			{% endfor %}
 		</tbody>

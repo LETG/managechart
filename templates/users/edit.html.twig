@@ -37,7 +37,19 @@
 			{{ form_errors(form.roles) }}
 		</div>
 	</div>
-
+        
+        {# Cas du Role "Super Admin" login=admin seul rôlke habilité à associer une bdd aux utilisateurs #}
+        {% if app.user.id == '1' %}               
+            <div class="form-group">
+                            {{ form_label(form.dataSource, 'formDataList.dataSource'|trans(), {'label_attr': {'class': 'col-md-3 control-label'}}) }}
+                            {{ form_errors(form.dataSource) }}
+                    <div class="col-md-5">
+                            {# Génération de l'input. #}
+                            {{ form_widget(form.dataSource, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+            </div>
+        {% endif %}        
+                
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-5">
 			<input class="btn btn-primary pull-right" type="submit" value="{{ 'button.submit'|trans({}, 'messages') }}" />

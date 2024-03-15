@@ -45,6 +45,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     private $plainPassword;
     
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\DataSource")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $dataSource;
     
     /**
      * @var \DateTime|null
@@ -222,6 +227,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUserMaj(?string $userMaj): static
     {
         $this->userMaj = $userMaj;
+
+        return $this;
+    }
+
+    public function getDataSource(): ?DataSource
+    {
+        return $this->dataSource;
+    }
+
+    public function setDataSource(?DataSource $dataSource): static
+    {
+        $this->dataSource = $dataSource;
 
         return $this;
     }

@@ -124,7 +124,7 @@ class ChartController extends AbstractController
     {
         $em = $this->doctrine->getManager();
         $user = $this->getUser();
-        if ($user->getRoles()[1] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
+        if ($user->getRoles()[0] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
             $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'ACCESS DENIED');
         }
 
@@ -344,7 +344,7 @@ class ChartController extends AbstractController
         $em = $this->doctrine->getManager();
         $user = $this->getUser();
 
-        if ($user->getRoles()[1] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
+        if ($user->getRoles()[0] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
             $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'ACCESS DENIED');
         }
         
@@ -380,7 +380,7 @@ class ChartController extends AbstractController
 
         $returnEdit = $this->edit($request, $chart);
         $user = $this->getUser();
-        if ($user->getRoles()[1] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
+        if ($user->getRoles()[0] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
             $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'ACCESS DENIED');
         }
 
@@ -416,7 +416,7 @@ class ChartController extends AbstractController
     {
         $returnEdit = $this->edit($request, $chart);
         $user = $this->getUser();
-        if ($user->getRoles()[1] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
+        if ($user->getRoles()[0] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
             $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'ACCESS DENIED');
         }
 
@@ -452,7 +452,7 @@ class ChartController extends AbstractController
     {
         $returnEdit = $this->edit($request, $chart);
         $user = $this->getUser();
-        if ($user->getRoles()[1] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
+        if ($user->getRoles()[0] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
             $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'ACCESS DENIED');
         }
 
@@ -488,7 +488,7 @@ class ChartController extends AbstractController
     {
         $returnEdit = $this->edit($request, $chart);
         $user = $this->getUser();
-        if ($user->getRoles()[1] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
+        if ($user->getRoles()[0] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
             $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'ACCESS DENIED');
         }
 
@@ -524,7 +524,7 @@ class ChartController extends AbstractController
     {
         $returnEdit = $this->edit($request, $chart);
         $user = $this->getUser();
-        if ($user->getRoles()[1] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
+        if ($user->getRoles()[0] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
             $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'ACCESS DENIED');
         }
 
@@ -560,7 +560,7 @@ class ChartController extends AbstractController
     {
         $returnEdit = $this->edit($request, $chart);
         $user = $this->getUser();
-        if ($user->getRoles()[1] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
+        if ($user->getRoles()[0] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
             $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'ACCESS DENIED');
         }
 
@@ -596,7 +596,7 @@ class ChartController extends AbstractController
     {
         $returnEdit = $this->edit($request, $chart);
         $user = $this->getUser();
-        if ($user->getRoles()[1] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
+        if ($user->getRoles()[0] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
             $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'ACCESS DENIED');
         }
 
@@ -632,7 +632,7 @@ class ChartController extends AbstractController
     {
         $returnEdit = $this->edit($request, $chart);
         $user = $this->getUser();
-        if ($user->getRoles()[1] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
+        if ($user->getRoles()[0] != 'ROLE_ADMIN' && $chart->getUserCre() != $user->getId()) {
             $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'ACCESS DENIED');
         }
 
