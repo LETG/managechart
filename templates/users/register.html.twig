@@ -58,6 +58,27 @@
 		</div>
 	</div>
 
+        {% if app.user.id == '1' %} 
+            {# Cas du Role "Super Admin" login=admin seul rôle habilité à associer une bdd aux utilisateurs #}
+            <div class="form-group">
+                            {{ form_label(form.dataSource, 'formDataList.dataSource'|trans(), {'label_attr': {'class': 'col-md-3 control-label'}}) }}
+                            {{ form_errors(form.dataSource) }}
+                    <div class="col-md-5">
+                            {# Génération de l'input. #}
+                            {{ form_widget(form.dataSource, {'attr': {'class': 'form-control '}}) }}
+                    </div>
+            </div>
+        {% else %}
+            <div class="form-group">
+                            {{ form_label(form.dataSource, 'formDataList.dataSource'|trans(), {'label_attr': {'class': 'col-md-3 control-label'}}) }}
+                            {{ form_errors(form.dataSource) }}
+                    <div class="col-md-5">
+                            {# Génération de l'input. #}
+                            {{ form_widget(form.dataSource, {'value': app.user.dataSource.getId }, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+            </div>
+        {% endif %} 
+        
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-5">
 			<input class="btn btn-primary pull-right" type="submit" value="{{ 'button.submit'|trans({}, 'messages') }}" />

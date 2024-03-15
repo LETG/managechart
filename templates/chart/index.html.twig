@@ -32,6 +32,7 @@
 
 		<tbody>
 			{% for chart in list_chart %}
+                            {% if app.user.id is defined and app.user.id == '1' %} 
 				<tr onClick="document.location.href='{{ path('chart_show', {'id': chart.id}) }}'" onmouseover="this.className='info';" onmouseout="this.className='';">
 					{% if (is_granted('ROLE_SCIENTIFIC') and (chart.userCre == app.user.id)) or is_granted('ROLE_ADMIN') %}
 						<td class="tabletdbtn">
@@ -78,6 +79,55 @@
 						<input 	id="url{{ chart.id }}" type="url" onClick="return selectInput(event, {{ chart.id }});" readonly value="{{ urlIframeExt }}"></input>
 					</td>
 				</tr>
+                            {% else %}
+                                    {# autre rôle (non SUPER-ADMIN id=1) Affiche la liste restreinte de données relative à la base de donnees de l'Utilisateur ) #}
+                                        <tr onClick="document.location.href='{{ path('chart_show', {'id': chart.id}) }}'" onmouseover="this.className='info';" onmouseout="this.className='';">
+                                                {% if (is_granted('ROLE_SCIENTIFIC') and (chart.userCre == app.user.id)) or is_granted('ROLE_ADMIN') %}
+                                                        <td class="tabletdbtn">
+                                                                {# Lien d'edition #}
+                                                                <a class="tablebtn btn btn-primary btn-sm" href="{{ path('chart_edit_' ~ chart.typeChart, {'id': chart.id}) }}" title="Edit">
+                                                                        <span class="glyphicon glyphicon-pencil"></span>
+                                                                </a>
+                                                                {# Lien de duplication #}
+                                                                <a class="tablebtn btn btn-primary btn-sm" href="{{ path('chart_duplicate', {'id': chart.id}) }}" title="Duplicate" onClick="return confirmeDelete(event, '{{ 'chart.table.duplicate.msgconfirm'|trans({'%nameChart%': chart.nameChart}) }}')">
+                                                                        <span class="glyphicon glyphicon-duplicate"></span>
+                                                                </a>
+                                                                {# Lien de suppression avec confirmation #}
+                                                                        <a 	class="tablebtn btn btn-danger btn-sm" href="{{ path('chart_delete', {'id': chart.id}) }}" title="Delete" onClick="return confirmeDelete(event, '{{ 'chart.table.delete.msgconfirm'|trans({'%nameChart%': chart.nameChart}) }}')">
+                                                                                <span class="glyphicon glyphicon-trash"></span>
+                                                                        </a>                                                            
+
+                                                        </td>
+                                                {% elseif is_granted('ROLE_SCIENTIFIC') %}  
+                                                        <td class="tabletdbtn">
+                                                                {# Lien d'edition #}
+                                                                <a class="tablebtn btn btn-primary btn-sm" href="" disabled title="Edit">
+                                                                        <span class="glyphicon glyphicon-pencil"></span>
+                                                                </a>
+                                                                {# Lien de duplication #}
+                                                                <a class="tablebtn btn btn-primary btn-sm" href="{{ path('chart_duplicate', {'id': chart.id}) }}" title="Duplicate" onClick="return confirmeDelete(event, '{{ 'chart.table.duplicate.msgconfirm'|trans({'%nameChart%': chart.nameChart}) }}')">
+                                                                        <span class="glyphicon glyphicon-duplicate"></span>
+                                                                </a>
+                                                                {# Lien de suppression avec confirmation #}
+                                                                <a 	class="tablebtn btn btn-danger btn-sm" href="" disabled title="Delete">
+                                                                        <span class="glyphicon glyphicon-trash"></span>
+                                                                </a>
+                                                        </td> 
+                                                {% endif %}
+
+                                                <td>{{ chart.id }}</td>
+                                                <td>{{ chart.nameChart }}</td>
+                                                <td>
+                                                        {% set type = 'chart.table.label.' ~ chart.typeChart %}
+                                                        {{ type|trans }}
+                                                </td>
+                                                <td onClick="return selectInput(event, {{ chart.id }})">
+                                                        {% set urlIframe =  url('chart_show_iframe', {'id': chart.id, 'width': 800, 'height': 530}) ~ '/{{AttrSpatiaux}}' %}
+                                                        {% set urlIframeExt = urlIframe|replace({'wapps.univ-brest.fr' : 'www-iuem.univ-brest.fr'}) %}
+                                                        <input 	id="url{{ chart.id }}" type="url" onClick="return selectInput(event, {{ chart.id }});" readonly value="{{ urlIframeExt }}"></input>
+                                                </td>
+                                        </tr>                              
+                            {% endif %}
 			{% endfor %}
 		</tbody>
 	</table>

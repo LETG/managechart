@@ -31,32 +31,53 @@
                                 <th>{{ 'userlist.table.titlecolumn.nameBDD'|trans() }}</th>
 			</tr>
 		</thead>
-
 		<tbody>
-			{% for user in listUsers %}
-				<tr onClick="document.location.href='{{ path('user_show', {'id': user.id}) }}'" onmouseover="this.className='info';" onmouseout="this.className='';">
-					<td class="tabletdbtn">
-						{# Affiche le lien d'edition de compte uniquement sur le compte de l'utilisateur connecte #}
-                        <a class="tablebtn btn btn-primary" href="{{ path('user_edit', {'id': user.id}) }}" title="Edit">
-                            <span class="glyphicon glyphicon-pencil"></span>
-                        </a>
-
-						{% if user.id != app.user.id %}
-							<a 	class="tablebtn btn btn-danger" href="{{ path('user_delete', {'id': user.id}) }}" title="Delete" onClick="return confirmeDelete(event, '{{ 'userlist.table.deleteuser.msgconfirm'|trans({'%username%': user.username}) }}')">
-								<span class="glyphicon glyphicon-trash"></span>
-							</a>
-						{% endif %}
-					</td>
-					<td>{{ user.id }}</td>
-					<td>{{ user.username }}</td>
-					<td>{{ user.roles[0] }}</td>
-                                        {% if (user.dataSource is defined and user.dataSource != null) %}
-                                            <td>{{ user.dataSource.getUniqueName }}</td>
-                                        {% else %}
-                                            <td>&nbsp;</td>
-                                        {% endif %}
-				</tr>
-			{% endfor %}
+                    {# {{ dump(app.user) }}#}
+                    {% for user in listUsers %}
+                        {% if app.user.id == '1' %} 
+                            {# role  SUPER-ADMIN id=1 #}
+                            <tr onClick="document.location.href='{{ path('user_show', {'id': user.id}) }}'" onmouseover="this.className='info';" onmouseout="this.className='';">
+                                    <td class="tabletdbtn">
+                                    {# Affiche le lien d'edition de compte uniquement sur le compte de l'utilisateur connecte #}
+                                    <a class="tablebtn btn btn-primary" href="{{ path('user_edit', {'id': user.id}) }}" title="Edit">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </a>
+                                    <a 	class="tablebtn btn btn-danger" href="{{ path('user_delete', {'id': user.id}) }}" title="Delete" onClick="return confirmeDelete(event, '{{ 'userlist.table.deleteuser.msgconfirm'|trans({'%username%': user.username}) }}')">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                    </a>
+                                    </td>
+                                    <td>{{ user.id }}</td>
+                                    <td>{{ user.username }}</td>
+                                    <td>{{ user.roles[0] }}</td>
+                                    {% if (user.dataSource is defined and user.dataSource != null) %}
+                                        <td>{{ user.dataSource.getUniqueName }}</td>
+                                    {% else %}
+                                        <td>&nbsp;</td>
+                                    {% endif %}
+                            </tr>
+                        {% else %}
+                            {% if (user.dataSource is defined and user.dataSource != null and app.user.dataSource is defined and app.user.dataSource != null) %} 
+                                {% if (app.user.dataSource.getId == user.dataSource.getId)  %}
+                                {# role ADMIN (non SUPER-ADMIN id=1) Affiche la liste restreinte des Utilisateurs à la base de donnees de celle de l'ADMIN ) #}
+                                <tr onClick="document.location.href='{{ path('user_show', {'id': user.id}) }}'" onmouseover="this.className='info';" onmouseout="this.className='';">
+                                    <td class="tabletdbtn">
+                                        {# Affiche le lien d'edition de compte uniquement sur le compte de l'utilisateur connecte #}
+                                        <a class="tablebtn btn btn-primary" href="{{ path('user_edit', {'id': user.id}) }}" title="Edit">
+                                            <span class="glyphicon glyphicon-pencil"></span>
+                                        </a>
+                                        <a 	class="tablebtn btn btn-danger" href="{{ path('user_delete', {'id': user.id}) }}" title="Delete" onClick="return confirmeDelete(event, '{{ 'userlist.table.deleteuser.msgconfirm'|trans({'%username%': user.username}) }}')">
+                                                <span class="glyphicon glyphicon-trash"></span>
+                                        </a>
+                                    </td>
+                                    <td>{{ user.id }}</td>
+                                    <td>{{ user.username }}</td>
+                                    <td>{{ user.roles[0] }}</td>
+                                    <td>{{ user.dataSource.getUniqueName }}</td>
+                               </tr>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
 		</tbody>
 	</table>
 {% endblock %}

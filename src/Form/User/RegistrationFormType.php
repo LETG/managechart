@@ -24,7 +24,7 @@ use App\Form\Type\ActionFormType;
 use App\Entity\DataSource;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
-class RegistrationFormType extends AbstractType
+class RegistrationFormType extends ActionFormType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options) 
 	{
