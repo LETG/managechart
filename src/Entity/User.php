@@ -46,12 +46,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $plainPassword;
     
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\DataSource")
-     * @ORM\JoinColumn(nullable=true)
-     */
-    private $dataSource;
-    
-    /**
      * @var \DateTime|null
      *
      * @ORM\Column(name="date_cre", type="datetime", nullable=true, options={"default"="CURRENT_TIMESTAMP"})
@@ -231,15 +225,4 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getDataSource(): ?DataSource
-    {
-        return $this->dataSource;
-    }
-
-    public function setDataSource(?DataSource $dataSource): static
-    {
-        $this->dataSource = $dataSource;
-
-        return $this;
-    }
 }

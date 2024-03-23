@@ -14,6 +14,7 @@ use App\Entity\DataList;
 use App\Entity\DataSource;
 
 use App\Form\Type\ActionFormType;
+use Doctrine\ORM\EntityRepository;
 
 class DataListType extends ActionFormType
 {
@@ -22,6 +23,10 @@ class DataListType extends ActionFormType
      * @param array $options
      */
 	public function buildForm(FormBuilderInterface $builder, array $options) {
+                $data = $builder->getData();
+                $datasource = $data->getDatasource();
+                $user = $this->security->getUser();
+                
 		$builder
 			->add('nameData',			TextType::class,					array(
 				'label' => 'formDataList.name'
@@ -29,6 +34,13 @@ class DataListType extends ActionFormType
 			->add('dataSource', 		EntityType::class,				array(
 				'label' => 'formDataList.dataSource',
 				'class' => DataSource::class,
+                                'query_builder' => function (EntityRepository $er) use ($datasource) {
+                                        if ($datasource) {
+                                            return $er->createQueryBuilder('d')
+                                                ->where('d.userCre = :id')
+                                                ->setParameter('id', $this->security->getUser()->getUserCre());
+                                        } 
+                                    },
 				'choice_label' => 'getUniqueName'
 			))
 			->add('requestData',		TextareaType::class,				array(

@@ -32,6 +32,11 @@
 
 		<tbody>
 			{% for chart in list_chart %}
+                            {% if is_granted('ROLE_ADMIN') %} 
+                                        {% if (app.user.id == '1' or chart.userCre == app.user.id) %}  {# role  SUPER-ADMIN id=1 #}
+
+                                        {% endif %}
+                            {% endif %}
                             {% if app.user.id is defined and app.user.id == '1' %} 
 				<tr onClick="document.location.href='{{ path('chart_show', {'id': chart.id}) }}'" onmouseover="this.className='info';" onmouseout="this.className='';">
 					{% if (is_granted('ROLE_SCIENTIFIC') and (chart.userCre == app.user.id)) or is_granted('ROLE_ADMIN') %}

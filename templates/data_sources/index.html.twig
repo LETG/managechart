@@ -37,6 +37,7 @@
 
 			<tbody>
 				{% for dataSource in list_dataSources %}
+                                    {% if app.user.id == '1' %} {# role  SUPER-ADMIN id=1 #}
 					<tr onClick="document.location.href='{{ path('data_sources_show', {'id': dataSource.id}) }}'" onmouseover="this.className='info';" onmouseout="this.className='';">
 						<td class="tabletdbtn">
 							{% if privateKey %}
@@ -58,6 +59,31 @@
 						{# TRI SELON L'année , le mois  #}
 			
 					</tr>
+                                    {% else %}
+                                        {% if (app.user.id == dataSource.userCre)  %} {# role ADMIN (non SUPER-ADMIN) Affiche la liste restreinte des bdd  celle de l'ADMIN ) #}
+                                            <tr onClick="document.location.href='{{ path('data_sources_show', {'id': dataSource.id}) }}'" onmouseover="this.className='info';" onmouseout="this.className='';">
+						<td class="tabletdbtn">
+							{% if privateKey %}
+								<a href="{{ path('data_sources_edit', {'id': dataSource.id}) }}" class="tablebtn btn btn-primary" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
+							{% else %}
+								<div data-toggle="tooltip" data-placement="bottom" title="{{ 'datasources.privateKey.edit'|trans() }}" style="display:inline-block; cursor: default;">
+									<a href="#" class="tablebtn btn btn-primary disabled"><span class="glyphicon glyphicon-pencil"></span></a>
+								</div>
+							{% endif %}
+							<a href="{{ path('data_sources_delete', {'id': dataSource.id}) }}" class="tablebtn btn btn-danger" title="Delete" onClick="return confirmeDelete(event, '{{ 'datasources.table.delete.msgconfirm'|trans({'%nameCon%': dataSource.nameCon}) }}')"><span class="glyphicon glyphicon-trash"></span></a>
+						</td>
+						<td>{{ dataSource.id }}</td>
+						<td>{{ dataSource.nameCon }}</td>
+						<td>{{ dataSource.nameBDD }}</td>
+						<td>{{ dataSource.descriptionBDD }}</td>
+						<td>{{ dataSource.typeStrBDD }}</td>
+						<td style="min-width: 135px;">{{ dataSource.dateBDD|date('Y/m/d') }}</td>
+						{# changement du format de la date du timestamp en se basant sur le tri des annés et des mois pour une meilleur visualisation lors de la création  d/m/Y H:i:s ===> Y/m/d H:i:s  #}
+						{# TRI SELON L'année , le mois  #}
+			
+                                            </tr>
+                                        {% endif %}
+                                    {% endif %}
 				{% endfor %}
 			</tbody>
 		</table>

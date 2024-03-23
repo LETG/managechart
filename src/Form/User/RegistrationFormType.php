@@ -21,9 +21,6 @@ use Symfony\Component\Validator\Constraints\Email;
 
 use App\Form\Type\ActionFormType;
 
-use App\Entity\DataSource;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-
 class RegistrationFormType extends ActionFormType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options) 
@@ -58,13 +55,6 @@ class RegistrationFormType extends ActionFormType
                     ]),
                     'multiple' => true,
             ])
-            ->add('dataSource', EntityType::class, array(
-                    'label' => 'formDataList.dataSource',
-                    'class' => DataSource::class,
-                    'choice_label' => 'getUniqueName',
-                    'placeholder'   => 'Nom de la base de donnée',
-                    'required'      => false
-            ))
             ->addEventSubscriber($this->addUserDate);
 	}
         

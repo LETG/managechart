@@ -26,44 +26,90 @@
 
 			<tbody>
 				{% for dataList in list_dataList %}
-					<tr onClick="document.location.href='{{ path('data_list_show', {'id': dataList.id}) }}'" onmouseover="this.className='info';" onmouseout="this.className='';">
-                                            {% if (is_granted('ROLE_SCIENTIFIC_PLUS') and (dataList.userCre == app.user.id)) or is_granted('ROLE_ADMIN') %}						
+                                    {% set flagRecord = 1 %} 
+                                    {#  {{  dump(dataList.dataSource.getUniqueName, dataList.datasource.userCre, app.user.id, app.user.userCre, app.user.roles[0])}}  #}
+                                    {# role Le cas des rôles ADMIN & SUPER-ADMIN  #}
+                                    {% if is_granted('ROLE_ADMIN') %} 
+                                        {% if (app.user.id == '1' or dataList.datasource.userCre == app.user.id) %}  {# role  SUPER-ADMIN id=1 #}
+                                            {% set flagRecord = 0 %} 
+                                            <tr onClick="document.location.href='{{ path('data_list_show', {'id': dataList.id}) }}'" onmouseover="this.className='info';" onmouseout="this.className='';"> 
+                                            <td class="tabletdbtn">
+                                                    {# Lien d'edition #}
+                                                    <a class="tablebtn btn btn-primary btn-sm" href="{{ path('data_list_edit', {'id': dataList.id}) }}" title="Edit">
+                                                            <span class="glyphicon glyphicon-pencil"></span>
+                                                    </a>
+                                                    {# Lien de duplication #}
+                                                    <a class="tablebtn btn btn-primary btn-sm" href="{{ path('data_list_duplicate', {'id': dataList.id}) }}" title="Duplicate" onClick="return confirmeDelete(event, '{{ 'datalist.table.duplicate.msgconfirm'|trans({'%nameData%': dataList.nameData}) }}')">
+                                                            <span class="glyphicon glyphicon-duplicate"></span>
+                                                    </a>
+                                                    {# Lien de suppression avec confirmation #}
+                                                    <a class="tablebtn btn btn-danger btn-sm" href="{{ path('data_list_delete', {'id': dataList.id}) }}" title="Delete" onClick="return confirmeDelete(event, '{{ 'datalist.table.delete.msgconfirm'|trans({'%nameData%': dataList.nameData}) }}')">
+                                                            <span class="glyphicon glyphicon-trash"></span>
+                                                    </a>
+                                            </td>
+                                            <td>{{ dataList.id }}</td>
+                                            <td>{{ dataList.nameData }}</td>
+                                            <td>{{ dataList.dataSource.getUniqueName }}</td>
+                                            <td style="min-width: 135px;">{{ dataList.dateData|date('Y/m/d') }}</td>   
+                                            </tr>
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if not is_granted('ROLE_ADMIN')  %}                                         
+                                        {% if ( dataList.datasource.userCre == app.user.userCre) %}
+                                            {% if (dataList.userCre == app.user.id) %} 
+                                                {# role  ROLE_SCIENTIFIC_PLUS ou tous les utilisateur créée par l'ADMIN  #} 
+                                                <tr onClick="document.location.href='{{ path('data_list_show', {'id': dataList.id}) }}'" onmouseover="this.className='info';" onmouseout="this.className='';">                                             
                                                 <td class="tabletdbtn">
-							{# Lien d'edition #}
-							<a class="tablebtn btn btn-primary btn-sm" href="{{ path('data_list_edit', {'id': dataList.id}) }}" title="Edit">
-								<span class="glyphicon glyphicon-pencil"></span>
-							</a>
-							{# Lien de duplication #}
-							<a class="tablebtn btn btn-primary btn-sm" href="{{ path('data_list_duplicate', {'id': dataList.id}) }}" title="Duplicate" onClick="return confirmeDelete(event, '{{ 'datalist.table.duplicate.msgconfirm'|trans({'%nameData%': dataList.nameData}) }}')">
-								<span class="glyphicon glyphicon-duplicate"></span>
-							</a>
-							{# Lien de suppression avec confirmation #}
-							<a class="tablebtn btn btn-danger btn-sm" href="{{ path('data_list_delete', {'id': dataList.id}) }}" title="Delete" onClick="return confirmeDelete(event, '{{ 'datalist.table.delete.msgconfirm'|trans({'%nameData%': dataList.nameData}) }}')">
-								<span class="glyphicon glyphicon-trash"></span>
-							</a>
-						</td>
-                                        {% elseif is_granted('ROLE_SCIENTIFIC') %}  
-                                            	<td class="tabletdbtn">
-							{# Lien d'edition #}
-							<a class="tablebtn btn btn-primary btn-sm" href="" disabled title="Edit">
-								<span class="glyphicon glyphicon-pencil"></span>
-							</a>
-							{# Lien de duplication #}
-							<a class="tablebtn btn btn-primary btn-sm" href="{{ path('data_list_duplicate', {'id': dataList.id}) }}" title="Duplicate" onClick="return confirmeDelete(event, '{{ 'datalist.table.duplicate.msgconfirm'|trans({'%nameData%': dataList.nameData}) }}')">
-								<span class="glyphicon glyphicon-duplicate"></span>
-							</a>
+                                                        {# Lien d'edition #}
+                                                        <a class="tablebtn btn btn-primary btn-sm" href="{{ path('data_list_edit', {'id': dataList.id}) }}" title="Edit">
+                                                                <span class="glyphicon glyphicon-pencil"></span>
+                                                        </a>
+                                                        {# Lien de duplication #}
+                                                        <a class="tablebtn btn btn-primary btn-sm" href="{{ path('data_list_duplicate', {'id': dataList.id}) }}" title="Duplicate" onClick="return confirmeDelete(event, '{{ 'datalist.table.duplicate.msgconfirm'|trans({'%nameData%': dataList.nameData}) }}')">
+                                                                <span class="glyphicon glyphicon-duplicate"></span>
+                                                        </a>
+                                                        {# Lien de suppression avec confirmation #}
+                                                        <a class="tablebtn btn btn-danger btn-sm" href="{{ path('data_list_delete', {'id': dataList.id}) }}" title="Delete" onClick="return confirmeDelete(event, '{{ 'datalist.table.delete.msgconfirm'|trans({'%nameData%': dataList.nameData}) }}')">
+                                                                <span class="glyphicon glyphicon-trash"></span>
+                                                        </a>
+                                                </td> 
+                                                <td>{{ dataList.id }}</td>
+                                                <td>{{ dataList.nameData }}</td>
+                                                <td>{{ dataList.dataSource.getUniqueName }}</td>
+                                                <td style="min-width: 135px;">{{ dataList.dateData|date('Y/m/d') }}</td>
+                                                </tr>
+                                            {% else %}  
+                                                <tr onClick="document.location.href='{{ path('data_list_show', {'id': dataList.id}) }}'" onmouseover="this.className='info';" onmouseout="this.className='';"> 
+                                                <td class="tabletdbtn">
+                                                        {# Lien d'edition #}
+                                                        <a class="tablebtn btn btn-primary btn-sm" href="" disabled title="Edit">
+                                                                <span class="glyphicon glyphicon-pencil"></span>
+                                                        </a>
+                                                        {# Lien de duplication #}
+                                                        <a class="tablebtn btn btn-primary btn-sm" href="{{ path('data_list_duplicate', {'id': dataList.id}) }}" title="Duplicate" onClick="return confirmeDelete(event, '{{ 'datalist.table.duplicate.msgconfirm'|trans({'%nameData%': dataList.nameData}) }}')">
+                                                                <span class="glyphicon glyphicon-duplicate"></span>
+                                                        </a>
                                                         {# Lien de suppression avec confirmation #}
                                                         <a 	class="tablebtn btn btn-danger btn-sm" href="" disabled title="Delete">
                                                                 <span class="glyphicon glyphicon-trash"></span>
                                                         </a>
-						</td> 
-					{% endif %}
-						<td>{{ dataList.id }}</td>
-						<td>{{ dataList.nameData }}</td>
-						<td>{{ dataList.dataSource.getUniqueName }}</td>
-						<td style="min-width: 135px;">{{ dataList.dateData|date('Y/m/d') }}</td>
-					</tr>
-				{% endfor %}
+                                                </td> 
+                                                <td>{{ dataList.id }}</td>
+                                                <td>{{ dataList.nameData }}</td>
+                                                <td>{{ dataList.dataSource.getUniqueName }}</td>
+                                                <td style="min-width: 135px;">{{ dataList.dateData|date('Y/m/d') }}</td>
+                                                </tr>
+                                            {% endif %}
+                                        {% endif %} 
+                                    {% endif %} 
+				{% endfor %}                                
+                                <tr>
+                                    <td class="tabletdbtn">&nbsp;</td> 
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td style="min-width: 135px;">&nbsp;</td>
+                                </tr>
 			</tbody>
 		</table>
 	{% endif %}
