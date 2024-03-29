@@ -85,7 +85,8 @@
 					</td>
 				</tr>
                             {% else %}
-                                    {# autre rôle (non SUPER-ADMIN id=1) Affiche la liste restreinte de données relative à la base de donnees de l'Utilisateur ) #}
+                                {% if (chart.publicchart == 1) %} {## n affiche que le graph public #}
+                                    {# autre rôle (non SUPER-ADMIN) Affiche la liste restreinte de données relative à la base de donnees de l'Utilisateur ) #}
                                         <tr onClick="document.location.href='{{ path('chart_show', {'id': chart.id}) }}'" onmouseover="this.className='info';" onmouseout="this.className='';">
                                                 {% if (is_granted('ROLE_SCIENTIFIC') and (chart.userCre == app.user.id)) or is_granted('ROLE_ADMIN') %}
                                                         <td class="tabletdbtn">
@@ -132,6 +133,7 @@
                                                         <input 	id="url{{ chart.id }}" type="url" onClick="return selectInput(event, {{ chart.id }});" readonly value="{{ urlIframeExt }}"></input>
                                                 </td>
                                         </tr>                              
+                                {% endif %}
                             {% endif %}
 			{% endfor %}
 		</tbody>
