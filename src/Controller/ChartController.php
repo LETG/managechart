@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+// use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use App\Entity\Chart;
 use App\Entity\DataList;
 use App\Entity\YAxis;
@@ -19,6 +19,10 @@ use App\Chart\AvailableChoice\AvailableDashStyleSerie;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Form\Enums\Action;
+use Symfony\Bundle\SecurityBundle\SecurityBundle;
+use Symfony\Component\Security\Core\Security;
+
+use App\Entity\User;
 
 
 class ChartController extends AbstractController
@@ -32,10 +36,11 @@ class ChartController extends AbstractController
      */
     private $doctrine;
 
-    public function __construct(TranslatorInterface $translator, ManagerRegistry $doctrine)
+    public function __construct(TranslatorInterface $translator, ManagerRegistry $doctrine, Security $security)
     {
         $this->translator = $translator;
         $this->doctrine = $doctrine;
+        $this->security = $security;
     }
 
     protected function initializeVarTwig($manager)
@@ -80,8 +85,10 @@ class ChartController extends AbstractController
     {
         $repository = $this->doctrine->getRepository(Chart::class);
         $list_chart = $repository->findAll();
+        $repositoryUser = $this->doctrine->getRepository(User::class);
+        $user_admin = $repositoryUser->findBy(array('id' => $this->security->getUser()->getUserCre()),array('userCre' => 'ASC'),1 ,0)[0];
 
-        return $this->render('chart/index.html.twig', array('list_chart' => $list_chart));
+        return $this->render('chart/index.html.twig', array('list_chart' => $list_chart, 'user_admin' => $user_admin));
     }
 
     /**

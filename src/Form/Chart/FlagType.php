@@ -34,6 +34,7 @@ class FlagType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+                
         array_push(AvailableNumberofSerie::$nbSerie,'Flag');
         array_splice(AvailableNumberofSerie::$nbSerie, 1, 1);
         $builder

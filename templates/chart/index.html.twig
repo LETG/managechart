@@ -86,6 +86,7 @@
 				</tr>
                             {% else %}
                                 {% if (chart.publicchart == 1) %} {## n affiche que le graph public #}
+                                    {# {{ dump(chart.userCre) }}#}
                                     {# autre rôle (non SUPER-ADMIN) Affiche la liste restreinte de données relative à la base de donnees de l'Utilisateur ) #}
                                         <tr onClick="document.location.href='{{ path('chart_show', {'id': chart.id}) }}'" onmouseover="this.className='info';" onmouseout="this.className='';">
                                                 {% if (is_granted('ROLE_SCIENTIFIC') and (chart.userCre == app.user.id)) or is_granted('ROLE_ADMIN') %}
@@ -104,7 +105,20 @@
                                                                         </a>                                                            
 
                                                         </td>
+                                                        <td>{{ chart.id }}</td>
+                                                        <td>{{ chart.nameChart }}</td>
+                                                        <td>
+                                                                {% set type = 'chart.table.label.' ~ chart.typeChart %}
+                                                                {{ type|trans }}
+                                                        </td>
+                                                        <td onClick="return selectInput(event, {{ chart.id }})">
+                                                                {% set urlIframe =  url('chart_show_iframe', {'id': chart.id, 'width': 800, 'height': 530}) ~ '/{{AttrSpatiaux}}' %}
+                                                                {% set urlIframeExt = urlIframe|replace({'wapps.univ-brest.fr' : 'www-iuem.univ-brest.fr'}) %}
+                                                                <input 	id="url{{ chart.id }}" type="url" onClick="return selectInput(event, {{ chart.id }});" readonly value="{{ urlIframeExt }}"></input>
+                                                        </td>
                                                 {% elseif is_granted('ROLE_SCIENTIFIC') %}  
+                                                        {# {{ dump(user_admin.id) }} #}
+                                                        {% if (chart.userCre == user_admin.id ) %}
                                                         <td class="tabletdbtn">
                                                                 {# Lien d'edition #}
                                                                 <a class="tablebtn btn btn-primary btn-sm" href="" disabled title="Edit">
@@ -119,19 +133,27 @@
                                                                         <span class="glyphicon glyphicon-trash"></span>
                                                                 </a>
                                                         </td> 
+                                                        <td>{{ chart.id }}</td>
+                                                        <td>{{ chart.nameChart }}</td>
+                                                        <td>
+                                                                {% set type = 'chart.table.label.' ~ chart.typeChart %}
+                                                                {{ type|trans }}
+                                                        </td>
+                                                        <td onClick="return selectInput(event, {{ chart.id }})">
+                                                                {% set urlIframe =  url('chart_show_iframe', {'id': chart.id, 'width': 800, 'height': 530}) ~ '/{{AttrSpatiaux}}' %}
+                                                                {% set urlIframeExt = urlIframe|replace({'wapps.univ-brest.fr' : 'www-iuem.univ-brest.fr'}) %}
+                                                                <input 	id="url{{ chart.id }}" type="url" onClick="return selectInput(event, {{ chart.id }});" readonly value="{{ urlIframeExt }}"></input>
+                                                        </td>
+                                                       {% else %}
+                                                            <td class="tabletdbtn">
+                                                                {# Lien d'edition #}
+                                                            </td> 
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                       {% endif %}
                                                 {% endif %}
-
-                                                <td>{{ chart.id }}</td>
-                                                <td>{{ chart.nameChart }}</td>
-                                                <td>
-                                                        {% set type = 'chart.table.label.' ~ chart.typeChart %}
-                                                        {{ type|trans }}
-                                                </td>
-                                                <td onClick="return selectInput(event, {{ chart.id }})">
-                                                        {% set urlIframe =  url('chart_show_iframe', {'id': chart.id, 'width': 800, 'height': 530}) ~ '/{{AttrSpatiaux}}' %}
-                                                        {% set urlIframeExt = urlIframe|replace({'wapps.univ-brest.fr' : 'www-iuem.univ-brest.fr'}) %}
-                                                        <input 	id="url{{ chart.id }}" type="url" onClick="return selectInput(event, {{ chart.id }});" readonly value="{{ urlIframeExt }}"></input>
-                                                </td>
                                         </tr>                              
                                 {% endif %}
                             {% endif %}

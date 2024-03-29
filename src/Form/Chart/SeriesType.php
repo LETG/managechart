@@ -33,6 +33,7 @@ class SeriesType extends AbstractType
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
+
     	$builder
     		->add('titleSerie',		TextType::class,		array(
     			'label' => 'formSerie.title'
