@@ -20,8 +20,14 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 
+use Symfony\Component\Security\Core\Security;
+
 class SeriesType extends AbstractType
 {
+      public function __construct(Security $security) {
+        $this->security = $security;
+      }
+
 	/**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -42,7 +48,10 @@ class SeriesType extends AbstractType
     			'placeholder' => 'formSerie.dataListChoice',
                 'required' => true,
                 'query_builder' => function(DataListRepository $dr) {
-                    return $dr->createQueryBuilder('d')->orderBy('d.nameData', 'ASC');
+                    return $dr->createQueryBuilder('d')
+                            ->where('d.userCre = :id')
+                            ->orderBy('d.nameData', 'ASC')
+                            ->setParameter('id', $this->security->getUser()->getId());
                 }
     		))
             ->add('typeSerie',      ChoiceType::class,   array(
