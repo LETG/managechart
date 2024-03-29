@@ -86,7 +86,11 @@ class ChartController extends AbstractController
         $repository = $this->doctrine->getRepository(Chart::class);
         $list_chart = $repository->findAll();
         $repositoryUser = $this->doctrine->getRepository(User::class);
-        $user_admin = $repositoryUser->findBy(array('id' => $this->security->getUser()->getUserCre()),array('userCre' => 'ASC'),1 ,0)[0];
+        if($this->security->getUser() !== null) {
+            $user_admin = $repositoryUser->findBy(array('id' => $this->security->getUser()->getUserCre()),array('userCre' => 'ASC'),1 ,0)[0];
+        }else{
+          $user_admin = 0;  
+        }
 
         return $this->render('chart/index.html.twig', array('list_chart' => $list_chart, 'user_admin' => $user_admin));
     }
