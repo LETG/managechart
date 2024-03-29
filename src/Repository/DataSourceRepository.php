@@ -10,4 +10,16 @@ namespace App\Repository;
  */
 class DataSourceRepository extends \Doctrine\ORM\EntityRepository
 {
+
+    public function findDataSourceListForUserCre($userCre=0) {
+        $queryBuilder =  $this->getEntityManager()->createQueryBuilder();
+
+        return $queryBuilder->select('ds')
+                ->from('App\Entity\DataSource','ds')
+                ->andWhere('ds.userCre = :val')
+                ->setParameter('val', $userCre)
+                ->orderBy('ds.id', 'ASC')
+        ;
+    }    
+
 }

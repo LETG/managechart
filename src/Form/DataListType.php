@@ -15,23 +15,30 @@ use App\Entity\DataSource;
 
 use App\Form\Type\ActionFormType;
 use Doctrine\ORM\EntityRepository;
+use App\Repository\DataSourceRepository;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use App\Form\EventListener\AddUserDateFields;
+use Doctrine\ORM\EntityManagerInterface;
 
 class DataListType extends ActionFormType
 {
-	/**
+    /**
 	 * @param FormBuilderInterface $builder
      * @param array $options
      */
 	public function buildForm(FormBuilderInterface $builder, array $options) {
                 $data = $builder->getData();
                 $datasource = $data->getDatasource();
+                // var_dump($data);
                 $user = $this->security->getUser();
                 
 		$builder
 			->add('nameData',			TextType::class,					array(
 				'label' => 'formDataList.name'
-			))
-			->add('dataSource', 		EntityType::class,				array(
+			));
+                if ($datasource){
+			$builder->add('dataSource', 		EntityType::class,				array(
 				'label' => 'formDataList.dataSource',
 				'class' => DataSource::class,
                                 'query_builder' => function (EntityRepository $er) use ($datasource) {
@@ -42,8 +49,19 @@ class DataListType extends ActionFormType
                                         } 
                                     },
 				'choice_label' => 'getUniqueName'
-			))
-			->add('requestData',		TextareaType::class,				array(
+			));
+                } else {
+                    	$builder->add('dataSource', 		EntityType::class,				array(
+				'label' => 'formDataList.dataSource',
+				'class' => DataSource::class,
+                                'query_builder' => function(DataSourceRepository $ttr) {
+                                    return $ttr->findDataSourceListForUserCre($this->security->getUser()->getUserCre());
+                                    
+                                },
+                                'choice_label' => 'getUniqueName'
+			));                    
+                }
+		$builder->add('requestData',		TextareaType::class,				array(
 				'label' => 'formDataList.request'
 			))
 			->add('attributsSpatiaux',	CollectionType::class, 			array(
