@@ -72,10 +72,11 @@ class ChartController extends AbstractController
     /**
      * Retourne la liste des dataList en BDD
      */
-    protected static function getListDataList($manager)
+    // protected static function getListDataList($manager)
+    public function getListDataList($manager)
     {
         $repository = $manager->getRepository(DataList::class);
-        return $repository->findBy([], ["nameData" => "ASC"]);
+        return $repository->findBy(array('userCre' => $this->security->getUser()->getId()), ["nameData" => "ASC"]);
     }
 
     /**
