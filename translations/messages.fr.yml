@@ -30,6 +30,7 @@ chart:
       name: Nom
       type: Type
       url: URL
+      userid: UserId
     label:
       simplechart: Classique
       timechart: Temporel

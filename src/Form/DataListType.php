@@ -32,6 +32,10 @@ class DataListType extends ActionFormType
                 $datasource = $data->getDatasource();
                 // var_dump($data);
                 $user = $this->security->getUser();
+                $userCre = $this->security->getUser()->getUserCre();
+                if($userCre == 1){
+                    $userCre = $this->security->getUser()->getId();
+                }
                 
 		$builder
 			->add('nameData',			TextType::class,					array(
@@ -41,11 +45,11 @@ class DataListType extends ActionFormType
 			$builder->add('dataSource', 		EntityType::class,				array(
 				'label' => 'formDataList.dataSource',
 				'class' => DataSource::class,
-                                'query_builder' => function (EntityRepository $er) use ($datasource) {
+                                'query_builder' => function (EntityRepository $er) use ($datasource, $userCre) {
                                         if ($datasource) {
                                             return $er->createQueryBuilder('d')
                                                 ->where('d.userCre = :id')
-                                                ->setParameter('id', $this->security->getUser()->getUserCre());
+                                                ->setParameter('id', $userCre);
                                         } 
                                     },
 				'choice_label' => 'getUniqueName'
@@ -54,8 +58,8 @@ class DataListType extends ActionFormType
                     	$builder->add('dataSource', 		EntityType::class,				array(
 				'label' => 'formDataList.dataSource',
 				'class' => DataSource::class,
-                                'query_builder' => function(DataSourceRepository $ttr) {
-                                    return $ttr->findDataSourceListForUserCre($this->security->getUser()->getUserCre());
+                                'query_builder' => function(DataSourceRepository $ttr) use ($userCre) {
+                                    return $ttr->findDataSourceListForUserCre($userCre);
                                     
                                 },
                                 'choice_label' => 'getUniqueName'
