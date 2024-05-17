@@ -28,6 +28,7 @@
 				<th>{{ 'userlist.table.titlecolumn.id'|trans }}</th>
 				<th>{{ 'userlist.table.titlecolumn.username'|trans() }}</th>
 				<th>{{ 'userlist.table.titlecolumn.roles'|trans() }}</th>
+                                <th>{{ 'userlist.table.titlecolumn.userCre'|trans() }}</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -47,6 +48,7 @@
                                     <td>{{ user.id }}</td>
                                     <td>{{ user.username }}</td>
                                     <td>{{ user.roles[0] }}</td>
+                                    <td>{{ user.userCre }}</td>
                             </tr>
                         {% else %}
                             {% if (app.user.id == user.userCre)  %} {# role ADMIN (non SUPER-ADMIN) Affiche la liste restreinte des Utilisateurs à la base de donnees de celle de l'ADMIN ) #}
@@ -63,6 +65,7 @@
                                     <td>{{ user.id }}</td>
                                     <td>{{ user.username }}</td>
                                     <td>{{ user.roles[0] }}</td>
+                                    <td>{{ user.userCre }}</td>
                                </tr>
                              {% endif %}
                         {% endif %}
