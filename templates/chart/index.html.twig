@@ -29,7 +29,6 @@
 				<th>{{ 'chart.table.titlecolumn.name'|trans }}</th>
 				<th>{{ 'chart.table.titlecolumn.type'|trans }}</th>
 				<th>{{ 'chart.table.titlecolumn.url'|trans }}</th>
-                                <th>{{ 'chart.table.titlecolumn.userid'|trans }}</th>
 			</tr>
 		</thead>
 
@@ -66,7 +65,6 @@
                                                                 {% set urlIframeExt = urlIframe|replace({'wapps.univ-brest.fr' : 'www-iuem.univ-brest.fr'}) %}
                                                                 <input 	id="url{{ chart.id }}" type="url" onClick="return selectInput(event, {{ chart.id }});" readonly value="{{ urlIframeExt }}"></input>
                                                         </td>
-                                                        <td>{{ chart.userCre }}</td>
                                                         </tr> 
                                                 {% endif %}                                                                
                                 {% endif %}
