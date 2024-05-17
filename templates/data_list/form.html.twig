@@ -3,7 +3,7 @@
 {% extends "layout.html.twig" %}
 
 {% block body %}
-	{% if is_granted('ROLE_SCIENTIFIC_PLUS') %}
+	{% if is_granted('ROLE_SCIENTIFIC') %}
 		<header class="page-header">
 	   		<h1>{{ title }}</h1>
 		</header>
@@ -32,7 +32,11 @@
 			{{ form_errors(form.dataSource) }}
 			<div class="col-md-4">
 	        	{# Génération de l'input. #}
-	        	{{ form_widget(form.dataSource, {'attr': {'class': 'form-control'}}) }}
+                        {% if not is_granted('ROLE_SCIENTIFIC_PLUS') %}
+	        	    {{ form_widget(form.dataSource, {'attr': {'class': 'form-control', 'readonly':'1'}}) }}
+                            	{% else %}
+                            {{ form_widget(form.dataSource, {'attr': {'class': 'form-control'}}) }}
+                        {% endif %}
       		</div>
     	</div>
 
@@ -41,7 +45,11 @@
 			{{ form_errors(form.requestData) }}
 			<div class="col-md-4">
 	        	{# Génération de l'input. #}
-	        	{{ form_widget(form.requestData, {'attr': {'class': 'form-control', 'data-widearea': 'enable'}}) }}
+                        {% if not is_granted('ROLE_SCIENTIFIC_PLUS') %}
+                            {{ form_widget(form.requestData, {'attr': {'class': 'form-control', 'data-widearea': 'enable', 'readonly':'1'}}) }}
+                        {% else %}
+                            {{ form_widget(form.requestData, {'attr': {'class': 'form-control', 'data-widearea': 'enable'}}) }}
+                        {% endif %}
       		</div>
       		<div class="col-md-5" id="helpbox">
 				<ul>

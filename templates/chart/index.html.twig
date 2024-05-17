@@ -35,64 +35,10 @@
 
 		<tbody>
 			{% for chart in list_chart %}
-                            {% if is_granted('ROLE_ADMIN') %} 
-                                        {% if (app.user.id == '1' or chart.userCre == app.user.id) %}  {# role  SUPER-ADMIN id=1 #}
-
-                                        {% endif %}
-                            {% endif %}
-                            {% if app.user.id is defined and app.user.id == '1' %} {# role  SUPER-ADMIN id=1 #}
-				<tr onClick="document.location.href='{{ path('chart_show', {'id': chart.id}) }}'" onmouseover="this.className='info';" onmouseout="this.className='';">
-					{% if (is_granted('ROLE_SCIENTIFIC') and (chart.userCre == app.user.id)) or is_granted('ROLE_ADMIN') %}
-						<td class="tabletdbtn">
-							{# Lien d'edition #}
-							<a class="tablebtn btn btn-primary btn-sm" href="{{ path('chart_edit_' ~ chart.typeChart, {'id': chart.id}) }}" title="Edit">
-								<span class="glyphicon glyphicon-pencil"></span>
-							</a>
-							{# Lien de duplication #}
-							<a class="tablebtn btn btn-primary btn-sm" href="{{ path('chart_duplicate', {'id': chart.id}) }}" title="Duplicate" onClick="return confirmeDelete(event, '{{ 'chart.table.duplicate.msgconfirm'|trans({'%nameChart%': chart.nameChart}) }}')">
-								<span class="glyphicon glyphicon-duplicate"></span>
-							</a>
-                                                        {# Lien de suppression avec confirmation #}
-                                                        <a 	class="tablebtn btn btn-danger btn-sm" href="{{ path('chart_delete', {'id': chart.id}) }}" title="Delete" onClick="return confirmeDelete(event, '{{ 'chart.table.delete.msgconfirm'|trans({'%nameChart%': chart.nameChart}) }}')">
-                                                                <span class="glyphicon glyphicon-trash"></span>
-                                                        </a>                                                            
-
-						</td>
-                                        {% elseif is_granted('ROLE_SCIENTIFIC') %}  
-                                            	<td class="tabletdbtn">
-							{# Lien d'edition #}
-							<a class="tablebtn btn btn-primary btn-sm" href="" disabled title="Edit">
-								<span class="glyphicon glyphicon-pencil"></span>
-							</a>
-							{# Lien de duplication #}
-							<a class="tablebtn btn btn-primary btn-sm" href="{{ path('chart_duplicate', {'id': chart.id}) }}" title="Duplicate" onClick="return confirmeDelete(event, '{{ 'chart.table.duplicate.msgconfirm'|trans({'%nameChart%': chart.nameChart}) }}')">
-								<span class="glyphicon glyphicon-duplicate"></span>
-							</a>
-                                                        {# Lien de suppression avec confirmation #}
-                                                        <a 	class="tablebtn btn btn-danger btn-sm" href="" disabled title="Delete">
-                                                                <span class="glyphicon glyphicon-trash"></span>
-                                                        </a>
-						</td> 
-					{% endif %}
-
-					<td>{{ chart.id }}</td>
-					<td>{{ chart.nameChart }}</td>
-					<td>
-						{% set type = 'chart.table.label.' ~ chart.typeChart %}
-						{{ type|trans }}
-					</td>
-					<td onClick="return selectInput(event, {{ chart.id }})">
-						{% set urlIframe =  url('chart_show_iframe', {'id': chart.id, 'width': 800, 'height': 530}) ~ '/{{AttrSpatiaux}}' %}
-						{% set urlIframeExt = urlIframe|replace({'wapps.univ-brest.fr' : 'www-iuem.univ-brest.fr'}) %}
-						<input 	id="url{{ chart.id }}" type="url" onClick="return selectInput(event, {{ chart.id }});" readonly value="{{ urlIframeExt }}"></input>
-					</td>
-                                        <td>{{ chart.userCre}}</td>
-				</tr>
-                            {% else %}
                                 {% if (chart.publicchart is defined and chart.publicchart == 1) or (chart.userCre is defined and chart.userCre == app.user.id) %} {## n affiche que les graph public sauf si c'est graph de l utilisateur #}
                                     {# {{ dump(chart.userCre) }}#}
                                     {# autre rôle (non SUPER-ADMIN) Affiche la liste restreinte de données relative à la base de donnees de l'Utilisateur ) #}
-                                                {% if (is_granted('ROLE_SCIENTIFIC') and (chart.userCre == app.user.id)) or is_granted('ROLE_ADMIN') %}
+                                                {% if ( is_granted('ROLE_SCIENTIFIC') and (chart.userCre == app.user.id) )  %}
                                                     <tr onClick="document.location.href='{{ path('chart_show', {'id': chart.id}) }}'" onmouseover="this.className='info';" onmouseout="this.className='';">
                                                         <td class="tabletdbtn">
                                                                 {# Lien d'edition #}
@@ -122,24 +68,29 @@
                                                         </td>
                                                         <td>{{ chart.userCre }}</td>
                                                         </tr> 
-                                                {% elseif is_granted('ROLE_SCIENTIFIC') %}  
-                                                        {# {{ dump(user_admin.id) }} #}
-                                                        {% if (chart.userCre == user_admin.id ) %}
-                                                        <tr onClick="document.location.href='{{ path('chart_show', {'id': chart.id}) }}'" onmouseover="this.className='info';" onmouseout="this.className='';">
-                                                        <td class="tabletdbtn">
-                                                                {# Lien d'edition #}
-                                                                <a class="tablebtn btn btn-primary btn-sm" href="" disabled title="Edit">
-                                                                        <span class="glyphicon glyphicon-pencil"></span>
-                                                                </a>
-                                                                {# Lien de duplication #}
-                                                                <a class="tablebtn btn btn-primary btn-sm" href="" disabled title="Duplicate">
-                                                                        <span class="glyphicon glyphicon-duplicate"></span>
-                                                                </a>
-                                                                {# Lien de suppression avec confirmation #}
-                                                                <a 	class="tablebtn btn btn-danger btn-sm" href="" disabled title="Delete">
-                                                                        <span class="glyphicon glyphicon-trash"></span>
-                                                                </a>
-                                                        </td> 
+                                                {% endif %}                                                                
+                                {% endif %}
+
+			{% endfor %}
+		</tbody>
+	</table>
+        {% else %} {# cas Anonymous : pas de User référencé connecté #}  
+            <table class="table table-striped" id="table">
+		<thead>
+			<tr>
+				<th>{{ 'chart.table.titlecolumn.id'|trans }}</th>
+				<th>{{ 'chart.table.titlecolumn.name'|trans }}</th>
+				<th>{{ 'chart.table.titlecolumn.type'|trans }}</th>
+				<th>{{ 'chart.table.titlecolumn.url'|trans }}</th>
+			</tr>
+		</thead>
+
+		<tbody>
+                    {% for chart in list_chart %}
+                                {% if (chart.publicchart is defined and chart.publicchart == 1)  %} {## n affiche que les graph public sauf si c'est graph de l utilisateur #}
+                                    {# {{ dump(chart.userCre) }}#}
+                                    {# autre rôle (non SUPER-ADMIN) Affiche la liste restreinte de données relative à la base de donnees de l'Utilisateur ) #}
+                                                    <tr onClick="document.location.href='{{ path('chart_show', {'id': chart.id}) }}'" onmouseover="this.className='info';" onmouseout="this.className='';">
                                                         <td>{{ chart.id }}</td>
                                                         <td>{{ chart.nameChart }}</td>
                                                         <td>
@@ -151,72 +102,69 @@
                                                                 {% set urlIframeExt = urlIframe|replace({'wapps.univ-brest.fr' : 'www-iuem.univ-brest.fr'}) %}
                                                                 <input 	id="url{{ chart.id }}" type="url" onClick="return selectInput(event, {{ chart.id }});" readonly value="{{ urlIframeExt }}"></input>
                                                         </td>
-                                                        <td>{{ chart.userCre }}</td>
-                                                        </tr> 
-                                                       {% endif %}
-                                                {% endif %}                                                                
+                                                    </tr>                                                             
                                 {% endif %}
-                            {% endif %}
+
 			{% endfor %}
 		</tbody>
-	</table>
-        {% else %} {# cas Anonymous : pas de User référencé connecté #}  
+            </table>
+                
             <div class="row">
-                            <div class="col-xs-6 col-md-4 modalBodyText">
-                            <a href="#" onClick="newChart('simplechart')" class="thumbnail">
-                                    <img src="{{ asset('img/SimpleChart.png') }}">
-                            </a>
-                            {{ 'modal.chart'|trans }}
-                            </div>
-                            <div class="col-xs-6 col-md-4 modalBodyText">
-                            <a href="#" onClick="newChart('timechart')" class="thumbnail">
-                                    <img src="{{ asset('img/time_chart.png') }}">
-                            </a>
-                            {{ 'modal.timechart'|trans }}
-                            </div>
-                            <div class="col-xs-6 col-md-4 modalBodyText">
-                            <a href="#" onClick="newChart('multiaxistimechart')" class="thumbnail">
-                                    <img src="{{ asset('img/multiaxis_time_chart.png') }}">
-                            </a>
-                            {{ 'modal.multiaxistimechart'|trans }}
-                            </div>
+                    <div class="col-xs-6 col-md-4 modalBodyText">
+                    <a href="#" onClick="newChart('simplechart')" class="thumbnail">
+                            <img src="{{ asset('img/SimpleChart.png') }}">
+                    </a>
+                    {{ 'modal.chart'|trans }}
                     </div>
+                    <div class="col-xs-6 col-md-4 modalBodyText">
+                    <a href="#" onClick="newChart('timechart')" class="thumbnail">
+                            <img src="{{ asset('img/time_chart.png') }}">
+                    </a>
+                    {{ 'modal.timechart'|trans }}
+                    </div>
+                    <div class="col-xs-6 col-md-4 modalBodyText">
+                    <a href="#" onClick="newChart('multiaxistimechart')" class="thumbnail">
+                            <img src="{{ asset('img/multiaxis_time_chart.png') }}">
+                    </a>
+                    {{ 'modal.multiaxistimechart'|trans }}
+                    </div>
+            </div>
 
-                    <div class="row">
-                            <div class="col-xs-6 col-md-4 modalBodyText">
-                            <a href="#" onClick="newChart('dynamicchart')" class="thumbnail">
-                                    <img src="{{ asset('img/DynamicChart.png') }}">
-                            </a>
-                            {{ 'modal.dynamicchart'|trans }}
-                            </div>
-                            <div class="col-xs-6 col-md-4 modalBodyText">
-                            <a href="#" onClick="newChart('timedynamicchart')" class="thumbnail">
-                                    <img src="{{ asset('img/TimeDynamicChart.png') }}">
-                            </a>
-                            {{ 'modal.timedynamicchart'|trans }}
-                            </div>
-                            <div class="col-xs-6 col-md-4 modalBodyText">
-                            <a href="#" onClick="newChart('polarchart')" class="thumbnail">
-                                    <img src="{{ asset('img/polar_chart.png') }}">
-                            </a>
-                            {{ 'modal.polarchart'|trans }}
-                            </div>
+            <div class="row">
+                    <div class="col-xs-6 col-md-4 modalBodyText">
+                    <a href="#" onClick="newChart('dynamicchart')" class="thumbnail">
+                            <img src="{{ asset('img/DynamicChart.png') }}">
+                    </a>
+                    {{ 'modal.dynamicchart'|trans }}
                     </div>
+                    <div class="col-xs-6 col-md-4 modalBodyText">
+                    <a href="#" onClick="newChart('timedynamicchart')" class="thumbnail">
+                            <img src="{{ asset('img/TimeDynamicChart.png') }}">
+                    </a>
+                    {{ 'modal.timedynamicchart'|trans }}
+                    </div>
+                    <div class="col-xs-6 col-md-4 modalBodyText">
+                    <a href="#" onClick="newChart('polarchart')" class="thumbnail">
+                            <img src="{{ asset('img/polar_chart.png') }}">
+                    </a>
+                    {{ 'modal.polarchart'|trans }}
+                    </div>
+            </div>
 
-                    <div class="row">
-                            <div class="col-xs-6 col-md-4 modalBodyText">
-                            <a href="#" onClick="newChart('piechart')" class="thumbnail">
-                                    <img src="{{ asset('img/PieChart.png') }}">
-                            </a>
-                            {{ 'modal.piechart'|trans }}
-                            </div>
-                            <div class="col-xs-6 col-md-4 modalBodyText">
-                            <a href="#" onClick="newChart('heatmapchart')" class="thumbnail">
-                                    <img src="{{ asset('img/heatmap.png') }}">
-                            </a>
-                            {{ 'modal.heatmapchart'|trans }}
-                            </div>
+            <div class="row">
+                    <div class="col-xs-6 col-md-4 modalBodyText">
+                    <a href="#" onClick="newChart('piechart')" class="thumbnail">
+                            <img src="{{ asset('img/PieChart.png') }}">
+                    </a>
+                    {{ 'modal.piechart'|trans }}
                     </div>
+                    <div class="col-xs-6 col-md-4 modalBodyText">
+                    <a href="#" onClick="newChart('heatmapchart')" class="thumbnail">
+                            <img src="{{ asset('img/heatmap.png') }}">
+                    </a>
+                    {{ 'modal.heatmapchart'|trans }}
+                    </div>
+            </div>
 					            
         {% endif %}    
 

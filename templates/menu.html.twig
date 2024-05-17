@@ -20,7 +20,7 @@
                     <li><a href="{{ path('data_list_list') }}" title="{{ 'menu.datalist'|trans() }}">{{ 'menu.datalist'|trans() }}</a></li>
                     <li><a href="{{ path('index2', {'_locale' : app.request.locale}) }}" title="{{ 'menu.chart'|trans() }}">{{ 'menu.chart'|trans() }}</a></li>
                     <li><a href="{{ path('user_list') }}" title="{{ 'menu.user'|trans() }}">{{ 'menu.user'|trans() }}</a></li>
-                {% elseif is_granted('ROLE_SCIENTIFIC_PLUS') %}
+                {% elseif is_granted('ROLE_SCIENTIFIC') %}
                     <li><a href="{{ path('data_list_list') }}" title="{{ 'menu.datalist'|trans() }}">{{ 'menu.datalist'|trans() }}</a></li>
                     <li><a href="{{ path('index2', {'_locale' : app.request.locale}) }}" title="{{ 'menu.chart'|trans() }}">{{ 'menu.chart'|trans() }}</a></li>
                 {% endif %}

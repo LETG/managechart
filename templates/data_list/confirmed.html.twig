@@ -3,7 +3,7 @@
 {% extends "layout.html.twig" %}
 
 {% block body %}
-	{% if is_granted('ROLE_SCIENTIFIC_PLUS') %}
+	{% if is_granted('ROLE_SCIENTIFIC') %}
 		<p>{{ 'datalist.registration.confirmed'|trans({'%nameData%': dataList.nameData}, 'messages') }}</p>
 	{% endif %}
 {% endblock body %}

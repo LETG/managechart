@@ -57,7 +57,7 @@ class ChartType extends ActionFormType
     		))
                 ->add('publicChart',      CheckboxType::class,	array(
     			'label' => 'formChart.public',
-    			'required' => true
+    			'required' => false
     		))
             ->add('xAxisTitle',       TextType::class,        array(
                 'label' => 'formChart.xAxisTitle',

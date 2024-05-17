@@ -7,11 +7,7 @@
    		<h1>
    			{{ user.username|capitalize }}
 
-   			{% if user.id == app.user.id %}
-   				<div class="pull-right">
-                  <a class="btn btn-primary" href="{{ path('user_edit', {id: app.user.id}) }}" title="Profile">{{ 'user.edit'|trans }}</a>	
-				</div>
-			{% elseif is_granted('ROLE_ADMIN') %}
+   			{% if is_granted('ROLE_ADMIN') and app.user.id == 1 %}
 				<div class="pull-right">
 					<a class="btn btn-primary" href="{{ path('user_edit', {'id': user.id}) }}" title="Profile">{{ 'user.edit'|trans }}</a>
 				</div>

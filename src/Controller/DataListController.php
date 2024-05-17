@@ -26,7 +26,7 @@ class DataListController extends AbstractController
     }
        
     /**
-     * @isGranted("ROLE_SCIENTIFIC_PLUS")
+     * @isGranted("ROLE_SCIENTIFIC")
      */
     public function index() {
         $repository = $this->doctrine->getRepository(DataList::class);
@@ -112,7 +112,7 @@ class DataListController extends AbstractController
     }
 
     /**
-     * @isGranted("ROLE_SCIENTIFIC_PLUS")
+     * @isGranted("ROLE_SCIENTIFIC")
      */
     public function queryBrut(TranslatorInterface $translator) {
         $idDatasource = $_POST['dataSource'];
@@ -161,14 +161,14 @@ class DataListController extends AbstractController
     }
 
     /**
-     * @isGranted("ROLE_SCIENTIFIC_PLUS")
+     * @isGranted("ROLE_SCIENTIFIC")
      */
     public function confirmed(DataList $dataList) {
         return $this->render('data_list/confirmed.html.twig', array('dataList' => $dataList));
     }
 
     /**
-     * @isGranted("ROLE_SCIENTIFIC_PLUS")
+     * @isGranted("ROLE_SCIENTIFIC")
      */
     public function delete(DataList $dataList) {
         $em = $this->doctrine->getManager();
@@ -184,7 +184,7 @@ class DataListController extends AbstractController
     }
 
     /**
-     * @isGranted("ROLE_SCIENTIFIC_PLUS")
+     * @isGranted("ROLE_SCIENTIFIC")
      */
     public function edit(Request $request, TranslatorInterface $translator,  DataList $dataList) {
         $attributsSpatiaux = $dataList->getAttributsSpatiaux()->toArray();//array_reverse($dataList->getAttributsSpatiaux()->toArray());
@@ -244,14 +244,14 @@ class DataListController extends AbstractController
     }
 
     /**
-     * @isGranted("ROLE_SCIENTIFIC_PLUS")
+     * @isGranted("ROLE_SCIENTIFIC")
      */
     public function show(DataList $dataList) {
         return $this->render('data_list/show.html.twig', array('dataList' => $dataList));
     }
 
     /**
-     * @isGranted("ROLE_SCIENTIFIC_PLUS")
+     * @isGranted("ROLE_SCIENTIFIC")
      */
     public function duplicate(DataList $dataList) {
 

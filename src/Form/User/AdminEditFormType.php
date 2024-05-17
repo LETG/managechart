@@ -23,32 +23,51 @@ class AdminEditFormType extends ActionFormType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options) 
 	{
-		$builder
+		$user = $this->security->getUser();
+                $userId = $this->security->getUser()->getId();
+
+                $builder
 			->add('username', TextType::class, [
 				'constraints' => [
 					new NotBlank(),
 					new Length(['min' => 2, 'max' => 180]),
 				],
 			])
-            ->add('email', EmailType::class, [
+                        ->add('email', EmailType::class, [
 				'constraints' => [
 					new NotBlank(),
 					new Length(['min' => 2, 'max' => 180]),
 					new Email(),
 				],
-			])
-			->add('roles', ChoiceType::class, [
-				'constraints' => [
-					new NotBlank()
-				],
-				'choices' => array_flip([
-					'ROLE_ADMIN' => 'Admin',
-					'ROLE_SCIENTIFIC_PLUS' => 'Scientific+',
-					'ROLE_SCIENTIFIC' => 'Scientific'
-				]),
-				'multiple' => true,
-			])                       
-                        ->addEventSubscriber($this->addUserDate);
+			]);
+                if($userId == 1)
+                {
+                    $builder        
+                            ->add('roles', ChoiceType::class, [
+                                    'constraints' => [
+                                            new NotBlank()
+                                    ],
+                                    'choices' => array_flip([
+                                            'ROLE_ADMIN' => 'Admin',
+                                            'ROLE_SCIENTIFIC_PLUS' => 'Scientific+',
+                                            'ROLE_SCIENTIFIC' => 'Scientific'
+                                    ]),
+                                    'multiple' => true,
+                            ]);
+                    } else {
+                    $builder        
+                            ->add('roles', ChoiceType::class, [
+                                    'constraints' => [
+                                            new NotBlank()
+                                    ],
+                                    'choices' => array_flip([
+                                            'ROLE_SCIENTIFIC_PLUS' => 'Scientific+',
+                                            'ROLE_SCIENTIFIC' => 'Scientific'
+                                    ]),
+                                    'multiple' => true,
+                            ]) ;                   
+                }                       
+                $builder->addEventSubscriber($this->addUserDate);
 	}
 	
 	
