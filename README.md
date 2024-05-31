@@ -31,11 +31,11 @@ It is particularly suitable for operation with the [geoCMS](https://github.com/L
 
 
 ```
-https://www-iuem.univ-brest.fr/wapps/managechart/en/chart/show/{{chart id}}/{{width in px or auto}}/{{heigth in px or auto}}/{{parameter in type defined in request}}
+https://www-iuem.univ-brest.fr/wapps/managechart/en/chart/show/{{chart id}}/{{width in px or auto}}/{{heigth in px or auto}}/{{parameter in type defined in request}}?{{background=color|transparent}}
 ```
 
 
-Exemple : [https://www-iuem.univ-brest.fr/wapps/managechart/en/chart/show/291/800/auto/2](https://www-iuem.univ-brest.fr/wapps/managechart/en/chart/show/291/800/auto/2)
+Exemple : [https://managechart.univ-brest.fr/en/chart/show/291/800/auto/2?background=LightYellow](https://managechart.univ-brest.fr/en/chart/show/291/800/auto/2?background=LightYellow)
 
 # Installation
 
