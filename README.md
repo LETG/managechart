@@ -33,7 +33,7 @@ It is particularly suitable for operation with the [geoCMS](https://github.com/L
 ```
 https://www-iuem.univ-brest.fr/wapps/managechart/en/chart/show/{{chart id}}/{{width in px or auto}}/{{heigth in px or auto}}/{{parameter in type defined in request}}?{{background=color|transparent}}
 ```
-
+name color guide : [https://htmlcolorcodes.com/fr/noms-de-couleur/](https://htmlcolorcodes.com/fr/noms-de-couleur/)
 
 Exemple : [https://managechart.univ-brest.fr/en/chart/show/291/800/auto/2?background=LightYellow](https://managechart.univ-brest.fr/en/chart/show/291/800/auto/2?background=LightYellow)
 
