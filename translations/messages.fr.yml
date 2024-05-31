@@ -69,6 +69,7 @@ modal:
       description: Aucun type sélectionné
 
 formChart:
+  public: Public
   hide: Masquer
   show: Afficher
   fix: Figer
