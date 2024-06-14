@@ -194,14 +194,14 @@ class Chart
     /**
      * @var int|null
      *
-     * @ORM\Column(name="user_cre", type="bigint", nullable=true, options={"default"="1"})
+     * @ORM\Column(name="user_cre", type="integer", nullable=true, options={"default"="1"})
      */
     private $userCre = '1';
 
     /**
      * @var int|null
      *
-     * @ORM\Column(name="user_maj", type="bigint", nullable=true, options={"default"="1"})
+     * @ORM\Column(name="user_maj", type="integer", nullable=true, options={"default"="1"})
      */
     private $userMaj = '1';
 
@@ -711,31 +711,7 @@ class Chart
 
         return $this;
     }
-
-    public function getUserCre(): ?string
-    {
-        return $this->userCre;
-    }
-
-    public function setUserCre(?string $userCre): static
-    {
-        $this->userCre = $userCre;
-
-        return $this;
-    }
-
-    public function getUserMaj(): ?string
-    {
-        return $this->userMaj;
-    }
-
-    public function setUserMaj(?string $userMaj): static
-    {
-        $this->userMaj = $userMaj;
-
-        return $this;
-    }
-
+    
     public function removeListYAxi(YAxis $listYAxi): static
     {
         if ($this->list_yAxis->removeElement($listYAxi)) {
@@ -756,6 +732,30 @@ class Chart
     public function setPublicChart(bool $publicChart): static
     {
         $this->publicChart = $publicChart;
+
+        return $this;
+    }
+
+    public function getUserCre(): ?int
+    {
+        return $this->userCre;
+    }
+
+    public function setUserCre(?int $userCre): static
+    {
+        $this->userCre = $userCre;
+
+        return $this;
+    }
+
+    public function getUserMaj(): ?int
+    {
+        return $this->userMaj;
+    }
+
+    public function setUserMaj(?int $userMaj): static
+    {
+        $this->userMaj = $userMaj;
 
         return $this;
     }

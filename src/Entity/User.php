@@ -62,14 +62,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var int|null
      *
-     * @ORM\Column(name="user_cre", type="bigint", nullable=true, options={"default"="1"})
+     * @ORM\Column(name="user_cre", type="integer", nullable=true, options={"default"="1"})
      */
     private $userCre = '1';
 
     /**
      * @var int|null
      *
-     * @ORM\Column(name="user_maj", type="bigint", nullable=true, options={"default"="1"})
+     * @ORM\Column(name="user_maj", type="integer", nullable=true, options={"default"="1"})
      */
     private $userMaj = '1';
     
@@ -201,28 +201,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getUserCre(): ?string
+    public function getUserCre(): ?int
     {
         return $this->userCre;
     }
 
-    public function setUserCre(?string $userCre): static
+    public function setUserCre(?int $userCre): static
     {
         $this->userCre = $userCre;
 
         return $this;
     }
 
-    public function getUserMaj(): ?string
+    public function getUserMaj(): ?int
     {
         return $this->userMaj;
     }
 
-    public function setUserMaj(?string $userMaj): static
+    public function setUserMaj(?int $userMaj): static
     {
         $this->userMaj = $userMaj;
 
         return $this;
     }
+
+
 
 }
