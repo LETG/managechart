@@ -409,7 +409,7 @@
                             }
                         }
 
-                        getData({{ serie.dataList.id }}, {{ attributsSpatiaux }}, {{ test }}, functionCallBack);
+                        getData({{ serie.dataList.id }}, '{{ attributsSpatiaux|e('js') }}', {{ test }}, functionCallBack);
                         {% set indexSerie = indexSerie + 1 %}
                     {% endfor %}
                 {% endfor %}
